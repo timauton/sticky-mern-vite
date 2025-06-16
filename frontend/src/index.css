@@ -1,3 +1,9 @@
+/* GENERAL FORMATTING*/
+#root {
+  margin: 0 auto;
+  text-align: center;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
@@ -22,4 +28,61 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+h2 {
+  font-size: 2.5em;
+  line-height: 1.1
+}
+
+
+/* bounding box for age background*/
+.view {
+  display: flex;
+  flex-direction: column;
+}
+
+/* bounding box for signup and login upper buttons */
+/* .signup-and-login {
+
+} */
+
+/* signup link text */
+.signup-link {
+  font-size: 2rem;
+  position: absolute;
+  left: 10px;
+
+}
+
+/* login link text */
+.login-link {
+  font-size: 2rem;
+  position: absolute;
+  right: 1px;
+}
+
+/* This sets up the frame */
+.image-frame {
+  width: 100vw;
+  max-width: 1280px;
+  aspect-ratio: 16 / 9;
+  margin: 1rem auto;
+  padding: 1px;
+  background-color: #f9f9f9ef;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1; /* keeps it above background */
+}
+
+/* Image keeps aspect ratio and fits the frame */
+.image-frame img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  height: auto;
+  width: auto;
 }
