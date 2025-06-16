@@ -63,6 +63,24 @@ describe("Rating model", () => {
         expect(savedRating.rating).toEqual(4);
     });
 
+    it("has timestamps when saved", async () => {
+        const memeId = new mongoose.Types.ObjectId();
+        const userId = new mongoose.Types.ObjectId();
+        
+        const rating = new Rating({
+            meme: memeId,
+            user: userId,
+            rating: 4,
+        });
+        
+        await rating.save();
+        
+        expect(rating.createdAt).toBeDefined();
+        expect(rating.updatedAt).toBeDefined();
+        expect(rating.createdAt).toBeInstanceOf(Date);
+        expect(rating.updatedAt).toBeInstanceOf(Date);
+    });
+
     it("rejects rating > 5", async () => {
         
         const memeId = new mongoose.Types.ObjectId();
@@ -85,7 +103,7 @@ describe("Rating model", () => {
         const invalidRating = new Rating({
             meme: memeId,
             user: userId,
-            rating: 0, // Invalid - too high
+            rating: 0, // Invalid - too low
         });
         
         await expect(invalidRating.save()).rejects.toThrow();
@@ -93,10 +111,10 @@ describe("Rating model", () => {
 
     it("requires all fields", async () => {
         const rating = new Rating({
-        // Missing required fields
+        // Missing required id fields
             rating: 3,
         });
-    
+
         await expect(rating.save()).rejects.toThrow();
     });
 
@@ -144,6 +162,7 @@ describe("Rating model", () => {
         await rating1.save();
         await rating2.save(); // Should not throw
         
+        // Both should be saved
         const savedRatings = await Rating.find({ user: userId }); 
         expect(savedRatings).toHaveLength(2);
     });
@@ -169,6 +188,7 @@ describe("Rating model", () => {
         await rating1.save();
         await rating2.save(); 
         
+        // Expect both ratings to have been saved
         const savedRatings = await Rating.find({ meme: memeId }); 
         expect(savedRatings).toHaveLength(2);
     });
