@@ -1,18 +1,18 @@
-const User = require("../models/user");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const User = require("../models/user"); // interacts with users collection on mongodb
+const bcrypt = require("bcrypt"); //hash passwords securely
+const jwt = require("jsonwebtoken"); //creates tokens that keeps users logged in using jwts
 
-const JWT_CODE = process.env.JWT_CODE || "supersecret";
+const JWT_CODE = process.env.JWT_CODE || "supersecret"; //jwtcode reads from .env file and uses supersecret as a fallback
 
 const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-
+//pulls data from the request body, that info a new user sends in the form.
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User has an account" });
-
-    const hashedPassword = await bcrypt.hash(password, 8);
-
+//checks if user with the same email already exists and if so through an error
+    const hashedPassword = await bcrypt.hash(password, 8);//8 as a standard security level
+//creates a new hashed password
     const user = await User.create({
       username,
       email,
