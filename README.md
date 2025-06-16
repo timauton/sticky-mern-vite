@@ -1,4 +1,4 @@
-## Totally No The Acebook MERN Template
+## Totally Not The Acebook MERN Template
 
 In this project, you are task with working on an existing application. A
 significant part of the challenge will be to familiarise yourself with the
