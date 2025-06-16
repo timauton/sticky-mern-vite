@@ -23,7 +23,7 @@ the application works.
 
 ### Card wall
 
-REPLACE THIS TEXT WITH A LINK TO YOUR CARD WALL
+(https://trello.com/b/c1Np9Vd9/rate-my-meme)
 
 ### Quickstart
 
@@ -46,7 +46,7 @@ If you haven't already, make sure you have node and NVM installed.
 ### Set up your project
 
 1. Have one team member fork this repository
-2. Rename the fork to `acebook-<team name>`
+2. Rename the fork to `sticky-mern-vite`
 3. Every team member clone the fork to their local machine
 4. Install dependencies for both the `frontend` and `api` applications:
    ```
