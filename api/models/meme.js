@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const MemeSchema = new mongoose.Schema({
     img: String,
     title: String,
-    user_id: String, // TODO: link to the User Schema
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     created_at: Date,
 });
 

@@ -1,19 +1,23 @@
 require("../mongodb_helper");
 
+const User = require("../../models/user");
 const Meme = require("../../models/meme");
 
 const testDate = new Date("2025-01-01T01:01:01Z");
+let testUser;
 
 describe("Meme model", () => {
     beforeEach(async () => {
         await Meme.deleteMany({});
+        testUser = new User({ email: "a@example.com", password: "password1" });
+        await testUser.save();
     });
 
     it("has an image path", () => {
         const meme = new Meme({
             img: "images/my_meme.jpeg",
             title: "My Fab Meme",
-            user_id: "123a",
+            user: testUser.id,
             created_at: testDate
         });
         expect(meme.img).toEqual("images/my_meme.jpeg");
@@ -23,33 +27,32 @@ describe("Meme model", () => {
         const meme = new Meme({
             img: "images/my_meme.jpeg",
             title: "My Fab Meme",
-            user_id: "123a",
+            user: testUser.id,
             created_at: testDate
         });
         expect(meme.title).toEqual("My Fab Meme");
     });
 
-    // TODO: create a proper user and ID when that schema is ready
-    it("has a user_id", () => {
+    it("has a user", async () => {
         const meme = new Meme({
             img: "images/my_meme.jpeg",
             title: "My Fab Meme",
-            user_id: "123a",
+            user: testUser.id,
             created_at: testDate
         });
-        expect(meme.user_id).toEqual("123a");
+        await meme.save();
+        expect(meme.user).toEqual(testUser._id);
     });
 
     it("has a created date", () => {
         const meme = new Meme({
             img: "images/my_meme.jpeg",
             title: "My Fab Meme",
-            user_id: "123a",
+            user: testUser.id,
             created_at: testDate
         });
         expect(meme.created_at).toEqual(testDate);
     });
-
 
     it("gives as empty list when there are no memes", async () => {
         const memes = await Meme.find();
@@ -60,7 +63,7 @@ describe("Meme model", () => {
         const meme = new Meme({
             img: "images/my_meme.jpeg",
             title: "My Fab Meme",
-            user_id: "123a",
+            user: testUser.id,
             created_at: testDate
         });
 
@@ -74,7 +77,7 @@ describe("Meme model", () => {
         const meme1 = new Meme({
             img: "images/my_meme1.jpeg",
             title: "My First Fab Meme",
-            user_id: "123a",
+            user: testUser.id,
             created_at: testDate
         });
         await meme1.save();
@@ -82,7 +85,7 @@ describe("Meme model", () => {
         const meme2 = new Meme({
             img: "images/my_meme2.jpeg",
             title: "My Second Fab Meme",
-            user_id: "123a",
+            user: testUser.id,
             created_at: testDate
         });
         await meme2.save();
