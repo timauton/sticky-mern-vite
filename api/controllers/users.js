@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken"); //creates tokens that keeps users logged in
 
 const JWT_CODE = process.env.JWT_CODE || "supersecret"; //jwtcode reads from .env file and uses supersecret as a fallback
 
+//registering new users
 const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -29,6 +30,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+//login
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -47,7 +49,68 @@ const login = async (req, res) => {
   }
 };
 
+//gets all users
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, "-password");
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+//gets user by their ids
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id, "-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+//updates users
+const updateUser = async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { username },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ message: "User updated", user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+//delete users
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ message: "User deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
 module.exports = {
   registerUser,
   login,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
 }

@@ -19,7 +19,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // API Routes
-app.use("/users", usersRouter);
+app.use("/users", tokenChecker, usersRouter);
 app.use("/posts", tokenChecker, postsRouter);
 app.use("/tokens", authenticationRouter);
 app.use("/memes", tokenChecker, memesRouter);
