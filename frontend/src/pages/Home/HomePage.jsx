@@ -10,9 +10,10 @@ export function HomePage() {
       <Link to="/login" className="login-link">Log In</Link>
       </div>
       <h2>It's Sticky!</h2>
-      <div className="image-frame">
-        <img src="/The-archives.jpg" alt="the archives" />
+      <div className="image-container">
+        <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
       </div>
+      <div className="rating-bar-box"></div>
     </div>
   );
 }

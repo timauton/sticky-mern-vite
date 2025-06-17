@@ -2,6 +2,9 @@
 #root {
   margin: 0 auto;
   text-align: center;
+  width: 100%;
+  max-width: 900px;
+  box-sizing: border-box;
 }
 
 :root {
@@ -21,6 +24,8 @@ a:hover {
 body {
   margin: 0;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -35,7 +40,7 @@ h2 {
   line-height: 1.1
 }
 
-
+/* VIEW PAGE FORMATTING */
 /* bounding box for age background*/
 .view {
   display: flex;
@@ -51,22 +56,45 @@ h2 {
 .signup-link {
   font-size: 2rem;
   position: absolute;
-  left: 10px;
-
+  left: 0px;
+  padding: 10px;
+  border: 2px solid #000000;
 }
 
 /* login link text */
 .login-link {
   font-size: 2rem;
   position: absolute;
-  right: 1px;
+  right: 0px;
+  padding: 10px;
+  border: 2px solid #000000;
 }
 
-/* This sets up the frame */
-.image-frame {
+/* meme formatting. Height will adjust to image OG max size without exceeding a width 
+of 900px to keep the ratings bar snug to the image bottom regardless of proportions*/
+.image-container {
+  padding: 0 5rem;
+  display: flex;
+  background-color: #f9f9f9ef;
+  max-width: 900px;
+  max-height: 500px;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.responsive-image {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; 
+ }
+
+/* Holding box for rating bar */
+.rating-bar-box {
   width: 100vw;
-  max-width: 1280px;
-  aspect-ratio: 16 / 9;
+  height: 4rem;
+  max-width: 900px;
   margin: 1rem auto;
   padding: 1px;
   background-color: #f9f9f9ef;
@@ -75,14 +103,5 @@ h2 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  z-index: 1; /* keeps it above background */
-}
-
-/* Image keeps aspect ratio and fits the frame */
-.image-frame img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  height: auto;
-  width: auto;
+  z-index: 1;
 }
