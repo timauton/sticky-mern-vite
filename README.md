@@ -23,7 +23,7 @@ the application works.
 
 ### Card wall
 
-REPLACE THIS TEXT WITH A LINK TO YOUR CARD WALL
+(https://trello.com/b/c1Np9Vd9/rate-my-meme)
 
 ### Quickstart
 
@@ -36,8 +36,12 @@ If you haven't already, make sure you have node and NVM installed.
    brew install nvm
    ```
    Then follow the instructions to update your `~/.bash_profile`.
-2. Open a new terminal
-3. Install the latest version of [Node.js](https://nodejs.org/en/), (`20.5.0` at
+2. Open a new terminal cd into api
+   ```
+   npm install bcrypt jsonwebtoken
+   ```
+3. Open a new terminal
+4. Install the latest version of [Node.js](https://nodejs.org/en/), (`20.5.0` at
    time of writing).
    ```
    nvm install 20
@@ -46,7 +50,7 @@ If you haven't already, make sure you have node and NVM installed.
 ### Set up your project
 
 1. Have one team member fork this repository
-2. Rename the fork to `acebook-<team name>`
+2. Rename the fork to `sticky-mern-vite`
 3. Every team member clone the fork to their local machine
 4. Install dependencies for both the `frontend` and `api` applications:
    ```
@@ -88,7 +92,7 @@ VITE_BACKEND_URL="http://localhost:3000"
 Create a file `api/.env` with the following contents:
 
 ```
-MONGODB_URL="mongodb://0.0.0.0/acebook"
+MONGODB_URL="mongodb://0.0.0.0/sticky"
 NODE_ENV="development"
 JWT_SECRET="secret"
 ```
