@@ -3,7 +3,7 @@
 export const StatsPage = () => {
   return (
     <div>
-      <p>StatsPage</p>
+      <h1>Stats page</h1>
     </div>
   );
 };

@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     element: <FeedPage />,
   },
   {
-    path: "stats",
+    path: "/stats",
     element: <StatsPage/>
   }
 ]);
