@@ -11,5 +11,24 @@
   },
   "engines": {
     "npm": "YOU ARE IN THE WRONG DIRECTORY! cd to api or frontend folder to run this command"
-  }
+  },
+  "name": "sticky-mern-vite",
+  "version": "1.0.0",
+  "description": "In this project, you are task with working on an existing application. A significant part of the challenge will be to familiarise yourself with the codebase you've inherited, as you work to **improve and extend** it.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timauton/sticky-mern-vite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/timauton/sticky-mern-vite/issues"
+  },
+  "homepage": "https://github.com/timauton/sticky-mern-vite#readme"
 }
