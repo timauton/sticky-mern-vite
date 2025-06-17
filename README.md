@@ -36,8 +36,12 @@ If you haven't already, make sure you have node and NVM installed.
    brew install nvm
    ```
    Then follow the instructions to update your `~/.bash_profile`.
-2. Open a new terminal
-3. Install the latest version of [Node.js](https://nodejs.org/en/), (`20.5.0` at
+2. Open a new terminal cd into api
+   ```
+   npm install bcrypt jsonwebtoken
+   ```
+3. Open a new terminal
+4. Install the latest version of [Node.js](https://nodejs.org/en/), (`20.5.0` at
    time of writing).
    ```
    nvm install 20
