@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import "../../index.css";
 
+// logged out render
 export function HomePage() {
   return (
     <div className="view">
@@ -9,7 +10,7 @@ export function HomePage() {
       <Link to="/signup" className="signup-link">Sign Up</Link>
       <Link to="/login" className="login-link">Log In</Link>
       </div>
-      <div className="title">It's Sticky!</div>
+      <div className="title">It is Sticky!</div>
       <div className="image-container">
         <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
       </div>
