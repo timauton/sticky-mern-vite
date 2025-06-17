@@ -103,6 +103,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 .card {
   background: rgb(106, 106, 106);
   padding: 1rem;
+  margin-bottom: 1rem;
   border-radius: 0.5rem;
 }
 
@@ -110,6 +111,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding-right: 1rem;
   margin-bottom: 1rem;
   background-color: #b0b0b0;
 }
@@ -117,4 +119,17 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 .my-meme img {
   width: 80px;
   height: 80px;
+}
+
+  .avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stats-card img {
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 1rem;
 }
