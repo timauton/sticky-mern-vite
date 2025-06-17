@@ -9,6 +9,9 @@ const MemeSchema = new mongoose.Schema({
         required: true
     },
     created_at: Date,
+},{
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
 
 //TODO: Uncomment the virtual fields when we implement these schemas
