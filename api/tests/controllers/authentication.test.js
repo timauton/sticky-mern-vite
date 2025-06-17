@@ -4,9 +4,10 @@ require("../mongodb_helper");
 const User = require("../../models/user");
 
 describe("/tokens", () => {
+  User.deleteMany({});
   beforeAll(async () => {
     const user = new User({
-      email: "auth-test@test.com",
+      username: "auth-test@test.com",
       password: "12345678",
     });
 
@@ -25,7 +26,7 @@ describe("/tokens", () => {
     const testApp = supertest(app);
     const response = await testApp
       .post("/tokens")
-      .send({ email: "auth-test@test.com", password: "12345678" });
+      .send({ username: "auth-test@test.com", password: "12345678" });
 
     expect(response.status).toEqual(201);
     expect(response.body.token).not.toEqual(undefined);
@@ -47,7 +48,7 @@ describe("/tokens", () => {
     let testApp = supertest(app);
     const response = await testApp
       .post("/tokens")
-      .send({ email: "auth-test@test.com", password: "1234" });
+      .send({ username: "auth-test@test.com", password: "1234" });
 
     expect(response.status).toEqual(401);
     expect(response.body.token).toEqual(undefined);
