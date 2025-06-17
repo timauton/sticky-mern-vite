@@ -3,7 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { StatsPage } from "../../src/pages/Stats/StatsPage";
 
 describe("Stats Page", () => {
-  test("Displays a title StatsPage", () => {
+  test("Displays a title Stats page", () => {
     // We need the Browser Router so that the Link elements load correctly
     render(
       <BrowserRouter>
