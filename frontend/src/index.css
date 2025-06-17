@@ -25,7 +25,10 @@ body {
 
 /* VIEW PAGE FORMATTING */
 /* bounding box for age background*/
-.stats-page-wrapper,
+
+.stats-page-wrapper {
+}
+
 .view {
   display: flex;
   flex-direction: column;
@@ -74,6 +77,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   box-sizing: border-box;
 }
 
+
 .responsive-image {
   display: block;
   max-width: 100%;
@@ -98,8 +102,9 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   z-index: 1;
 }
 
-/* StatsPage cards: */
+/* START OF STATS PAGE STYLING */
 
+/* StatsPage cards: */
 .card {
   background: rgb(232, 232, 232);
   padding: 1rem;
@@ -150,4 +155,28 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 
 .right{
   width: 75%;
+}
+
+.responsive-image {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; 
+ }
+
+/* Holding box for rating bar */
+.rating-bar-box {
+  width: 100vw;
+  height: 4rem;
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1px;
+  background-color: #f9f9f9ef;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
 }
