@@ -121,8 +121,8 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 }
 
   .avatar {
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -131,6 +131,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   width: 100%;
   max-width: 300px;
   margin-bottom: 1rem;
+  margin-right: 1rem;
 }
 
 .row {
