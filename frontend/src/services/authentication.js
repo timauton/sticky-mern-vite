@@ -1,4 +1,5 @@
 // docs: https://vitejs.dev/guide/env-and-mode.html
+// URL needs to be replaced
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export async function login(email, password) {
