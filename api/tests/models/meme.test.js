@@ -9,9 +9,12 @@ let testUser;
 describe("Meme model", () => {
     beforeEach(async () => {
         await Meme.deleteMany({});
-        testUser = new User({ email: "a@example.com", password: "password1" });
+        await User.deleteMany({});
+        testUser = new User({ username: "a@example.com", password: "password1" });
         await testUser.save();
     });
+
+
 
     it("has an image path", () => {
         const meme = new Meme({

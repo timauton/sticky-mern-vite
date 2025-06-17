@@ -30,7 +30,7 @@ describe("GET, when token is present", () => {
 
     beforeAll(async () => {
         testUser = new User({
-            email: "test@test.com",
+            username: "test@test.com",
             password: "12345678",
         });
         await testUser.save();
@@ -71,7 +71,18 @@ describe("GET, when token is present", () => {
         expect(response.body.memes.length).toEqual(1);
     });
 
-    test("has the correct image and title", async () => {
+    test("returns two memes when there are two memes", async () => {
+        const meme1 = await makeTestMeme(1);
+        const meme2 = await makeTestMeme(2);
+
+        const response = await request(app)
+            .get("/memes")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.memes.length).toEqual(2);
+    });
+
+    test("a meme has the correct image and title", async () => {
         const meme = await makeTestMeme();
 
         const response = await request(app)
@@ -82,7 +93,7 @@ describe("GET, when token is present", () => {
         expect(response.body.memes[0].title).toEqual(meme.title);
     });
 
-    test("returns two memes when there are two memes", async () => {
+    test("find the right meme when searchign by ID", async () => {
         const meme1 = await makeTestMeme(1);
         const meme2 = await makeTestMeme(2);
 
