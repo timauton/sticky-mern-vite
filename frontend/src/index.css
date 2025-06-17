@@ -98,10 +98,10 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   z-index: 1;
 }
 
-/* !! Stats page cards: */
+/* StatsPage cards: */
 
 .card {
-  background: rgb(106, 106, 106);
+  background: rgb(232, 232, 232);
   padding: 1rem;
   margin-bottom: 1rem;
 }
@@ -112,7 +112,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   gap: 1rem;
   padding-right: 1rem;
   margin-bottom: 1rem;
-  background-color: #b0b0b0;
+  background-color: #f9f9f9ef;
 }
 
 .my-meme img {
@@ -134,6 +134,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   margin-right: 1rem;
 }
 
+/* StatsPage columns & rows */
 .row {
   display: flex;
    gap: 1rem;
