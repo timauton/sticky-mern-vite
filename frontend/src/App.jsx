@@ -2,8 +2,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
 import { HomePage } from "./pages/Home/HomePage";
-import { LoginPage } from "./pages/Login/LoginPage";
-import { SignupPage } from "./pages/Signup/SignupPage";
+import { Login } from "./components/Login";
+import { Signup } from "./components/Signup";
 import { FeedPage } from "./pages/Feed/FeedPage";
 
 // docs: https://reactrouter.com/en/main/start/overview
@@ -14,11 +14,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: <Login />,
   },
   {
     path: "/signup",
-    element: <SignupPage />,
+    element: <Signup />,
   },
   {
     path: "/posts",
