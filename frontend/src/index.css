@@ -1,3 +1,4 @@
+/* GENERAL FORMATTING*/
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
@@ -15,11 +16,83 @@ a:hover {
 body {
   margin: 0;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
+
+/* VIEW PAGE FORMATTING */
+/* bounding box for age background*/
+.view {
+  display: flex;
+  flex-direction: column;
+}
+
+/* bounding box for signup and login upper buttons and info input */
+/* .signup-and-login {
+
+
+/* signup link text */
+.signup-link {
+  font-size: 2rem;
+  position: absolute;
+  left: 0px;
+  padding: 10px;
+  border: 2px solid #000000;
+}
+
+/* login link text */
+.login-link {
+  font-size: 2rem;
+  position: absolute;
+  right: 0px;
+  padding: 10px;
+  border: 2px solid #000000;
+}
+
+.title {
+  font-size: 2.5em;
+  font-weight: bold;
   line-height: 1.1;
+  text-align: center;
+  margin: 2rem;
+  margin-top: calc(2rem + 20px + 20px);
+}
+
+/* meme formatting. Height will adjust to image OG max size without exceeding a width 
+of 900px to keep the ratings bar snug to the image bottom regardless of proportions*/
+.image-container {
+  padding: 0 5rem;
+  display: flex;
+  background-color: #f9f9f9ef;
+  max-width: 900px;
+  max-height: 500px;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.responsive-image {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; 
+ }
+
+/* Holding box for rating bar */
+.rating-bar-box {
+  width: 100vw;
+  height: 4rem;
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1px;
+  background-color: #f9f9f9ef;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
 }
