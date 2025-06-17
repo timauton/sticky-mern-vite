@@ -1,11 +1,11 @@
 /* GENERAL FORMATTING*/
-#root {
+/* #root {
   margin: 0 auto;
   text-align: center;
   width: 100%;
   max-width: 900px;
   box-sizing: border-box;
-}
+} */
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -35,10 +35,6 @@ h1 {
   line-height: 1.1;
 }
 
-h2 {
-  font-size: 2.5em;
-  line-height: 1.1
-}
 
 /* VIEW PAGE FORMATTING */
 /* bounding box for age background*/
@@ -50,7 +46,6 @@ h2 {
 /* bounding box for signup and login upper buttons */
 /* .signup-and-login {
 
-} */
 
 /* signup link text */
 .signup-link {
@@ -68,6 +63,15 @@ h2 {
   right: 0px;
   padding: 10px;
   border: 2px solid #000000;
+}
+
+.title {
+  font-size: 2.5em;
+  font-weight: bold;
+  line-height: 1.1;
+  text-align: center;
+  margin: 2rem;
+  margin-top: calc(2rem + 20px + 20px);
 }
 
 /* meme formatting. Height will adjust to image OG max size without exceeding a width 
