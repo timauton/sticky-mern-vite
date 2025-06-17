@@ -132,3 +132,20 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   max-width: 300px;
   margin-bottom: 1rem;
 }
+
+.row {
+  display: flex;
+   gap: 1rem;
+}
+
+.column {
+  float: left;
+}
+
+.left {
+  width: 75%;
+}
+
+.right{
+  width: 75%;
+}
