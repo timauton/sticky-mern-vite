@@ -1,9 +1,12 @@
 const Button = ({
-    className,
+    className, // for css
     onClick,
     buttonText,
+    buttonImage, // file path
+    imageTitle, // to serve as alt text
+    ariaHidden, // set to true if image is purely decorative
     disabled,
-    type="button",
+    type="button", // by default, but can be overridden
     ariaLabel
 }) => {
 return (
@@ -14,9 +17,15 @@ return (
         type={type}
         aria-label={ariaLabel}
     >
+        {buttonImage && 
+        <img
+            src={buttonImage}
+            alt={imageTitle || ""}
+            aria-hidden={ariaHidden}
+        />} 
         {buttonText}
     </button>
-    );
+    ); // buttonImage conditionally renders
 };
 
 export default Button;

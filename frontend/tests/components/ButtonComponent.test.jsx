@@ -13,6 +13,21 @@ describe("ButtonComponent", () => {
         expect(button.className).toBe("testButton");
     });
 
+    test("Renders an image prop", () => {
+        render(<Button
+            buttonText="Clickity pic"
+            buttonImage="https://ichef.bbci.co.uk/news/480/cpsprodpb/b44e/live/6d3965d0-460e-11f0-8402-c958f7234d20.jpg.webp"
+            imageTitle="Dinosaur"
+            />);
+        
+
+        const img = screen.getByAltText("Dinosaur");
+
+        expect(img).toBeDefined();
+        expect(img.getAttribute("src")).toBe("https://ichef.bbci.co.uk/news/480/cpsprodpb/b44e/live/6d3965d0-460e-11f0-8402-c958f7234d20.jpg.webp");
+        expect(img.getAttribute("aria-hidden")).toBe(null);
+    });
+
     test("Handles an onClick", () => {
         const handleClick = vi.fn();
         render(<Button onClick={handleClick} buttonText="Click me, I dare you" />);
