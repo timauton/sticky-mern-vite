@@ -25,6 +25,10 @@ body {
 
 /* VIEW PAGE FORMATTING */
 /* bounding box for age background*/
+
+.stats-page-wrapper {
+}
+
 .view {
   display: flex;
   flex-direction: column;
@@ -71,6 +75,86 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   max-height: 500px;
   justify-content: center;
   box-sizing: border-box;
+}
+
+
+.responsive-image {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; 
+ }
+
+/* Holding box for rating bar */
+.rating-bar-box {
+  width: 100vw;
+  height: 4rem;
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1px;
+  background-color: #f9f9f9ef;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* START OF STATS PAGE STYLING */
+
+/* StatsPage cards: */
+.card {
+  background: rgb(232, 232, 232);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.my-meme {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9ef;
+}
+
+.my-meme img {
+  width: 80px;
+  height: 80px;
+}
+
+  .avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stats-card img {
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+}
+
+/* StatsPage columns & rows */
+.row {
+  display: flex;
+   gap: 1rem;
+}
+
+.column {
+  float: left;
+}
+
+.left {
+  width: 75%;
+}
+
+.right{
+  width: 75%;
 }
 
 .responsive-image {

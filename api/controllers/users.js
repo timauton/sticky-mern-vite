@@ -30,10 +30,12 @@ const registerUser = async (req, res) => {
 };
 
 const login = async (req, res) => {
+    console.log("Received Login info", req.body )
   try {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username });
+    console.log("user exists", user)
     if (!user) return res.status(400).json({ message: "Invalid username or password" });
 
     const isAMatch = await bcrypt.compare(password, user.password);

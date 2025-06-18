@@ -8,7 +8,11 @@ function LogoutButton() {
     navigate("/");
   }
 
-  return <button onClick={logOut}>Log out</button>;
+  return (
+    <div style={({ textAlign: "center"})}>
+      <button onClick={logOut}>Log out</button>;
+    </div>
+  )
 }
 
 export default LogoutButton;

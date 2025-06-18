@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
 
@@ -9,6 +10,7 @@ export function HomePage() {
       <div className="signup-and-login">
       <Link to="/signup" className="signup-link">Sign Up</Link>
       <Link to="/login" className="login-link">Log In</Link>
+      <LogoutButton />
       </div>
       <div className="title">It is Sticky!</div>
       <div className="image-container">
