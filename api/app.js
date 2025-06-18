@@ -18,8 +18,13 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // API Routes
+app.use("/users/registerUser", usersRouter);
+app.use("/users/login", usersRouter);
+
 app.use("/users", usersRouter);
+
 app.use("/tokens", authenticationRouter);
+
 app.use("/memes", tokenChecker, memesRouter);
 
 // 404 Handler

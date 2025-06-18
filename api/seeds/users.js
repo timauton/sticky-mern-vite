@@ -8,10 +8,10 @@ const { connectDB } = require("../db/db");
 const seededUsers = async () => {
     await connectDB();
 
-    await User.deleteMany({}); //we clear the existing users first.
+    await User.deleteMany({}); //we clear/delete the existing users first.
     console.log("Existing users removed.");
 
-    //examples of users - teamates
+    //examples of users
 
     const users = [
         {
@@ -49,6 +49,91 @@ const seededUsers = async () => {
             email: "breebrigid@email.com",
             password: "londonbridge1888"
         },
+
+        {
+            username: "flaviallen",
+            email: "flaviaallen@email.com",
+            password: "flaviaallen",
+        },
+
+        {
+            username: "sonnieman",
+            email: "sonniegill@email.com",
+            password: "sonniepass",
+        },
+
+        {
+            username: "richierich",
+            email: "richierichards@email.com",
+            password: "moneytalks",
+        },
+
+        {
+            username: "tonyfelix",
+            email: "anthonyfelix@email.com",
+            password: "felixcat88",
+        },
+
+        {
+            username: "brandiefifi",
+            email: "brandiefiona@email.com",
+            password: "fififizz",
+        },
+
+        {
+            username: "gracejus",
+            email: "gracejustine@email.com",
+            password: "gracefullyme",
+        },
+
+        {
+            username: "mildasam",
+            email: "mildasam@email.com",
+            password: "samsmile77",
+        },
+
+        {
+            username: "nasbrownie",
+            email: "nasbrown@email.com",
+            password: "brownienas",
+        },
+
+        {
+            username: "marksutt",
+            email: "marksutton@email.com",
+            password: "ashymark123",
+        },
+
+        {
+            username: "josyms",
+            email: "josyms@email.com",
+            password: "josypower",
+        },
+
+        {
+            username: "angieann",
+            email: "angieann@email.com",
+            password: "angelic2025",
+        },
+
+        {
+            username: "chloequink",
+            email: "chloequink@email.com",
+            password: "chloequeen",
+        },
+
+        {
+            username: "jamiejam",
+            email: "jamiejam@email.com",
+            password: "jammin1999",
+        },
+
+        {
+            username: "joechico",
+            email: "joechico@email.com",
+            password: "chicoboy26",
+        },
+
     ];
 
     const hashedUsers = await Promise.all(
@@ -61,7 +146,7 @@ const seededUsers = async () => {
     await User.insertMany(hashedUsers); //insert users
     console.log("Seeded users added successfully.");
 
-    mongoose.connection.close();
+    mongoose.connection.close(); //close db connection 
 };
 
 seededUsers().catch((e) => {
