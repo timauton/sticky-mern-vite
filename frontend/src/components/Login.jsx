@@ -52,8 +52,7 @@ export function Login() {
           value={password}
           onChange={handlePasswordChange}
         />
-        <Button type="submit" className="submit-button" buttonText="Submit" />
-        {/* <input role="submit-button" id="submit" type="submit" value="Submit" /> */}
+        <Button type="submit" className="login-submit-button" buttonText="Submit" />
       </form>
     </>
   );
