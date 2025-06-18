@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
+const tokenChecker = require("../middleware/tokenChecker")
 const MemesController = require("../controllers/memes");
+const { uploadConfigs, handleUploadError } = require("../middleware/uploadMiddleware");
 
 router.get("/", MemesController.getAllMemes);
-router.get("/id/:meme_id", MemesController.getMemeByID);
+router.get("/id/:meme_id", tokenChecker, MemesController.getMemeByID);
+router.post("/", tokenChecker, uploadConfigs.memes.single("image"), handleUploadError, MemesController.createMeme);
 //router.get("/random", MemesController.getRandomMemes);
 //router.get("/user/:user_id", MemesController.getMemesForUser);
 

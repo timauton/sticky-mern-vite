@@ -19,9 +19,26 @@ async function getMemeByID(req, res) {
     }
 }
 
+async function createMeme(req, res) {
+
+    const image = req.file;
+
+    const meme = new Meme({
+        img: (image) ? image.path : null,
+        title: req.body.title,
+        user: req.user_id,
+        created_at: Date.now()
+    });
+    await meme.save();
+    const newToken = generateToken(req.user_id);
+
+    res.status(201).json({ message: "Meme saved", token: newToken, newMeme: meme });
+};
+
 const MemesController = {
     getAllMemes: getAllMemes,
-    getMemeByID: getMemeByID
+    getMemeByID: getMemeByID,
+    createMeme, createMeme
 };
 
 module.exports = MemesController;

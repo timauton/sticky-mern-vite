@@ -125,11 +125,54 @@ describe("GET, when token is present", () => {
 
         expect(response.status).toEqual(400);
     });
+});
 
+describe("POST, when token is present", () => {
+
+    beforeAll(async () => {
+        await User.deleteMany({});
+        await Meme.deleteMany({});
+        testUser = new User({
+            username: "test@test.com",
+            password: "12345678",
+        });
+        await testUser.save();
+        token = createToken(testUser.id);
+    });
+
+    afterEach(async () => {
+        await Meme.deleteMany({});
+    });
+
+    afterAll(async () => {
+        await Meme.deleteMany({});
+    });
+
+    test("creates a meme correctly", async () => {
+
+        const webpBuffer = Buffer.from([
+            0x52, 0x49, 0x46, 0x46, 0x26, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50,
+            0x56, 0x50, 0x38, 0x20, 0x1A, 0x00, 0x00, 0x00, 0x30, 0x01, 0x00, 0x9D,
+            0x01, 0x2A, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x34, 0x25, 0xA4, 0x00,
+            0x03, 0x70, 0x00, 0xFE, 0xFB, 0xFD, 0x50, 0x00
+        ]);
+
+        const response = await request(app)
+            .post("/memes")
+            .set("Authorization", `Bearer ${token}`)
+            .field("title", "My created meme")
+            .field("user", testUser._id.toString())
+            .attach("image", webpBuffer, "test-meme.webp")  // filename as third parameter
+
+        const memes = await Meme.find();
+        expect(memes[0].title).toEqual("My created meme");
+        expect(response.status).toEqual(201);
+    });
 
 });
 
 const makeTestMeme = async ( suffix = "" ) => {
+
     const meme = new Meme({
         img: "images/my_meme" + suffix + ".jpeg",
         title: "My Fab Meme " + suffix,
