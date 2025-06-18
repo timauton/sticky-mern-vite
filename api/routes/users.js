@@ -1,4 +1,5 @@
 const express = require("express");
+const tokenChecker = require("../middleware/tokenChecker");
 
 const router = express.Router();
 
@@ -16,9 +17,9 @@ router.post("/registerUser", registerUser);
 router.post("/login", login);
 
 //our CRUDs
-router.get("/", getAllUsers); // gets all users
-router.get("/:id", getUserById); // gets users by id
-router.put("/:id", updateUser); // puts users by id
-router.delete("/:id", deleteUser); //deletes user by id
+router.get("/", tokenChecker, getAllUsers); // gets all users
+router.get("/:id", tokenChecker, getUserById); // gets users by id
+router.put("/:id", tokenChecker, updateUser); // puts users by id
+router.delete("/:id", tokenChecker, deleteUser); //deletes user by id
 
 module.exports = router;

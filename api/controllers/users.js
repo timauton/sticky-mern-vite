@@ -2,7 +2,7 @@ const User = require("../models/user"); // interacts with users collection on mo
 const bcrypt = require("bcrypt"); //hash passwords securely
 const jwt = require("jsonwebtoken"); //creates tokens that keeps users logged in using jwts
 
-const JWT_CODE = process.env.JWT_CODE || "supersecret"; //jwtcode reads from .env file and uses supersecret as a fallback
+const JWT_SECRET = process.env.JWT_SECRET || "supersecret"; //jwtcode reads from .env file and uses supersecret as a fallback
 
 //registering new users
 const registerUser = async (req, res) => {
@@ -41,7 +41,7 @@ const login = async (req, res) => {
     const isAMatch = await bcrypt.compare(password, user.password);
     if (!isAMatch) return res.status(400).json({ message: "Invalid username or password" });
 
-    const token = jwt.sign({ userId: user._id }, JWT_CODE, { expiresIn: "1d" });
+    const token = jwt.sign({ sub: user._id}, JWT_SECRET, { expiresIn: "1d" });
 
     res.status(200).json({ token, user: { id: user._id, username: user.username } });
   } catch (error) {
