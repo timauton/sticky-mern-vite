@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../services/authentication";
 import Button from "./ButtonComponent";
 
+import "../index.css";
+
 
 
 export function Login() {
@@ -35,24 +37,22 @@ export function Login() {
 
   return (
     <>
-      <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="username">Username:</label>
+        <label htmlFor="username">Username: </label>
         <input
           id="username"
           type="text"
           value={username}
           onChange={handleUsernameChange}
         />
-        <label htmlFor="password">Password:</label>
+        <label htmlFor="password"> Password: </label>
         <input
           id="password"
           type="password"
           value={password}
           onChange={handlePasswordChange}
         />
-        <Button type="submit" className="submitButton" buttonText="Submit" />
-        {/* <input role="submit-button" id="submit" type="submit" value="Submit" /> */}
+        <Button type="submit" className="login-submit-button" buttonText="Submit" />
       </form>
     </>
   );

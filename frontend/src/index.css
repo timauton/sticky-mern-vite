@@ -39,16 +39,46 @@ body {
 
 
 /* signup link text */
-.signup-link {
+.signup-button {
   font-size: 2rem;
   position: absolute;
   left: 0px;
   padding: 10px;
   border: 2px solid #000000;
+  z-index: 1;
 }
 
-/* login link text */
-.login-link {
+.signup-container {
+  font-size: 1rem;
+  position: absolute;
+  left: 135px;
+  padding: 2px 8px;
+  line-height: 1.6rem;
+  border: 2px solid #000000;
+}
+
+.email-input {
+  padding: 0px 4px;
+  padding-left: 47px;
+}
+
+.signup-submit-button {
+  margin: 2px 94px;
+}
+
+.login-container {
+  font-size: 1rem;
+  position: absolute;
+  right: 100px;
+  padding: 10px;
+  border: 2px solid #000000;
+}
+
+.login-submit-button {
+  margin: 0.49rem;
+}
+
+.login-button {
   font-size: 2rem;
   position: absolute;
   right: 0px;

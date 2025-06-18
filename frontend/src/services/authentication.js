@@ -29,10 +29,11 @@ export async function login(username, password) {
   }
 }
 
-export async function signup(username, password) {
+export async function signup(username, password, email) {
   const payload = {
     username: username,
     password: password,
+    email: email
   };
 
   const requestOptions = {
@@ -43,7 +44,10 @@ export async function signup(username, password) {
     body: JSON.stringify(payload),
   };
 
-  let response = await fetch(`${BACKEND_URL}/users`, requestOptions);
+  console.log('calling API with:', {username, password, email});
+  console.log('Backend URL:', BACKEND_URL);  // Add this before fetch
+
+  let response = await fetch(`${BACKEND_URL}/users/registerUser`, requestOptions);
 
   // docs: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/201
   if (response.status === 201) {
