@@ -32,6 +32,7 @@ body {
 .view {
   display: flex;
   flex-direction: column;
+  background-image: ;
 }
 
 /* bounding box for signup and login upper buttons and info input */

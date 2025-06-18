@@ -15,7 +15,7 @@ export function Signup() {
   async function handleSubmit(event) {
     event.preventDefault();
     try {
-      await signup(username, password);
+      await signup(username, password, email);
       navigate("/");
     } catch (err) {
       console.error(err);
