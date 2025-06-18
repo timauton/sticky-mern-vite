@@ -22,20 +22,22 @@ export function HomePage() {
   };
 
   return (
-    <div className="view">
-      <div className="signup-and-login">
-       <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
-      {showLogin && <div className="login-container"><Login />
-                    </div>}
-      <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
-      {showSignup && <div className="signup-container"><Signup />
-                    </div>}
+    <div className="background-image">
+      <div className="view">
+        <div className="signup-and-login">
+        <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
+        {showLogin && <div className="login-container"><Login />
+                      </div>}
+        <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
+        {showSignup && <div className="signup-container"><Signup />
+                      </div>}
+        </div>
+        <div className="title">It is Sticky!</div>
+        <div className="image-container">
+          <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
+        </div>
+        <div className="rating-bar-box"></div>
       </div>
-      <div className="title">It is Sticky!</div>
-      <div className="image-container">
-        <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
-      </div>
-      <div className="rating-bar-box"></div>
     </div>
   );
 }
