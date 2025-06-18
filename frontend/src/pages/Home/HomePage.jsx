@@ -6,31 +6,38 @@ import { Signup } from "../../components/Signup"
 
 import "../../index.css";
 
-
+// logged out render
 export function HomePage() {
+
   // Login function
   const [showLogin, setShowLogin] = useState(false);
-
   const handleLoginClick = () => {
     setShowLogin((prev) => !prev);
   };
+
   // Signup function
   const [showSignup, setShowSignup] = useState(false);
-
   const handleSignupClick = () => {
     setShowSignup((prev) => !prev);
   };
+
+  // This function will be passed to the Signup component
+  const handleSignupSuccess = () => {
+    setShowSignup(false); // Hide form
+    setShowLogin(true); // Show login form
+  }
+
 
   return (
     <div className="background-image">
       <div className="view">
         <div className="signup-and-login">
         <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
+        {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
+                      </div>}
         {showLogin && <div className="login-container"><Login />
                       </div>}
         <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
-        {showSignup && <div className="signup-container"><Signup />
-                      </div>}
         </div>
         <div className="title">It is Sticky!</div>
         <div className="image-container">
