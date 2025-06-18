@@ -1,27 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { login } from "../../services/authentication";
+import { login } from "../services/authentication";
+import Button from "./ButtonComponent";
 
-export function LoginPage() {
-  const [email, setEmail] = useState("");
+
+
+export function Login() {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   async function handleSubmit(event) {
     event.preventDefault();
+    console.log("Login Request", {username, password})
+
     try {
-      const token = await login(email, password);
+      const token = await login(username, password);
       localStorage.setItem("token", token);
-      navigate("/posts");
+      navigate("/");
     } catch (err) {
       console.error(err);
-      navigate("/login");
+      // navigate("/login");
     }
   }
 
-  function handleEmailChange(event) {
-    setEmail(event.target.value);
+  function handleUsernameChange(event) {
+    setUsername(event.target.value);
   }
 
   function handlePasswordChange(event) {
@@ -32,12 +37,12 @@ export function LoginPage() {
     <>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
+        <label htmlFor="username">Username:</label>
         <input
-          id="email"
+          id="username"
           type="text"
-          value={email}
-          onChange={handleEmailChange}
+          value={username}
+          onChange={handleUsernameChange}
         />
         <label htmlFor="password">Password:</label>
         <input
@@ -46,7 +51,8 @@ export function LoginPage() {
           value={password}
           onChange={handlePasswordChange}
         />
-        <input role="submit-button" id="submit" type="submit" value="Submit" />
+        <Button type="submit" className="submitButton" buttonText="Submit" />
+        {/* <input role="submit-button" id="submit" type="submit" value="Submit" /> */}
       </form>
     </>
   );
