@@ -1,9 +1,9 @@
 // docs: https://vitejs.dev/guide/env-and-mode.html
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-export async function login(email, password) {
+export async function login(username, password) {
   const payload = {
-    email: email,
+    username: username,
     password: password,
   };
 
@@ -28,9 +28,9 @@ export async function login(email, password) {
   }
 }
 
-export async function signup(email, password) {
+export async function signup(username, password) {
   const payload = {
-    email: email,
+    username: username,
     password: password,
   };
 

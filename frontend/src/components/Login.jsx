@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { login } from "../services/authentication";
 import Button from "./ButtonComponent";
@@ -9,14 +9,16 @@ import Button from "./ButtonComponent";
 export function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   async function handleSubmit(event) {
     event.preventDefault();
+    console.log("Login Request", {username, password})
+
     try {
       const token = await login(username, password);
       localStorage.setItem("token", token);
-      // navigate("/posts");
+      navigate("/");
     } catch (err) {
       console.error(err);
       // navigate("/login");
@@ -30,8 +32,6 @@ export function Login() {
   function handlePasswordChange(event) {
     setPassword(event.target.value);
   }
-
-  console.log()
 
   return (
     <>
@@ -51,7 +51,7 @@ export function Login() {
           value={password}
           onChange={handlePasswordChange}
         />
-        <Button type="submit" className="submitButton" buttonText="Submit" onClick={handleSubmit}/>
+        <Button type="submit" className="submitButton" buttonText="Submit" />
         {/* <input role="submit-button" id="submit" type="submit" value="Submit" /> */}
       </form>
     </>
