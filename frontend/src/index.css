@@ -56,6 +56,18 @@ body {
   border: 2px solid #000000;
 } */
 
+.login-container {
+  font-size: 1rem;
+  position: absolute;
+  right: 100px;
+  padding: 10px;
+  border: 2px solid #000000;
+}
+
+.submit-button {
+  margin: 0.49rem;
+}
+
 .login-button {
   font-size: 2rem;
   position: absolute;

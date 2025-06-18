@@ -4,8 +4,6 @@ import "./index.css";
 import { HomePage } from "./pages/Home/HomePage";
 import { Login } from "./components/Login";
 import { Signup } from "./components/Signup";
-import { FeedPage } from "./pages/Feed/FeedPage";
-
 
 // docs: https://reactrouter.com/en/main/start/overview
 const router = createBrowserRouter([
