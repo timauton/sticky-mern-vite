@@ -6,7 +6,7 @@ import Button from "./ButtonComponent";
 
 import "../index.css";
 
-export function Signup() {
+export function Signup({onSignupSuccess}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -14,9 +14,14 @@ export function Signup() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    // check output
+    console.log('signing up with:', {username, password, email})
     try {
       await signup(username, password, email);
       navigate("/");
+      if (onSignupSuccess) {
+        onSignupSuccess();
+      }
     } catch (err) {
       console.error(err);
       // navigate("/signup");
