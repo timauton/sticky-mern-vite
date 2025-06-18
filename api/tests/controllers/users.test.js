@@ -1,3 +1,5 @@
+process.env.JWT_SECRET = "supersecret";
+
 const request = require("supertest");
 
 const app = require("../../app");
@@ -142,5 +144,143 @@ describe("/users", () => {
       expect(response.body.message).toBe("Invalid username or password");
     });
   });
+
+  describe("User CRUD routes", () => {
+    let authenticationToken, userId;
+
+    beforeEach(async () => {
+      const res = await request(app)
+        .post("/users/registerUser")
+        .send({
+          username: "bree123",
+          email: "breekal@email.com", 
+          password: "password"
+        });
+
+      const login = await request(app)
+        .post("/users/login")
+        .send({ 
+          username: "bree123",
+          password: "password"
+        })
+      
+      authenticationToken = login.body.token;
+      userId = res.body.user.id;
+    });
+
+    test("GET /users returns all users", async () => {
+      const response = await request(app)
+        .get("/users")
+        .set("Authorization", `Bearer ${authenticationToken}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.some(user => user.username === "bree123")).toBe(true);
+    });
+
+    test("GET /users/:id returns a user by ID", async () => {
+      const response = await request(app)
+        .get(`/users/${userId}`)
+        .set("Authorization", `Bearer ${authenticationToken}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.username).toBe("bree123");
+    });
+
+    test("PUT /users/:id updates a user's username", async () => {
+      const response = await request(app)
+        .put(`/users/${userId}`)
+        .set("Authorization", `Bearer ${authenticationToken}`)
+        .send({ username: "breekal" });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.user.username).toBe("breekal");
+      expect(response.body.message).toBe("User updated");
+    });
+
+    test("DELETE /users/:id removes a user", async () => {
+      const deleteResponse = await request(app)
+        .delete(`/users/${userId}`)
+        .set("Authorization", `Bearer ${authenticationToken}`);
+
+      expect(deleteResponse.statusCode).toBe(200);
+      expect(deleteResponse.body.message).toBe("User deleted");
+
+      const checkDeletedUser = await request(app)
+        .get(`/users/${userId}`)
+        .set("Authorization", `Bearer ${authenticationToken}`);
+
+      expect(checkDeletedUser.statusCode).toBe(404);
+    });
+  });
+
+  describe("Token-protected user routes", () => {
+    let authenticationToken, userId;
+
+    beforeEach(async () => {
+      await User.deleteMany({});
+
+      await request(app)
+        .post("/users/registerUser")
+        .send({
+          username: "bree123",
+          email: "breekal@email.com",
+          password: "password"
+        });
+
+      const login = await request(app)
+        .post("/users/login")
+        .send({
+          username: "bree123",
+          password: "password"
+        });
+
+      if (!login.body.user) {
+        console.error("Login failed:", login.body);
+        throw new Error("Login did not return a user");
+      }
+
+      authenticationToken = login.body.token;
+      userId = login.body.user.id;
+    });
+
+    test("GET /users require a token and returns users", async () => {
+      const response = await request(app)
+        .get("/users")
+        .set("Authorization", `Bearer ${authenticationToken}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+    });
+
+    test("GET /users/:id requires a token and returns the user", async () => {
+      const response = await request(app)
+        .get(`/users/${userId}`)
+        .set("Authorization", `Bearer ${authenticationToken}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.username).toBe("bree123");
+    });
+
+    test("PUT /users/:id updates username with token", async () => {
+      const response = await request(app)
+        .put(`/users/${userId}`)
+        .set("Authorization", `Bearer ${authenticationToken}`)
+        .send({ username: "bree123" });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.user.username).toBe("bree123");
+    });
+
+    test("DELETE /users/:id deletes the user with token", async () => {
+      const response = await request(app)
+        .delete(`/users/${userId}`)
+        .set("Authorization", `Bearer ${authenticationToken}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.message).toBe("User deleted");
+    });
+
+  });  
 
 });
