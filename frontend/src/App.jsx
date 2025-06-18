@@ -4,6 +4,7 @@ import "./index.css";
 import { HomePage } from "./pages/Home/HomePage";
 import { Login } from "./components/Login";
 import { Signup } from "./components/Signup";
+import { StatsPage } from "./pages/Stats/StatsPage";
 
 // docs: https://reactrouter.com/en/main/start/overview
 const router = createBrowserRouter([
@@ -17,8 +18,13 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <Signup />,
+    element: <SignupPage />,
   },
+  {
+    path: "/stats",
+    element: <StatsPage />,
+  },
+
 ]);
 
 function App() {
