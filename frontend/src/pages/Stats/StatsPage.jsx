@@ -1,4 +1,5 @@
 
+import MemeUpload from "../../components/MemeUploadComponent";
 
 export const StatsPage = () => {
   return (
@@ -45,12 +46,17 @@ export const StatsPage = () => {
           </div>  
         </div>
       </div>
+      
+      <div>
+        <MemeUpload />
+      </div>
 
       </div>
 
     </div>
   );
 };
+
 
 
 
