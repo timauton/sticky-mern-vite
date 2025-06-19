@@ -9,7 +9,7 @@ import {
 
 import './StarRatingTest.css';
 
-export default function StarRatingTest() {
+export default function RatingsBar() {
   const [userRating, setUserRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
   const [hoveredStar, setHoveredStar] = useState(0);

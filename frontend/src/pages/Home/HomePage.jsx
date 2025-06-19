@@ -2,6 +2,7 @@ import Button from "../../components/ButtonComponent"
 import  { useState } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
+import { RatingsBar } from "../../components/RatingBar"
 // import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
@@ -29,20 +30,27 @@ export function HomePage() {
 
 
   return (
-    <div className="view">
-      <div className="signup-and-login">
-       <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
-      {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
-                    </div>}
-      {showLogin && <div className="login-container"><Login />
-                    </div>}
-      <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
+    <>
+      <div className="background-image"></div>
+      <div className="background-area">
+        <div className="view">
+          <div className="signup-and-login">
+          <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
+          {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
+                        </div>}
+          {showLogin && <div className="login-container"><Login />
+                        </div>}
+          <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
+          </div>
+          <div className="title">Sticky Memes</div>
+          <div className="image-container">
+            <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
+          </div>
+          <div className="rating-bar-box">
+            <RatingsBar />
+          </div>
+        </div>
       </div>
-      <div className="title">It is Sticky!</div>
-      <div className="image-container">
-        <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
-      </div>
-      <div className="rating-bar-box"></div>
-    </div>
+  </>
   );
 }
