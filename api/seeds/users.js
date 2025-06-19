@@ -1,3 +1,6 @@
+// To create seed data run:
+// npm run seed
+
 require("dotenv").config();
 
 const mongoose = require("mongoose");
@@ -149,7 +152,12 @@ const seededUsers = async () => {
     mongoose.connection.close(); //close db connection 
 };
 
+// Running this from runSeeds now
+/*
 seededUsers().catch((e) => {
     console.error("Error seeding users:", e);
     mongoose.connection.close();
 });
+*/
+
+module.exports = seededUsers;

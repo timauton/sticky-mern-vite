@@ -1,5 +1,6 @@
 const Meme = require("../models/meme");
 const { generateToken } = require("../lib/token");
+const fs = require('fs').promises;
 
 async function getAllMemes(req, res) {
     const memes = await Meme.find().populate('user');
@@ -21,24 +22,64 @@ async function getMemeByID(req, res) {
 
 async function createMeme(req, res) {
 
-    const image = req.file;
+    try {
 
-    const meme = new Meme({
-        img: (image) ? image.path : null,
-        title: req.body.title,
-        user: req.user_id,
-        created_at: Date.now()
-    });
-    await meme.save();
-    const newToken = generateToken(req.user_id);
+        const image = req.file;
 
-    res.status(201).json({ message: "Meme saved", token: newToken, newMeme: meme });
-};
+        if (!image) {
+            throw "No image provided";
+        }
+
+        const meme = new Meme({
+            img: (image) ? image.path : null,
+            title: req.body.title,
+            user: req.user_id,
+            created_at: Date.now()
+        });
+        await meme.save();
+        const newToken = generateToken(req.user_id);
+
+        res.status(201).json({ message: "Meme saved", token: newToken, newMeme: meme });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(400).json({ message: "Error creating meme" });
+    }
+}
+
+async function deleteMeme(req, res) {
+
+    try {
+
+        const meme = await Meme.findById(req.params.meme_id).populate('user');
+
+        const newToken = generateToken(req.user_id);
+
+        // check it's this user's meme
+        if (meme.user.id != req.user_id) {
+            res.status(401).json({ message: "Unable to delete another user's meme", token: newToken });
+            return;
+        }
+
+        await fs.rm(meme.img);
+        await Meme.findOneAndDelete( { _id: meme._id } );
+
+        res.status(200).json({ message: "Meme deleted", token: newToken });
+        return;
+
+    }
+    catch (err) {
+        console.error(err);
+        res.status(400).json({ message: "Error deleting meme", token: newToken });
+        return;
+    }
+}
 
 const MemesController = {
     getAllMemes: getAllMemes,
     getMemeByID: getMemeByID,
-    createMeme, createMeme
+    createMeme, createMeme,
+    deleteMeme, deleteMeme
 };
 
 module.exports = MemesController;
