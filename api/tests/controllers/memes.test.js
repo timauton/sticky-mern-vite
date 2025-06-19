@@ -4,6 +4,7 @@ const JWT = require("jsonwebtoken");
 const app = require("../../app");
 const User = require("../../models/user");
 const Meme = require("../../models/meme");
+const Rating = require("../../models/rating");
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -158,7 +159,7 @@ describe("GET, when token is present", () => {
         expect(gotMeme3).toEqual(true);
     });
 
-    test("gets memes for a user", async () => {
+    test("gets memes made by a user", async () => {
 
         const meme1 = makeTestMeme(1);
         const meme2 = makeTestMeme(2);
@@ -169,6 +170,27 @@ describe("GET, when token is present", () => {
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.body.memes.length).toEqual(3);
+    });
+
+    test("gets memes a user has rated", async () => {
+
+        const meme1 = await makeTestMeme(1);
+        const meme2 = await makeTestMeme(2);
+        const meme3 = await makeTestMeme(3);
+
+        await Rating.deleteMany({});
+        const rating1 = new Rating({
+            meme: meme1._id,
+            user: testUser._id,
+            rating: 5
+        });
+        await rating1.save();
+
+        const response = await request(app)
+            .get("/memes/rated_by_user/" + testUser._id)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.memes.length).toEqual(1);
     });
 
 });

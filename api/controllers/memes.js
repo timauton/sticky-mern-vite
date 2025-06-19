@@ -1,6 +1,7 @@
 const Meme = require("../models/meme");
 const { generateToken } = require("../lib/token");
 const fs = require('fs').promises;
+const mongoose = require('mongoose');
 
 async function getAllMemes(req, res) {
     const memes = await Meme.find().populate('user');
@@ -101,6 +102,33 @@ async function getMemesCreatedByUser(req, res) {
 
 }
 
+async function getMemesRatedByUser(req, res) {
+
+    console.log("getMemesRatedByUser " + req.params.user_id);  
+
+    const memes = await Meme.aggregate([
+        {
+            $lookup: {
+                from: 'ratings',
+                localField: '_id',
+                foreignField: 'meme',
+                as: 'ratings'
+            }
+        },
+        {
+            $match: {
+                'ratings.user': new mongoose.Types.ObjectId(req.params.user_id)
+            }
+        },
+    ]);
+
+    console.log("getMemesRatedByUser " + memes.length);   
+
+    const token = generateToken(req.user_id);
+    res.status(200).json({ memes: memes, token: token });
+
+}
+
 
 const MemesController = {
     getAllMemes: getAllMemes,
@@ -109,6 +137,7 @@ const MemesController = {
     deleteMeme, deleteMeme,
     getNextMeme, getNextMeme,
     getMemesCreatedByUser, getMemesCreatedByUser,
+    getMemesRatedByUser, getMemesRatedByUser,
 };
 
 module.exports = MemesController;

@@ -20,6 +20,11 @@ router.get("/:meme_id", tokenChecker, MemesController.getMemeByID);
 // returns an array of memes
 router.get("/user/:user_id", tokenChecker, MemesController.getMemesCreatedByUser);
 
+// gets all memes with a rating by the user_id param in the URL
+// does NOT use the req.user_id so you can view memes for other users
+// returns an array of memes
+router.get("/rated_by_user/:user_id", tokenChecker, MemesController.getMemesRatedByUser);
+
 // post a new meme, including the image
 router.post("/", tokenChecker, uploadConfigs.memes.single("image"), handleUploadError, MemesController.createMeme);
 
