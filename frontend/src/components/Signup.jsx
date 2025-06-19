@@ -43,14 +43,14 @@ export function Signup({onSignupSuccess}) {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="username"> * Username: </label>
+        <label htmlFor="username"> Username: </label>
         <input
           id="username"
           type="text"
           value={username}
           onChange={handleUsernameChange}
         />
-        <label htmlFor="password"> * Password: </label>
+        <label htmlFor="password"> Password: </label>
         <input
           id="password"
           type="password"

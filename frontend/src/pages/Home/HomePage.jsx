@@ -2,7 +2,7 @@ import Button from "../../components/ButtonComponent"
 import  { useState } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
-// import LogoutButton from "../../components/LogoutButton"
+import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
 
@@ -13,12 +13,14 @@ export function HomePage() {
   const [showLogin, setShowLogin] = useState(false);
   const handleLoginClick = () => {
     setShowLogin((prev) => !prev);
+    setShowSignup(false)
   };
 
   // Signup function
   const [showSignup, setShowSignup] = useState(false);
   const handleSignupClick = () => {
     setShowSignup((prev) => !prev);
+    setShowLogin(false)
   };
 
   // This function will be passed to the Signup component
@@ -26,8 +28,15 @@ export function HomePage() {
     setShowSignup(false); // Hide form
     setShowLogin(true); // Show login form
   }
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
-
+  const handleLoginSuccess = () => {
+    setShowLogin(false)
+    setIsLoggedIn(true)
+  }
+  
+  if (!isLoggedIn) {
   return (
     <>
       <div className="background-image"></div>
@@ -50,4 +59,14 @@ export function HomePage() {
       </div>
   </>
   );
+  }
+  return (
+  <div>
+    <h1>logged in</h1>
+    <Button
+      className="logout-button"
+      buttonText="Log Out"
+      onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
+      />
+  </div>)
 }

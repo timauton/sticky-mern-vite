@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 import { login } from "../services/authentication";
 import Button from "./ButtonComponent";
@@ -8,10 +8,10 @@ import "../index.css";
 
 
 
-export function Login() {
+export function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -20,7 +20,8 @@ export function Login() {
     try {
       const token = await login(username, password);
       localStorage.setItem("token", token);
-      navigate("/");
+      if (onLoginSuccess) onLoginSuccess();
+      // navigate("/");
     } catch (err) {
       console.error(err);
       // navigate("/login");
