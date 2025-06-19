@@ -5,13 +5,25 @@ const tokenChecker = require("../middleware/tokenChecker")
 const MemesController = require("../controllers/memes");
 const { uploadConfigs, handleUploadError } = require("../middleware/uploadMiddleware");
 
+// gets all memes in the database (you probably don't want this!), returns an array of memes
 router.get("/", MemesController.getAllMemes);
+
+// gets the next meme that is relevant for the user, returns one meme
+// exactly whcih meme you get will be decided by The Algorithm™
 router.get("/next", tokenChecker, MemesController.getNextMeme);
+
+// gets a particular meme using the _id, returns one meme
 router.get("/:meme_id", tokenChecker, MemesController.getMemeByID);
+
+// gets all memes where the user matches the user_id param in the URL
+// does NOT use the req.user_id so you can view memes for other users
+// returns an array of memes
 router.get("/user/:user_id", tokenChecker, MemesController.getMemesCreatedByUser);
+
+// post a new meme, including the image
 router.post("/", tokenChecker, uploadConfigs.memes.single("image"), handleUploadError, MemesController.createMeme);
+
+// deletes a meme and deletes the file from the uploads fodler
 router.delete("/:meme_id", tokenChecker, MemesController.deleteMeme);
-//router.get("/random", MemesController.getRandomMemes);
-//router.get("/user/:user_id", MemesController.getMemesForUser);
 
 module.exports = router;
