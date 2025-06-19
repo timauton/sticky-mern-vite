@@ -6,6 +6,7 @@ import { Login } from "./components/Login";
 import { Signup } from "./components/Signup";
 import { StatsPage } from "./pages/Stats/StatsPage";
 
+
 // docs: https://reactrouter.com/en/main/start/overview
 const router = createBrowserRouter([
   {
@@ -24,7 +25,6 @@ const router = createBrowserRouter([
     path: "/stats",
     element: <StatsPage />,
   },
-
 ]);
 
 function App() {

@@ -16,7 +16,6 @@ const MemeUpload = () => {
             </form>
 
         </div>
-
     )
 };
 
