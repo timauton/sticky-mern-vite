@@ -137,7 +137,8 @@ describe("POST, when token is present", () => {
         await User.deleteMany({});
         await Meme.deleteMany({});
         testUser = new User({
-            username: "test@test.com",
+            username: "testuser",
+            email: "test@test.com",
             password: "12345678",
         });
         await testUser.save();

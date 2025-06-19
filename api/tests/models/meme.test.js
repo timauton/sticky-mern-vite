@@ -10,7 +10,7 @@ describe("Meme model", () => {
     beforeEach(async () => {
         await Meme.deleteMany({});
         await User.deleteMany({});
-        testUser = new User({ username: "a@example.com", password: "password1" });
+        testUser = new User({ username: "test user", email: "a@example.com", password: "password1" });
         await testUser.save();
     });
 
