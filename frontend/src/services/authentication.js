@@ -1,9 +1,10 @@
 // docs: https://vitejs.dev/guide/env-and-mode.html
+// URL needs to be replaced
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-export async function login(email, password) {
+export async function login(username, password) {
   const payload = {
-    email: email,
+    username: username,
     password: password,
   };
 
@@ -28,10 +29,11 @@ export async function login(email, password) {
   }
 }
 
-export async function signup(email, password) {
+export async function signup(username, password, email) {
   const payload = {
-    email: email,
+    username: username,
     password: password,
+    email: email
   };
 
   const requestOptions = {
@@ -42,7 +44,10 @@ export async function signup(email, password) {
     body: JSON.stringify(payload),
   };
 
-  let response = await fetch(`${BACKEND_URL}/users`, requestOptions);
+  console.log('calling API with:', {username, password, email});
+  console.log('Backend URL:', BACKEND_URL);  // Add this before fetch
+
+  let response = await fetch(`${BACKEND_URL}/users/registerUser`, requestOptions);
 
   // docs: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/201
   if (response.status === 201) {

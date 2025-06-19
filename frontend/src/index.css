@@ -25,9 +25,13 @@ body {
 
 /* VIEW PAGE FORMATTING */
 /* bounding box for age background*/
+
+
+.stats-page-wrapper,
 .view {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 /* bounding box for signup and login upper buttons and info input */
@@ -35,16 +39,46 @@ body {
 
 
 /* signup link text */
-.signup-link {
+.signup-button {
   font-size: 2rem;
   position: absolute;
   left: 0px;
   padding: 10px;
   border: 2px solid #000000;
+  z-index: 1;
 }
 
-/* login link text */
-.login-link {
+.signup-container {
+  font-size: 1rem;
+  position: absolute;
+  left: 135px;
+  padding: 2px 8px;
+  line-height: 1.6rem;
+  border: 2px solid #000000;
+}
+
+.email-input {
+  padding: 0px 4px;
+  padding-left: 47px;
+}
+
+.signup-submit-button {
+  margin: 2px 94px;
+}
+
+.login-container {
+  font-size: 1rem;
+  position: absolute;
+  right: 100px;
+  padding: 10px;
+  border: 2px solid #000000;
+}
+
+.login-submit-button {
+  margin: 0.49rem;
+}
+
+.login-button {
   font-size: 2rem;
   position: absolute;
   right: 0px;
@@ -71,6 +105,91 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   max-height: 500px;
   justify-content: center;
   box-sizing: border-box;
+}
+
+
+.responsive-image {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; 
+ }
+
+/* Holding box for rating bar */
+.rating-bar-box {
+  width: 100vw;
+  height: 4rem;
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1px;
+  background-color: #f9f9f9ef;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* START OF STATS PAGE STYLING */
+
+/* StatsPage cards: */
+.card {
+  background: rgb(232, 232, 232);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.my-meme {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9ef;
+}
+
+.my-meme img {
+  width: 80px;
+  height: 80px;
+}
+
+  .avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* .stats-card {
+  text-align: center;
+} */
+
+.stats-card img {
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+}
+
+/* StatsPage columns & rows */
+.row {
+  display: flex;
+   gap: 1rem;
+}
+
+.column {
+  float: left;
+}
+
+.left {
+  width: 75%;
+}
+
+.right{
+  width: 75%;
 }
 
 .responsive-image {

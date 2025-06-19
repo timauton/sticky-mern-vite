@@ -1,14 +1,42 @@
-import { Link } from "react-router-dom";
+import Button from "../../components/ButtonComponent"
+import  { useState } from "react"
+import { Login } from "../../components/Login"
+import { Signup } from "../../components/Signup"
+// import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
 
 // logged out render
 export function HomePage() {
+
+  // Login function
+  const [showLogin, setShowLogin] = useState(false);
+  const handleLoginClick = () => {
+    setShowLogin((prev) => !prev);
+  };
+
+  // Signup function
+  const [showSignup, setShowSignup] = useState(false);
+  const handleSignupClick = () => {
+    setShowSignup((prev) => !prev);
+  };
+
+  // This function will be passed to the Signup component
+  const handleSignupSuccess = () => {
+    setShowSignup(false); // Hide form
+    setShowLogin(true); // Show login form
+  }
+
+
   return (
     <div className="view">
       <div className="signup-and-login">
-      <Link to="/signup" className="signup-link">Sign Up</Link>
-      <Link to="/login" className="login-link">Log In</Link>
+       <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
+      {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
+                    </div>}
+      {showLogin && <div className="login-container"><Login />
+                    </div>}
+      <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
       </div>
       <div className="title">It is Sticky!</div>
       <div className="image-container">
