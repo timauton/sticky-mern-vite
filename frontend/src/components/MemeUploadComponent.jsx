@@ -1,8 +1,13 @@
 
 
-
+import { useImageValidation } from "../Hooks/useImageValidationHook";
+import { createMeme } from "../services/memeUploadService";
 
 const MemeUpload = () => {
+    
+
+
+
     return(
         <div className="meme-upload-wrapper">
             <div className="meme-upload-title">

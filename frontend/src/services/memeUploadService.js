@@ -2,7 +2,7 @@
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 
-
+// Takes form data and adds it to POST request. Also makes title optional
 export async function createMeme(token, title = undefined, image = null){
     const formData = new FormData();
     formData.append('image' , image);
@@ -18,6 +18,7 @@ export async function createMeme(token, title = undefined, image = null){
     body: formData,
   };
 
+  // Sends off the form data to the route /memes. And stores response
   const response = await fetch(`${BACKEND_URL}/memes`, requestOptions);
 
   if (response.status !==201) {
