@@ -6,8 +6,9 @@ const MemesController = require("../controllers/memes");
 const { uploadConfigs, handleUploadError } = require("../middleware/uploadMiddleware");
 
 router.get("/", MemesController.getAllMemes);
-router.get("/id/:meme_id", tokenChecker, MemesController.getMemeByID);
+router.get("/:meme_id", tokenChecker, MemesController.getMemeByID);
 router.post("/", tokenChecker, uploadConfigs.memes.single("image"), handleUploadError, MemesController.createMeme);
+router.delete("/:meme_id", tokenChecker, MemesController.deleteMeme);
 //router.get("/random", MemesController.getRandomMemes);
 //router.get("/user/:user_id", MemesController.getMemesForUser);
 

@@ -149,7 +149,12 @@ const seededUsers = async () => {
     mongoose.connection.close(); //close db connection 
 };
 
+// Running this from runSeeds now
+/*
 seededUsers().catch((e) => {
     console.error("Error seeding users:", e);
     mongoose.connection.close();
 });
+*/
+
+module.exports = seededUsers;
