@@ -129,7 +129,7 @@ describe("GET, when token is present", () => {
         expect(response.status).toEqual(400);
     });
 
-    test("gets another meme", async () => {
+    test("gets the next meme", async () => {
 
         // this is random, so we just keep looking for a particular meme somewhere in the
         // middle until we find it. It is exceptionally unlikely that we would not find it
@@ -156,6 +156,19 @@ describe("GET, when token is present", () => {
         }
 
         expect(gotMeme3).toEqual(true);
+    });
+
+    test("gets memes for a user", async () => {
+
+        const meme1 = makeTestMeme(1);
+        const meme2 = makeTestMeme(2);
+        const meme3 = makeTestMeme(3);
+
+        const response = await request(app)
+            .get("/memes/user/" + testUser._id)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.memes.length).toEqual(3);
     });
 
 });

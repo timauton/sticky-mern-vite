@@ -90,8 +90,17 @@ async function getNextMeme(req, res) {
         console.error(err);
         res.status(400).json({ message: "Error finding next meme", token: newToken });
     }
+}
+
+async function getMemesCreatedByUser(req, res) {
+
+    const memes = await Meme.find({ user: req.params.user_id });
+
+    const token = generateToken(req.user_id);
+    res.status(200).json({ memes: memes, token: token });
 
 }
+
 
 const MemesController = {
     getAllMemes: getAllMemes,
@@ -99,6 +108,7 @@ const MemesController = {
     createMeme, createMeme,
     deleteMeme, deleteMeme,
     getNextMeme, getNextMeme,
+    getMemesCreatedByUser, getMemesCreatedByUser,
 };
 
 module.exports = MemesController;
