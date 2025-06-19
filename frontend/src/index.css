@@ -173,6 +173,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 }
 /* END OF VIEW PAGE FORMATTING */
 
+<<<<<<< HEAD
 
 /* START OF RATINGS BAR STYLING */
 .rating-bar-container {
@@ -210,6 +211,8 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 
 /* END OF RATINGS BAR STYLING */
 
+=======
+>>>>>>> eaf1665 (switch branch)
 
 /* START OF STATS PAGE STYLING */
 

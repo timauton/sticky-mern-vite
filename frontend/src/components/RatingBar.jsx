@@ -1,7 +1,15 @@
 import { useState } from 'react';
 
+<<<<<<< HEAD
 export const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage = 0 }) => {
   const [userRating, setUserRating] = useState(initialRating);
+=======
+import './StarRatingTest.css';
+
+export default function RatingsBar() {
+  const [userRating, setUserRating] = useState(0);
+  const [hasRated, setHasRated] = useState(false);
+>>>>>>> eaf1665 (switch branch)
   const [hoveredStar, setHoveredStar] = useState(0);
   const [hasVoted, setHasVoted] = useState(initialRating > 0);
   const [averageRating, setAverageRating] = useState(initialAverage);

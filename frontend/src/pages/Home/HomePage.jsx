@@ -2,7 +2,11 @@ import Button from "../../components/ButtonComponent"
 import  { useState } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
+<<<<<<< HEAD
 import { RatingBar } from "../../components/RatingBar"
+=======
+import { RatingsBar } from "../../components/RatingBar"
+>>>>>>> eaf1665 (switch branch)
 // import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
@@ -46,8 +50,13 @@ export function HomePage() {
           <div className="image-container">
             <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
           </div>
+<<<<<<< HEAD
           <div className="rating-bar-div">
             <RatingBar />
+=======
+          <div className="rating-bar-box">
+            <RatingsBar />
+>>>>>>> eaf1665 (switch branch)
           </div>
         </div>
       </div>
