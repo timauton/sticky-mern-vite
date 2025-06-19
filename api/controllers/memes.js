@@ -75,11 +75,30 @@ async function deleteMeme(req, res) {
     }
 }
 
+async function getNextMeme(req, res) {
+
+    try {
+        const memes = await Meme.aggregate([
+            { $sample: { size:1 } }
+        ]);
+        const meme = memes[0];
+
+        const token = generateToken(req.user_id);
+        res.status(200).json({ meme: meme, token: token });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(400).json({ message: "Error finding next meme", token: newToken });
+    }
+
+}
+
 const MemesController = {
     getAllMemes: getAllMemes,
     getMemeByID: getMemeByID,
     createMeme, createMeme,
-    deleteMeme, deleteMeme
+    deleteMeme, deleteMeme,
+    getNextMeme, getNextMeme,
 };
 
 module.exports = MemesController;

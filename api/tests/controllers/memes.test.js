@@ -129,6 +129,35 @@ describe("GET, when token is present", () => {
         expect(response.status).toEqual(400);
     });
 
+    test("gets another meme", async () => {
+
+        // this is random, so we just keep looking for a particular meme somewhere in the
+        // middle until we find it. It is exceptionally unlikely that we would not find it
+        // in 100 attempts, but we cap it just in case
+
+        const meme1 = makeTestMeme(1);
+        const meme2 = makeTestMeme(2);
+        const meme3 = makeTestMeme(3);
+        const meme4 = makeTestMeme(4);
+        const meme5 = makeTestMeme(5);
+
+        let gotMeme3 = false;
+        for (i = 0; i < 100; i++) {
+
+            response = await request(app)
+                .get("/memes/next")
+                .set("Authorization", `Bearer ${token}`);
+
+            if (response.body.meme.title === "My Fab Meme 3") {
+                gotMeme3 = true;
+                console.log("/memes/next test found the meme in " + (i+1) + " attempts");
+                break;
+            }
+        }
+
+        expect(gotMeme3).toEqual(true);
+    });
+
 });
 
 describe("POST, when token is present", () => {
