@@ -11,14 +11,14 @@ const MemeSchema = new mongoose.Schema({
     created_at: Date,
 });
 
-//TODO: Uncomment the virtual fields when we implement these schemas
-/*
-
 MemeSchema.virtual('rating', {
     ref: 'Tag',
     localField: '_id',
-    foreignField: 'meme_id'
+    foreignField: 'meme'
 });
+
+//TODO: Uncomment the virtual fields when we implement these schemas
+/*
 
 MemeSchema.virtual('tags', {
     ref: 'Tag',

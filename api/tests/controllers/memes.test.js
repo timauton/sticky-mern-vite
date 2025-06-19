@@ -128,6 +128,7 @@ describe("GET, when token is present", () => {
 
         expect(response.status).toEqual(400);
     });
+
 });
 
 describe("POST, when token is present", () => {
