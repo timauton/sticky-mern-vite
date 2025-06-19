@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Star } from 'lucide-react';
+import { useState } from 'react';
 
 const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage = 0 }) => {
   const [userRating, setUserRating] = useState(initialRating);
@@ -23,31 +22,32 @@ const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage = 0 }) 
     }
   };
 
+  // Hover functions
   const handleStarHover = (rating) => {
     if (!hasVoted) {
       setHoveredStar(rating);
     }
   };
-
   const handleMouseLeave = () => {
     if (!hasVoted) {
       setHoveredStar(0);
     }
   };
 
+  //integrated styling for reactive render
   const getStarFill = (starIndex) => {
     if (hasVoted) {
-      return starIndex <= userRating ? 'fill' : 'none';
+      return starIndex <= userRating ? '#ff0f5c' : 'none';
     }
-    return starIndex <= hoveredStar ? 'fill' : 'none';
+    return starIndex <= hoveredStar ? '#ff0f5c' : 'none';
   };
-
   const getStarColor = (starIndex) => {
     if (hasVoted) {
       return starIndex <= userRating ? 'text-yellow-400' : 'text-gray-300';
     }
     return starIndex <= hoveredStar ? 'text-yellow-400' : 'text-gray-300';
   };
+
 
   return (
     <div className="flex items-center gap-4 p-4">

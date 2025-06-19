@@ -2,7 +2,7 @@ import Button from "../../components/ButtonComponent"
 import  { useState } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
-import { RatingsBar } from "../../components/RatingBar"
+import { RatingBar } from "../../components/RatingBar"
 // import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
@@ -47,7 +47,7 @@ export function HomePage() {
             <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
           </div>
           <div className="rating-bar-box">
-            <RatingsBar />
+            <RatingBar />
           </div>
         </div>
       </div>
