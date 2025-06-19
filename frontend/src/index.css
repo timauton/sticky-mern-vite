@@ -191,8 +191,14 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
  min-width: 45px;
 }
 
+.has-voted {
+  font-size: 1rem;
+  padding-right: 5px;
+  text-align: right;
+}
+
 .average-rating {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bold; 
   color: #000000;
   padding-right: 10px;
@@ -201,6 +207,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 .star-box {
   display: flex;
 }
+
 /* END OF RATINGS BAR STYLING */
 
 

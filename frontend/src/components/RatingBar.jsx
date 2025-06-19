@@ -53,6 +53,10 @@ export const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage 
     <div className="rating-bar-container">
       {/* Average Rating Display */}
       <div className="info-box">
+              {/* User Status */}
+      {hasVoted && (
+        <div className="has-voted">Average<br />Rating</div>
+      )}
         <div className="average-rating">
           {averageRating > 0 ? averageRating.toFixed(1) : '0.0'}
         </div>
@@ -91,13 +95,6 @@ export const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage 
           </button>
         ))}
       </div>
-
-      {/* User Status */}
-      {hasVoted && (
-        <div className="text-sm text-green-600 font-medium">
-          You rated: {userRating} star{userRating > 1 ? 's' : ''}
-        </div>
-      )}
     </div>
   );
 };
