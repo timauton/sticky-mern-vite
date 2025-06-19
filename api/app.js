@@ -6,6 +6,8 @@ const usersRouter = require("./routes/users");
 const memesRouter = require("./routes/memes");
 const authenticationRouter = require("./routes/authentication");
 const tokenChecker = require("./middleware/tokenChecker");
+const fs = require('fs')
+const path = require('path')
 
 const app = express();
 

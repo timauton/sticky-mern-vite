@@ -76,7 +76,7 @@ const MemeUpload = () => {
                     <input type="file" accept="image/*" onChange={handleFileChange} ref={fileInputRef}/> {/* <--- Runs the handleSubmit function above */}
                     <input type="submit" disabled={!image || imageError} />
                     <div> 
-                        {isSuccess && (<div className="success-message">✨✨🥳 Meme now in the RANDOMIZER! 🥳✨✨</div>)}                       
+                        {isSuccess && (<div className="success-message">✨✨🥳 Your meme is now in the RANDOMIZER! 🥳✨✨</div>)}                       
                     </div>
             </form>
 
