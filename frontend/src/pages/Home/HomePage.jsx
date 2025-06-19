@@ -46,7 +46,7 @@ export function HomePage() {
           <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
           {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
                         </div>}
-          {showLogin && <div className="login-container"><Login />
+          {showLogin && <div className="login-container"><Login onLoginSuccess={handleLoginSuccess}/>
                         </div>}
           <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
           </div>
