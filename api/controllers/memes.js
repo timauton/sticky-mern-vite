@@ -1,6 +1,7 @@
 const Meme = require("../models/meme");
 const { generateToken } = require("../lib/token");
 const fs = require('fs').promises;
+const mongoose = require('mongoose');
 
 async function getAllMemes(req, res) {
     const memes = await Meme.find().populate('user');
@@ -75,11 +76,68 @@ async function deleteMeme(req, res) {
     }
 }
 
+async function getNextMeme(req, res) {
+
+    try {
+        const memes = await Meme.aggregate([
+            { $sample: { size:1 } }
+        ]);
+        const meme = memes[0];
+
+        const token = generateToken(req.user_id);
+        res.status(200).json({ meme: meme, token: token });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(400).json({ message: "Error finding next meme", token: newToken });
+    }
+}
+
+async function getMemesCreatedByUser(req, res) {
+
+    const memes = await Meme.find({ user: req.params.user_id });
+
+    const token = generateToken(req.user_id);
+    res.status(200).json({ memes: memes, token: token });
+
+}
+
+async function getMemesRatedByUser(req, res) {
+
+    console.log("getMemesRatedByUser " + req.params.user_id);  
+
+    const memes = await Meme.aggregate([
+        {
+            $lookup: {
+                from: 'ratings',
+                localField: '_id',
+                foreignField: 'meme',
+                as: 'ratings'
+            }
+        },
+        {
+            $match: {
+                'ratings.user': new mongoose.Types.ObjectId(req.params.user_id)
+            }
+        },
+    ]);
+
+    console.log("getMemesRatedByUser " + memes.length);   
+
+    const token = generateToken(req.user_id);
+    res.status(200).json({ memes: memes, token: token });
+
+}
+
+
 const MemesController = {
     getAllMemes: getAllMemes,
     getMemeByID: getMemeByID,
     createMeme, createMeme,
-    deleteMeme, deleteMeme
+    deleteMeme, deleteMeme,
+    getNextMeme, getNextMeme,
+    getMemesCreatedByUser, getMemesCreatedByUser,
+    getMemesRatedByUser, getMemesRatedByUser,
 };
 
 module.exports = MemesController;

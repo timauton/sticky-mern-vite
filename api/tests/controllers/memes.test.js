@@ -4,6 +4,7 @@ const JWT = require("jsonwebtoken");
 const app = require("../../app");
 const User = require("../../models/user");
 const Meme = require("../../models/meme");
+const Rating = require("../../models/rating");
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -127,6 +128,69 @@ describe("GET, when token is present", () => {
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toEqual(400);
+    });
+
+    test("gets the next meme", async () => {
+
+        // this is random, so we just keep looking for a particular meme somewhere in the
+        // middle until we find it. It is exceptionally unlikely that we would not find it
+        // in 100 attempts, but we cap it just in case
+
+        const meme1 = makeTestMeme(1);
+        const meme2 = makeTestMeme(2);
+        const meme3 = makeTestMeme(3);
+        const meme4 = makeTestMeme(4);
+        const meme5 = makeTestMeme(5);
+
+        let gotMeme3 = false;
+        for (i = 0; i < 100; i++) {
+
+            response = await request(app)
+                .get("/memes/next")
+                .set("Authorization", `Bearer ${token}`);
+
+            if (response.body.meme.title === "My Fab Meme 3") {
+                gotMeme3 = true;
+                console.log("/memes/next test found the meme in " + (i+1) + " attempts");
+                break;
+            }
+        }
+
+        expect(gotMeme3).toEqual(true);
+    });
+
+    test("gets memes made by a user", async () => {
+
+        const meme1 = makeTestMeme(1);
+        const meme2 = makeTestMeme(2);
+        const meme3 = makeTestMeme(3);
+
+        const response = await request(app)
+            .get("/memes/user/" + testUser._id)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.memes.length).toEqual(3);
+    });
+
+    test("gets memes a user has rated", async () => {
+
+        const meme1 = await makeTestMeme(1);
+        const meme2 = await makeTestMeme(2);
+        const meme3 = await makeTestMeme(3);
+
+        await Rating.deleteMany({});
+        const rating1 = new Rating({
+            meme: meme1._id,
+            user: testUser._id,
+            rating: 5
+        });
+        await rating1.save();
+
+        const response = await request(app)
+            .get("/memes/rated_by_user/" + testUser._id)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.memes.length).toEqual(1);
     });
 
 });
