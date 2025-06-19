@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const ratingsRouter = require("./routes/ratings")
 const usersRouter = require("./routes/users");
 const memesRouter = require("./routes/memes");
 const authenticationRouter = require("./routes/authentication");
@@ -26,6 +26,8 @@ app.use("/users", usersRouter);
 app.use("/tokens", authenticationRouter);
 
 app.use("/memes", tokenChecker, memesRouter);
+
+app.use("/ratings", tokenChecker, ratingsRouter);
 
 // 404 Handler
 app.use((_req, res) => {
