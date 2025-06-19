@@ -27,10 +27,6 @@ export const StatsPage = () => {
         </div>
       </div>
 
-      <div>
-        <MemeUpload />
-      </div>
-
       <div className="column">
         <div className="card my-memes-card">
           <div className="my-memes">
@@ -49,6 +45,10 @@ export const StatsPage = () => {
             </div>
           </div>  
         </div>
+      </div>
+      
+      <div>
+        <MemeUpload />
       </div>
 
       </div>

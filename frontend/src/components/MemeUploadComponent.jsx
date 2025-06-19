@@ -56,10 +56,10 @@ const MemeUpload = () => {
       fileInputRef.current.value = '';
 
       setIsSuccess(true);
-      // If setIsSuccess is true, then after 2500 milliseconds make setIsSuccess false:
+      // If setIsSuccess is true, then after 3000 milliseconds make setIsSuccess false:
       setTimeout(() => {
         setIsSuccess(false);
-      }, 2500);
+      }, 3000);
 
     } catch (error) {
       console.error(error);
