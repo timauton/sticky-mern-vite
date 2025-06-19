@@ -46,7 +46,7 @@ export function HomePage() {
           <div className="image-container">
             <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
           </div>
-          <div className="rating-bar-box">
+          <div className="rating-bar-div">
             <RatingBar />
           </div>
         </div>
