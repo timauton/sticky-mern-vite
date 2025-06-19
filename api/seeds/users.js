@@ -1,3 +1,6 @@
+// To create seed data run:
+// npm run seed
+
 require("dotenv").config();
 
 const mongoose = require("mongoose");
