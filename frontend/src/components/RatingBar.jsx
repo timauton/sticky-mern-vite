@@ -1,165 +1,100 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Star } from 'lucide-react';
-import {
-  mockFetchExistingRatings,
-  mockSaveRating,
-  mockCheckUserRating,
-  mockRemoveUserRating
-} from './mockRatingService';
 
-import './StarRatingTest.css';
-
-export default function RatingsBar() {
-  const [userRating, setUserRating] = useState(0);
-  const [hasRated, setHasRated] = useState(false);
+const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage = 0 }) => {
+  const [userRating, setUserRating] = useState(initialRating);
   const [hoveredStar, setHoveredStar] = useState(0);
-  const [existingRatings, setExistingRatings] = useState([]);
-  const [averageRating, setAverageRating] = useState(0);
-  const [totalRatings, setTotalRatings] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [hasVoted, setHasVoted] = useState(initialRating > 0);
+  const [averageRating, setAverageRating] = useState(initialAverage);
+  const [ratingCount, setRatingCount] = useState(totalRatings);
 
-  useEffect(() => {
-    const loadRatings = async () => {
-      setLoading(true);
-      try {
-        const userExistingRating = await mockCheckUserRating('test-image-123');
-        if (userExistingRating) {
-          setUserRating(userExistingRating);
-          setHasRated(true);
-        }
-
-        const ratings = await mockFetchExistingRatings('test-image-123');
-        setExistingRatings(ratings);
-
-        if (ratings.length > 0) {
-          const sum = ratings.reduce((acc, rating) => acc + rating, 0);
-          setAverageRating((sum / ratings.length).toFixed(1));
-          setTotalRatings(ratings.length);
-        }
-      } catch (error) {
-        console.error('Error loading ratings:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadRatings();
-  }, []);
-
-  const handleRating = async (rating) => {
-    if (hasRated) return;
-
-    setLoading(true);
-    try {
-      await mockSaveRating('test-image-123', rating);
+  const handleStarClick = (rating) => {
+    if (!hasVoted) {
       setUserRating(rating);
-      setHasRated(true);
-
-      const newTotal = totalRatings + 1;
-      const newSum = (parseFloat(averageRating) * totalRatings) + rating;
-      setAverageRating((newSum / newTotal).toFixed(1));
-      setTotalRatings(newTotal);
-    } catch (error) {
-      console.error('Error saving rating:', error);
-    } finally {
-      setLoading(false);
+      setHasVoted(true);
+      
+      // Calculate new average (basic simulation)
+      const newTotal = (averageRating * ratingCount) + rating;
+      const newCount = ratingCount + 1;
+      const newAverage = newTotal / newCount;
+      
+      setAverageRating(newAverage);
+      setRatingCount(newCount);
     }
   };
 
-  const resetRating = async () => {
-    setLoading(true);
-    try {
-      await mockRemoveUserRating('test-image-123');
-      setUserRating(0);
-      setHasRated(false);
+  const handleStarHover = (rating) => {
+    if (!hasVoted) {
+      setHoveredStar(rating);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!hasVoted) {
       setHoveredStar(0);
-
-      if (existingRatings.length > 0) {
-        const sum = existingRatings.reduce((acc, rating) => acc + rating, 0);
-        setAverageRating((sum / existingRatings.length).toFixed(1));
-        setTotalRatings(existingRatings.length);
-      }
-    } catch (error) {
-      console.error('Error resetting rating:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const getStarClass = (starIndex) => {
-    const currentRating = hoveredStar || userRating;
-    let classes = '';
-
-    if (starIndex <= currentRating) {
-      classes += hasRated ? 'star-rated' : 'star-hover';
-      classes += ' star-filled';
-    } else {
-      classes += ' star-empty';
+  const getStarFill = (starIndex) => {
+    if (hasVoted) {
+      return starIndex <= userRating ? 'fill' : 'none';
     }
-
-    return classes;
+    return starIndex <= hoveredStar ? 'fill' : 'none';
   };
 
-  if (loading) {
-    return (
-      <div className="rating-container">
-        <div className="rating-section">
-          <p className="rating-loading">Loading ratings...</p>
-        </div>
-      </div>
-    );
-  }
+  const getStarColor = (starIndex) => {
+    if (hasVoted) {
+      return starIndex <= userRating ? 'text-yellow-400' : 'text-gray-300';
+    }
+    return starIndex <= hoveredStar ? 'text-yellow-400' : 'text-gray-300';
+  };
 
   return (
-    <div className="rating-container">
-      <div className="rating-section">
-        <h3 className="rating-title">Rate this image (Test Mode)</h3>
-
-        <div className="stars-container">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              onClick={() => handleRating(star)}
-              onMouseEnter={() => !hasRated && setHoveredStar(star)}
-              onMouseLeave={() => !hasRated && setHoveredStar(0)}
-              disabled={hasRated || loading}
-              className={`star-button ${hasRated || loading ? 'star-button-disabled' : 'star-button-active'}`}
-            >
-              <Star size={32} className={getStarClass(star)} />
-            </button>
-          ))}
+    <div className="flex items-center gap-4 p-4">
+      {/* Average Rating Display */}
+      <div className="flex flex-col items-center min-w-[80px]">
+        <div className="text-2xl font-bold text-gray-800">
+          {averageRating > 0 ? averageRating.toFixed(1) : '0.0'}
         </div>
-
-        {!hasRated ? (
-          <p className="rating-prompt">Click a star to rate this image</p>
-        ) : (
-          <div className="rating-results">
-            <p className="rating-thanks">
-              Thanks for rating! You gave it {userRating} star{userRating !== 1 ? 's' : ''}
-            </p>
-            {totalRatings > 0 && (
-              <div className="average-display">
-                <p className="average-rating">
-                  Average Rating: {averageRating}/5.0
-                </p>
-                <p className="rating-count">
-                  Based on {totalRatings} rating{totalRatings !== 1 ? 's' : ''}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {hasRated && (
-          <button
-            onClick={resetRating}
-            className="reset-button"
-            disabled={loading}
-          >
-            Rate Again
-          </button>
-        )}
+        <div className="text-sm text-gray-500">
+          {ratingCount} {ratingCount === 1 ? 'rating' : 'ratings'}
+        </div>
       </div>
+
+      {/* Star Rating */}
+      <div 
+        className="flex gap-1"
+        onMouseLeave={handleMouseLeave}
+      >
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            onClick={() => handleStarClick(star)}
+            onMouseEnter={() => handleStarHover(star)}
+            disabled={hasVoted}
+            className={`
+              transition-all duration-200 transform hover:scale-110
+              ${hasVoted ? 'cursor-default' : 'cursor-pointer hover:drop-shadow-md'}
+            `}
+            aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+          >
+            <Star
+              size={24}
+              fill={getStarFill(star)}
+              className={`${getStarColor(star)} transition-colors duration-200`}
+            />
+          </button>
+        ))}
+      </div>
+
+      {/* User Status */}
+      {hasVoted && (
+        <div className="text-sm text-green-600 font-medium">
+          You rated: {userRating} star{userRating > 1 ? 's' : ''}
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default RatingBar;
