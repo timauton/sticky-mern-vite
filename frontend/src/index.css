@@ -1,3 +1,15 @@
+/* font */
+@font-face {
+  font-family: 'StickersRegular';
+  src: url('./assets/fonts/Stickers-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'CandySeason';
+  src: url('./assets/fonts/Candy-Season.otf') format('truetype');
+}
+
+
 /* GENERAL FORMATTING*/
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -24,19 +36,39 @@ body {
 
 
 /* VIEW PAGE FORMATTING */
-/* bounding box for age background*/
+/* bounding box for page background*/
+.background-image{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/sticker-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
 
+.background-area{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
 
 .stats-page-wrapper,
 .view {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 /* bounding box for signup and login upper buttons and info input */
 /* .signup-and-login {
-
 
 /* signup link text */
 .signup-button {
@@ -44,7 +76,7 @@ body {
   position: absolute;
   left: 0px;
   padding: 10px;
-  border: 2px solid #000000;
+  border: 4px solid #000000;
   z-index: 1;
 }
 
@@ -54,7 +86,8 @@ body {
   left: 135px;
   padding: 2px 8px;
   line-height: 1.6rem;
-  border: 2px solid #000000;
+  background-color: #ffffff;
+  border: 4px solid #000000;
 }
 
 .email-input {
@@ -71,7 +104,8 @@ body {
   position: absolute;
   right: 100px;
   padding: 10px;
-  border: 2px solid #000000;
+  background-color: #ffffff;
+  border: 4px solid #000000;
 }
 
 .login-submit-button {
@@ -83,33 +117,40 @@ body {
   position: absolute;
   right: 0px;
   padding: 10px;
-  border: 2px solid #000000;
+  border: 4px solid #000000;
+  z-index: 1;
 }
 
 .title {
-  font-size: 2.5em;
-  font-weight: bold;
+  font-size: 5rem;
+  /* font-weight: bold; */
+  font-family: CandySeason, sans-serif;
+  color: #01b9e8;
+  -webkit-text-stroke-width: 5px;
+  -webkit-text-stroke-color: #000000;
   line-height: 1.1;
   text-align: center;
-  margin: 2rem;
-  margin-top: calc(2rem + 20px + 20px);
+  margin: 1.5rem;
+  margin-top: calc(2rem + 20px + 40px);
 }
 
 /* meme formatting. Height will adjust to image OG max size without exceeding a width 
 of 900px to keep the ratings bar snug to the image bottom regardless of proportions*/
 .image-container {
   padding: 0 5rem;
+  margin: 0 auto;
   display: flex;
-  background-color: #f9f9f9ef;
+  width: 100%;
   max-width: 900px;
   max-height: 500px;
   justify-content: center;
   box-sizing: border-box;
 }
 
-
 .responsive-image {
   display: block;
+  border-radius: 2rem;
+  border: 6px solid #000000;
   max-width: 100%;
   width: auto;
   height: auto;
@@ -119,7 +160,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 /* Holding box for rating bar */
 .rating-bar-box {
   width: 100vw;
-  height: 4rem;
+  height: 6rem;
   max-width: 900px;
   margin: 1rem auto;
   padding: 1px;
@@ -131,6 +172,8 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   overflow: hidden;
   z-index: 1;
 }
+/* END OF VIEW PAGE FORMATTING */
+
 
 /* START OF STATS PAGE STYLING */
 
