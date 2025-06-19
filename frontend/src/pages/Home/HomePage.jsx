@@ -2,7 +2,7 @@ import Button from "../../components/ButtonComponent"
 import  { useState } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
-// import LogoutButton from "../../components/LogoutButton"
+import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
 
@@ -13,12 +13,14 @@ export function HomePage() {
   const [showLogin, setShowLogin] = useState(false);
   const handleLoginClick = () => {
     setShowLogin((prev) => !prev);
+    setShowSignup(false)
   };
 
   // Signup function
   const [showSignup, setShowSignup] = useState(false);
   const handleSignupClick = () => {
     setShowSignup((prev) => !prev);
+    setShowLogin(false)
   };
 
   // This function will be passed to the Signup component
@@ -26,15 +28,22 @@ export function HomePage() {
     setShowSignup(false); // Hide form
     setShowLogin(true); // Show login form
   }
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
-
+  const handleLoginSuccess = () => {
+    setShowLogin(false)
+    setIsLoggedIn(true)
+  }
+  
+  if (!isLoggedIn) {
   return (
     <div className="view">
       <div className="signup-and-login">
-       <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
+        <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
       {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
                     </div>}
-      {showLogin && <div className="login-container"><Login />
+      {showLogin && <div className="login-container"><Login onLoginSuccess={handleLoginSuccess} />
                     </div>}
       <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
       </div>
@@ -45,4 +54,14 @@ export function HomePage() {
       <div className="rating-bar-box"></div>
     </div>
   );
+  }
+  return (
+  <div>
+    <h1>logged in</h1>
+    <Button
+      className="logout-button"
+      buttonText="Log Out"
+      onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
+      />
+  </div>)
 }
