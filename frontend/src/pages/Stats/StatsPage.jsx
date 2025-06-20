@@ -1,9 +1,18 @@
-
+import Button from "../../components/ButtonComponent";
 import MemeUpload from "../../components/MemeUploadComponent";
+import { useNavigate } from "react-router-dom";
 
 export const StatsPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="stats-page-wrapper">
+
+      <Button
+        className="homepage-nav-button"
+        buttonText="Back to Memes" // other text is available
+        onClick={() => navigate("/")}
+      />
 
       <div className="stats-title">
         <h1>Stats page</h1>
