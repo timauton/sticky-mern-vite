@@ -1,5 +1,4 @@
 import Button from "../../components/ButtonComponent";
-import MemeUpload from "../../components/MemeUploadComponent";
 import { useNavigate } from "react-router-dom";
 
 export const StatsPage = () => {
