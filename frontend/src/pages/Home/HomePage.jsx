@@ -60,9 +60,6 @@ export function HomePage() {
             <RatingBar />
           </div>
         </div>
-        <div>
-          <MemeUploadButton />
-        </div>
       </div>
   </>
   );
@@ -75,6 +72,10 @@ export function HomePage() {
       buttonText="Log Out"
       onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
       />
+      <div className="meme-upload-button-wrapper">
+        <MemeUploadButton />
+      </div>
   </div>)
+  
 }
 

@@ -1,7 +1,3 @@
-
-import MemeUploadButton from "../../components/MemeUploadButtonComponent";
-import MemeUpload from "../../components/MemeUploadComponent";
-
 export const StatsPage = () => {
   return (
     <div className="stats-page-wrapper">
@@ -47,7 +43,7 @@ export const StatsPage = () => {
           </div>  
         </div>
       </div>
-      
+
       </div>
 
     </div>
