@@ -155,7 +155,7 @@ describe('MemeUpload Component', () => {
       const submitEvent = new Event('submit', { bubbles: true, cancelable: true })
       form.dispatchEvent(submitEvent)
       
-      expect(alertSpy).toHaveBeenCalledWith('☠️ You forgot to upload your meme! ☠️')
+      expect(alertSpy).toHaveBeenCalledWith('☠️ Silly billy. You forgot to upload your meme! ☠️')
       alertSpy.mockRestore()
     })
 
@@ -207,6 +207,44 @@ describe('MemeUpload Component', () => {
       
       expect(submitButton).toBeDisabled()
       })
+
+    test('alerts user when session expires so they know what happened', async () => {
+      const { createMeme } = await import('../../src/services/memeUploadService')
+      createMeme.mockClear()
+      
+      const unauthorizedError = new Error('Unauthorized')
+      unauthorizedError.status = 401
+      createMeme.mockRejectedValueOnce(unauthorizedError)
+      
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
+      
+      render(<MemeUpload />)
+      
+      // Fill and submit form
+      const titleInput = screen.getByLabelText('Meme title')
+      const fileInput = screen.getByLabelText('Choose meme image file')
+      
+      await userEvent.type(titleInput, 'My awesome meme')
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      await userEvent.upload(fileInput, file)
+      
+      // Submit form (your working pattern)
+      await userEvent.type(screen.getByDisplayValue('Upload Meme'), '{enter}')
+      if (createMeme.mock.calls.length === 0) {
+        const form = screen.getByLabelText('Upload meme form')
+        await act(async () => {
+          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+        })
+      }
+      
+      await vi.waitFor(() => {
+        expect(createMeme).toHaveBeenCalledTimes(1)
+      })
+      
+      expect(alertSpy).toHaveBeenCalledWith('🔒 Your session has expired. Please log in and try again.')
+
+      alertSpy.mockRestore()
+    })
   })
   describe("After upload completes", () => {
     test('form resets after upload', async () => {

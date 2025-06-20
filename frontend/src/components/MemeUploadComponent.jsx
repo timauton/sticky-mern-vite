@@ -65,6 +65,11 @@ const MemeUpload = () => {
       }, 3000);
 
     } catch (error) {
+
+      if (error.status === 401 || error.message.includes('401')) {
+        return alert('🔒 Your session has expired. Please log in and try again.')
+      }
+      alert('❌ Upload failed. Please try again.')
       console.error(error);
     }
   };
