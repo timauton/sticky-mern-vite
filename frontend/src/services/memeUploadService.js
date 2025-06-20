@@ -29,32 +29,3 @@ export async function createMeme(token, title = undefined, image = null){
   return data;
 
 }
-
-
-
-
-// !!! Reference from Acebook services/posts.js:
-// export async function createPost(token, message, image = null) {
-//   const formData = new FormData();
-//   formData.append('message', message);
-//   if (image) {
-//     formData.append('image', image);
-//   }
-
-//   const requestOptions = {
-//     method: 'POST',
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//     body: formData,
-//   };
-
-//   const response = await fetch(`${BACKEND_URL}/posts`, requestOptions);
-
-//   if (response.status !== 201) {
-//     throw new Error('Unable to fetch posts');
-//   }
-
-//   const data = await response.json();
-//   return data;
-// }
