@@ -3,8 +3,8 @@ import { useState } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
 import { RatingBar } from "../../components/RatingBar"
+import MemeUploadButton from "../../components/MemeUploadButtonComponent"
 import { useNavigate } from "react-router-dom"
-// import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
 
@@ -74,6 +74,9 @@ export function HomePage() {
           className="filter-by-tags-button"
           buttonText="Filter Memes"
         />
+        <div className="meme-upload-button-wrapper">
+          <MemeUploadButton />
+        </div>
         <Button
           className="stats-nav-button"
           buttonText="My Stats" // other text is available

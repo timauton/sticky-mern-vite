@@ -22,7 +22,7 @@ describe("User model", () => {
     expect(user.password).toEqual("password");
   });
 
-  it("can optionally have an email", () => {
+  it("has an email", () => {
     const user = new User({
       username: "bree123",
       email: "breekal@email.com",
@@ -39,6 +39,7 @@ describe("User model", () => {
   it("can save a user with all required fields", async () => {
     const user = new User({
       username: "bree123",
+      email: "breekal@email.com",
       password: "password",
     });
 
