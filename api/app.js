@@ -28,6 +28,7 @@ app.use("/users", usersRouter);
 app.use("/tokens", authenticationRouter);
 
 app.use("/memes", tokenChecker, memesRouter);
+app.use("/uploads", express.static("uploads"));
 
 app.use("/ratings", tokenChecker, ratingsRouter);
 

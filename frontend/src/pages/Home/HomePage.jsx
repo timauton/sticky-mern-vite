@@ -1,15 +1,44 @@
 import Button from "../../components/ButtonComponent"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
+import MemeDisplay from "../../components/MemeDisplay"
 import { RatingBar } from "../../components/RatingBar"
 import MemeUploadButton from "../../components/MemeUploadButtonComponent"
 import { useNavigate } from "react-router-dom"
+import getMeme from "../../services/memeSelector"
 
 import "../../index.css";
 
 // logged out render
 export function HomePage() {
+  // Meme Display
+  const [meme, setMeme] = useState([]);
+  let lastMeme = useRef(null);
+  useEffect(() => {
+    updateMeme("next");
+  }, [])
+
+  // Back and forth buttons
+  const updateMeme = (id) => {
+    const token = localStorage.getItem("token");
+    getMeme(token, id).then((data) => {
+      setMeme(data.meme)
+    })
+  }
+
+  const handleNextClick = () => {
+    lastMeme.current = meme;
+    console.log("LAST MEME", lastMeme)
+    updateMeme("next");
+  }
+
+  const handleBackClick = () => {
+    if (lastMeme.current) {
+      updateMeme(lastMeme.current._id);
+      lastMeme.current = null;
+    }
+  }
 
   // Login function
   const [showLogin, setShowLogin] = useState(false);
@@ -55,7 +84,7 @@ export function HomePage() {
           <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
           </div>
           <div className="title">Sticky Memes</div>
-          <div className="image-container">
+          <div className="image-container">TEXT
             <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
           </div>
           {/* <div className="rating-bar-div">
@@ -90,21 +119,31 @@ export function HomePage() {
       </div>
       <div className="title">Sticky Memes</div>
       <div className="meme-interface">
-        <Button
+        {lastMeme !== null ? (<Button
           className="back-and-forth"
           buttonText="<"
-        />
-        <div className="image-container">
+          onClick={handleBackClick}
+        />) : (
+          <Button
+          className="back-and-forth"
+          buttonText="<"
+          disabled={true}/>
+        )}
+        {/* <div className="image-container">
           <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
-        </div>
+        </div> */}
+        <MemeDisplay
+          meme={meme}
+        />
         <Button
           className="back-and-forth"
           buttonText=">"
+          onClick={handleNextClick}
         />
       </div>
-      <div className="rating-bar-div">
+      {/* <div className="rating-bar-div">
         <RatingBar />
-      </div>
+      </div> */}
     </>
   );
 }
