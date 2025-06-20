@@ -1,4 +1,4 @@
-## Totally Not The Acebook MERN Template
+## Sticky Memes MERN Template
 
 In this project, you are task with working on an existing application. A
 significant part of the challenge will be to familiarise yourself with the
@@ -38,7 +38,8 @@ If you haven't already, make sure you have node and NVM installed.
    Then follow the instructions to update your `~/.bash_profile`.
 2. Open a new terminal cd into api
    ```
-   npm install bcrypt jsonwebtoken
+   npm install bcrypt jsonwebtoken ~ for hashed passwords
+   npm install multer ~ for images
    ```
 3. Open a new terminal
 4. Install the latest version of [Node.js](https://nodejs.org/en/), (`20.5.0` at
@@ -58,6 +59,7 @@ If you haven't already, make sure you have node and NVM installed.
    npm install
    cd ../api
    npm install
+   npm run seed ~ for seed files
    ```
 5. Install an ESLint plugin for your editor, for example
    [ESLint for VSCode](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
