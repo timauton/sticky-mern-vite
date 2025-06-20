@@ -58,30 +58,54 @@ export function HomePage() {
           <div className="image-container">
             <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
           </div>
-          <div className="rating-bar-div">
+          {/* <div className="rating-bar-div">
             <RatingBar />
-          </div>
+          </div> */} {/* Moved to logged in render */}
         </div>
       </div>
   </>
   );
   }
   return (
-  <div>
-    <h1>logged in</h1>
-    <Button
-      className="stats-nav-button"
-      buttonText="My Stats" // other text is available
-      onClick={() => navigate("/stats")}
-      />
-    <Button
-      className="logout-button"
-      buttonText="Log Out"
-      onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
-      />
-      <div className="meme-upload-button-wrapper">
-        <MemeUploadButton />
+    <>
+      <div className="background-image"></div>
+      <div className="top-banner">
+        <Button
+          className="filter-by-tags-button"
+          buttonText="Filter Memes"
+        />
+        <div className="meme-upload-button-wrapper">
+          <MemeUploadButton />
+        </div>
+        <Button
+          className="stats-nav-button"
+          buttonText="My Stats" // other text is available
+          onClick={() => navigate("/stats")}
+        />
+        <Button
+          className="logout-button"
+          buttonText="Log Out"
+          onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
+        />
       </div>
-  </div>)
+      <div className="title">Sticky Memes</div>
+      <div className="meme-interface">
+        <Button
+          className="back-and-forth"
+          buttonText="<"
+        />
+        <div className="image-container">
+          <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
+        </div>
+        <Button
+          className="back-and-forth"
+          buttonText=">"
+        />
+      </div>
+      <div className="rating-bar-div">
+        <RatingBar />
+      </div>
+    </>
+  );
 }
 

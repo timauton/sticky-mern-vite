@@ -173,6 +173,62 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 }
 /* END OF VIEW PAGE FORMATTING */
 
+/* START OF LOGGED IN SPECIFIC FORMATTING */
+.filter-by-tags-button {
+  font-size: 2rem;
+  position: absolute;
+  left: 0px;
+  padding: 10px;
+  border: 4px solid #000000;
+  z-index: 1;
+}
+
+.stats-nav-button {
+  font-size: 1rem;
+  position: absolute;
+  right: 150px;
+  padding: 1px;
+  padding-top: 21px;
+  padding-bottom: 21px;
+  border: 4px solid #000000;
+  border-radius: 100%;
+  z-index: 1;
+}
+
+.logout-button {
+  font-size: 2rem;
+  position: absolute;
+  right: 0px;
+  padding: 10px;
+  border: 4px solid #000000;
+  z-index: 1;
+}
+
+.meme-interface {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+  padding: 0 1rem;
+}
+
+.back-and-forth {
+  /* background: transparent; */
+  background-color: yellow; /* temporary colouring for visibility */
+  border: none;
+
+  font-size: 8rem;
+  font-family: CandySeason, sans-serif;
+  color: #01b9e8;
+  -webkit-text-stroke-width: 5px;
+  -webkit-text-stroke-color: #000000;
+  line-height: 1.1;
+  text-align: center;
+  margin: 1.5rem;
+  margin-top: calc(2rem + 20px + 40px);
+} /* made to mirror title styling */
+
+/* END OF LOGGED IN SPECIFIC FORMATTING */
 
 /* START OF RATINGS BAR STYLING */
 .rating-bar-container {
@@ -185,10 +241,10 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 }
 
 .info-box {
- display: flex;
- color: #000000;
- align-items: center;
- min-width: 45px;
+  display: flex;
+  color: #000000;
+  align-items: center;
+  min-width: 45px;
 }
 
 .has-voted {
