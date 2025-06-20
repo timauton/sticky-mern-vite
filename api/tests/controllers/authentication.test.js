@@ -2,13 +2,18 @@ const app = require("../../app");
 const supertest = require("supertest");
 require("../mongodb_helper");
 const User = require("../../models/user");
+const bcrypt = require("bcrypt")
 
 describe("/tokens", () => {
   beforeAll(async () => {
     await User.deleteMany({});
+
+    const hashedPassword = await bcrypt.hash("12345678", 8)
+
     const user = new User({
       username: "auth-test@test.com",
-      password: "12345678",
+      email: "auth-test@test.com",
+      password: hashedPassword,
     });
 
     // We need to use `await` so that the "beforeAll" setup function waits for

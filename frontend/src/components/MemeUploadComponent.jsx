@@ -6,10 +6,10 @@ import { createMeme } from "../services/memeUploadService";
 
 const MemeUpload = () => {
     // State related variables
-  const [title, setTitle] = useState('');
-  const [image, setImage] = useState(null);
-  const fileInputRef = useRef(null);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [title, setTitle] = useState(''); // Title of the meme
+  const [image, setImage] = useState(null); // The image file
+  const fileInputRef = useRef(null); // To reset the file input element
+  const [isSuccess, setIsSuccess] = useState(false); // To show success message
 
   // Using useImageValidator hook with post-specific settings
   const { imageError, validateAndSetError, clearError, resetValidation } =
@@ -18,6 +18,7 @@ const MemeUpload = () => {
       required: false, // Posts don't require images
     });
 
+  // Called when file is selected
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
 
@@ -35,12 +36,13 @@ const MemeUpload = () => {
     }
   };
 
+  // Called on form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
 
     if (!image){
-      return alert('☠️ You forgot to upload your meme! ☠️');
+      return alert('☠️ Silly billy. You forgot to upload your meme! ☠️');
     }
 
     if (image && !validateAndSetError(image)) {
@@ -49,12 +51,13 @@ const MemeUpload = () => {
 
     try {
         await createMeme(token, title, image);
-      // resets state and the input element
+      // resets all fields state and the input element after successful upload
       setTitle('');
       setImage(null);
       resetValidation();
       fileInputRef.current.value = '';
 
+      // Show success message
       setIsSuccess(true);
       // If setIsSuccess is true, then after 3000 milliseconds make setIsSuccess false:
       setTimeout(() => {
