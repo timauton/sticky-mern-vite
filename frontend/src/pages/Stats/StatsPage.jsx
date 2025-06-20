@@ -1,4 +1,5 @@
 
+import MemeUploadButton from "../../components/MemeUploadButtonComponent";
 import MemeUpload from "../../components/MemeUploadComponent";
 
 export const StatsPage = () => {
@@ -47,10 +48,6 @@ export const StatsPage = () => {
         </div>
       </div>
       
-      <div>
-        <MemeUpload />
-      </div>
-
       </div>
 
     </div>

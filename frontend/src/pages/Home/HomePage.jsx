@@ -4,6 +4,7 @@ import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
 import { RatingBar } from "../../components/RatingBar"
 import LogoutButton from "../../components/LogoutButton"
+import MemeUploadButton from "../../components/MemeUploadButtonComponent"
 
 import "../../index.css";
 
@@ -58,6 +59,9 @@ export function HomePage() {
           <div className="rating-bar-div">
             <RatingBar />
           </div>
+        </div>
+        <div>
+          <MemeUploadButton />
         </div>
       </div>
   </>
