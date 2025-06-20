@@ -55,10 +55,6 @@ export const StatsPage = () => {
           </div>  
         </div>
       </div>
-      
-      <div>
-        <MemeUpload />
-      </div>
 
       </div>
 

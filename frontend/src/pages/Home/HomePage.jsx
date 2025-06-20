@@ -3,8 +3,8 @@ import { useState } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
 import { RatingBar } from "../../components/RatingBar"
+import MemeUploadButton from "../../components/MemeUploadButtonComponent"
 import { useNavigate } from "react-router-dom"
-// import LogoutButton from "../../components/LogoutButton"
 
 import "../../index.css";
 
@@ -79,6 +79,9 @@ export function HomePage() {
       buttonText="Log Out"
       onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
       />
-  </div>);
+      <div className="meme-upload-button-wrapper">
+        <MemeUploadButton />
+      </div>
+  </div>)
 }
 
