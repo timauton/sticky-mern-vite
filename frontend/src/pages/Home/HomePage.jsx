@@ -1,5 +1,5 @@
 import Button from "../../components/ButtonComponent"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
 import MemeDisplay from "../../components/MemeDisplay"
@@ -13,13 +13,32 @@ import "../../index.css";
 // logged out render
 export function HomePage() {
   // Meme Display
-  const [meme, setMeme] = useState([])
+  const [meme, setMeme] = useState([]);
+  let lastMeme = useRef(null);
   useEffect(() => {
+    updateMeme("next");
+  }, [])
+
+  // Back and forth buttons
+  const updateMeme = (id) => {
     const token = localStorage.getItem("token");
-    getMeme(token, "next").then((data) => {
+    getMeme(token, id).then((data) => {
       setMeme(data.meme)
     })
-  }, [])
+  }
+
+  const handleNextClick = () => {
+    lastMeme.current = meme;
+    console.log("LAST MEME", lastMeme)
+    updateMeme("next");
+  }
+
+  const handleBackClick = () => {
+    if (lastMeme.current) {
+      updateMeme(lastMeme.current._id);
+      lastMeme.current = null;
+    }
+  }
 
   // Login function
   const [showLogin, setShowLogin] = useState(false);
@@ -100,10 +119,16 @@ export function HomePage() {
       </div>
       <div className="title">Sticky Memes</div>
       <div className="meme-interface">
-        <Button
+        {lastMeme !== null ? (<Button
           className="back-and-forth"
           buttonText="<"
-        />
+          onClick={handleBackClick}
+        />) : (
+          <Button
+          className="back-and-forth"
+          buttonText="<"
+          disabled={true}/>
+        )}
         {/* <div className="image-container">
           <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
         </div> */}
@@ -113,6 +138,7 @@ export function HomePage() {
         <Button
           className="back-and-forth"
           buttonText=">"
+          onClick={handleNextClick}
         />
       </div>
       {/* <div className="rating-bar-div">
