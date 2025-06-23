@@ -14,8 +14,6 @@ export function Signup({onSignupSuccess}) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    // check output
-    console.log('signing up with:', {username, password, email})
     try {
       await signup(username, password, email);
       navigate("/");

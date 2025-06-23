@@ -15,8 +15,6 @@ export function Login({ onLoginSuccess }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    console.log("Login Request", {username, password})
-
     try {
       const token = await login(username, password);
       localStorage.setItem("token", token);
