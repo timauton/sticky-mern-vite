@@ -108,7 +108,7 @@ export function HomePage() {
         </div>
         <Button
           className="stats-nav-button"
-          buttonText="My Stats" // other text is available
+          buttonText={"My\nStats"} // other text is available
           onClick={() => navigate("/stats")}
         />
         <Button
@@ -121,13 +121,15 @@ export function HomePage() {
       <div className="meme-interface">
         {lastMeme !== null ? (<Button
           className="back-and-forth"
-          buttonText="<"
+          buttonImage="../../../public/left-arrow.png"
           onClick={handleBackClick}
         />) : (
           <Button
           className="back-and-forth"
-          buttonText="<"
-          disabled={true}/>
+          buttonImage="../../../public/left-arrow.png"
+          disabled={true}>
+            <span className="button-text-shadow">&lt;</span>
+          </Button>
         )}
         {/* <div className="image-container">
           <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
