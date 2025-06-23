@@ -7,6 +7,7 @@ import { RatingBar } from "../../components/RatingBar";
 import MemeUploadButton from "../../components/MemeUploadButtonComponent";
 import { useNavigate } from "react-router-dom";
 import getMeme from "../../services/memeSelector";
+import { TagFilter } from "../../components/TagFilter"
 
 import "../../index.css";
 
@@ -45,6 +46,12 @@ export function HomePage() {
     setIsLoggedIn(true);
   };
 
+  // Filter by tags
+  const [showTagFilter, setShowTagFilter] = useState(false);
+  const handleTagFilter = () => {
+    setShowTagFilter((prev) => !prev);
+  }
+
   // Meme Display
   const [meme, setMeme] = useState([]);
   let lastMeme = useRef(null); // for back button
@@ -61,7 +68,7 @@ export function HomePage() {
       return;
     }
     const token = localStorage.getItem("token");
-    getMeme(token, id).then((data) => {
+    getMeme(tags, token, id).then((data) => {
       setMeme(data.meme);
     })
   }
@@ -118,6 +125,7 @@ export function HomePage() {
         <Button
           className="filter-by-tags-button"
           buttonText="Filter Memes"
+          onClick={handleTagFilter}
         />
         <div className="meme-upload-button-wrapper">
           <MemeUploadButton />
@@ -133,6 +141,7 @@ export function HomePage() {
           onClick={handleLogOutClick}
         />
       </div>
+      {showTagFilter && <TagFilter />}
       <div className="title">Sticky Memes</div>
       <div className="meme-interface">
         {lastMeme !== null ? (<Button
