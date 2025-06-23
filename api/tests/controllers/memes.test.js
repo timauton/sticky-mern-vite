@@ -90,8 +90,8 @@ describe("GET, when token is present", () => {
         expect(response.body.memes.length).toEqual(2);
     });
 
-    test("a meme has the correct image and title", async () => {
-        const meme = await makeTestMeme();
+    test("a meme has the correct image, title and tag", async () => {
+        const meme = await makeTestMeme(1, "tag");
 
         const response = await request(app)
             .get("/memes")
@@ -99,6 +99,7 @@ describe("GET, when token is present", () => {
 
         expect(response.body.memes[0].img).toEqual(meme.img);
         expect(response.body.memes[0].title).toEqual(meme.title);
+        expect(response.body.memes[0].tags).toEqual(meme.tags);
     });
 
     test("finds the right meme when searching by ID", async () => {
@@ -193,6 +194,33 @@ describe("GET, when token is present", () => {
         expect(response.body.memes.length).toEqual(1);
     });
 
+    test("gets memes with a single tag", async () => {
+
+        const meme1 = await makeTestMeme(1, ["tag1"]);
+        const meme2 = await makeTestMeme(2, ["tag2"]);
+        const meme3 = await makeTestMeme(3, ["tag3"]);
+
+        const response = await request(app)
+            .get("/memes/tagged/tag2")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.memes.length).toEqual(1);
+    });
+
+    test("gets memes with multiple single tag", async () => {
+
+        const meme1 = await makeTestMeme(1, ["tag1", "tag2"]);
+        const meme2 = await makeTestMeme(2, ["tag2", "tag3"]);
+        const meme3 = await makeTestMeme(3, ["tag3", "tag4"]);
+        const meme4 = await makeTestMeme(4, ["tag4", "tag5"]);
+
+        const response = await request(app)
+            .get("/memes/tagged/tag2,tag3")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.memes.length).toEqual(3);
+    });
+
 });
 
 describe("POST, when token is present", () => {
@@ -231,10 +259,12 @@ describe("POST, when token is present", () => {
             .set("Authorization", `Bearer ${token}`)
             .field("title", "My created meme")
             .field("user", testUser._id.toString())
+            .field("tags", "tag1, tag2")
             .attach("image", webpBuffer, "test-meme.webp")  // filename as third parameter
 
         const memes = await Meme.find();
         expect(memes[0].title).toEqual("My created meme");
+        expect(memes[0].tags).toEqual(["tag1", "tag2"]);
         expect(response.status).toEqual(201);
 
         // tidy up after ourselves
@@ -248,6 +278,7 @@ describe("POST, when token is present", () => {
             .post("/memes")
             .set("Authorization", `Bearer ${token}`)
             .field("title", "My created meme")
+            .field("tags", "")
             .field("user", testUser._id.toString())
 
         expect(response.status).toEqual(400);
@@ -310,6 +341,7 @@ describe("DELETE, when token is present", () => {
             .set("Authorization", `Bearer ${token}`)
             .field("title", "My created meme")
             .field("user", testUser._id.toString())
+            .field("tags", "")
             .attach("image", webpBuffer, "test-meme.webp")  // filename as third parameter
 
         const memes = await Meme.find();
@@ -336,6 +368,7 @@ describe("DELETE, when token is present", () => {
             .set("Authorization", `Bearer ${token}`)
             .field("title", "My created meme")
             .field("user", testUser._id.toString())
+            .field("tags", "")
             .attach("image", webpBuffer, "test-meme.webp")  // filename as third parameter
 
         const memesBeforeDelete = await Meme.find();
@@ -370,6 +403,7 @@ describe("DELETE, when token is present", () => {
             .set("Authorization", `Bearer ${token}`)
             .field("title", "My created meme")
             .field("user", testUser._id.toString())
+            .field("tags", "")
             .attach("image", webpBuffer, "test-meme.webp")  // filename as third parameter
 
         const memes = await Meme.find();
@@ -395,13 +429,14 @@ describe("DELETE, when token is present", () => {
 
 });
 
-const makeTestMeme = async ( suffix = "" ) => {
+const makeTestMeme = async ( suffix = "", tags = [ "tag" + suffix ] ) => {
 
     const meme = new Meme({
         img: "images/my_meme" + suffix + ".jpeg",
         title: "My Fab Meme " + suffix,
         user: testUser.id,
-        created_at: testDate
+        created_at: testDate,
+        tags: tags
     });
     await meme.save();
     return meme;

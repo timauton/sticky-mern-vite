@@ -31,10 +31,13 @@ async function createMeme(req, res) {
             throw "No image provided";
         }
 
+        const tags = req.body.tags.split(",").map((tag) => tag.toLowerCase().trim());
+
         const meme = new Meme({
             img: (image) ? image.path : null,
             title: req.body.title,
             user: req.user_id,
+            tags: tags,
             created_at: Date.now()
         });
         await meme.save();
@@ -122,13 +125,23 @@ async function getMemesRatedByUser(req, res) {
         },
     ]);
 
-    console.log("getMemesRatedByUser " + memes.length);   
-
     const token = generateToken(req.user_id);
     res.status(200).json({ memes: memes, token: token });
 
 }
 
+async function getMemesByTags(req, res) {
+
+    const tags = req.params.tags.split(",");
+
+    const memes = await Meme.find({
+        tags: { $in: tags }
+    });
+
+    const token = generateToken(req.user_id);
+    res.status(200).json({ memes: memes, token: token });
+
+}
 
 const MemesController = {
     getAllMemes: getAllMemes,
@@ -138,6 +151,7 @@ const MemesController = {
     getNextMeme, getNextMeme,
     getMemesCreatedByUser, getMemesCreatedByUser,
     getMemesRatedByUser, getMemesRatedByUser,
+    getMemesByTags, getMemesByTags
 };
 
 module.exports = MemesController;

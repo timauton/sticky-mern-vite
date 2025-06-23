@@ -25,6 +25,11 @@ router.get("/user/:user_id", tokenChecker, MemesController.getMemesCreatedByUser
 // returns an array of memes
 router.get("/rated_by_user/:user_id", tokenChecker, MemesController.getMemesRatedByUser);
 
+// gets all memes matching any of the comma-separated list of tags
+// e.g. /memes/tagged/tag1,tag2
+// returns an array of memes
+router.get("/tagged/:tags", tokenChecker, MemesController.getMemesByTags);
+
 // post a new meme, including the image
 router.post("/", tokenChecker, uploadConfigs.memes.single("image"), handleUploadError, MemesController.createMeme);
 

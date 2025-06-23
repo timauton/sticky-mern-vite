@@ -14,8 +14,6 @@ describe("Meme model", () => {
         await testUser.save();
     });
 
-
-
     it("has an image path", () => {
         const meme = new Meme({
             img: "images/my_meme.jpeg",
@@ -149,6 +147,13 @@ describe("Meme model", () => {
 
         const tag2Memes = await Meme.find({ tags: "tag2" });
         expect(tag2Memes.length).toEqual(3);
+
+        const tags1or3Memes = await Meme.find({
+            tags: { $in: ["tag1", "tag3"] }
+        });
+        expect(tags1or3Memes.length).toEqual(3);
+
+
     });
 
 });
