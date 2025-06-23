@@ -18,7 +18,7 @@ const MemeDisplay = (props) => {
                 </p>
             </div>
             <div className="rating-bar-div">
-                <RatingBar />
+                <RatingBar meme_id={props.meme._id} />
             </div>
         </div>
     );
