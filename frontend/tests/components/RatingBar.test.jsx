@@ -1,125 +1,176 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import RatingBar from './RatingBar';
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, test, expect } from "vitest";
+import RatingBar from "../../src/components/RatingBar";
 
-describe('RatingBar', () => {
-  test('renders with default values', () => {
-    render(<RatingBar />);
-    
-    expect(screen.getByText('0.0')).toBeInTheDocument();
-    expect(screen.getByText('0 ratings')).toBeInTheDocument();
-    expect(screen.getAllByLabelText(/Rate \d star/)).toHaveLength(5);
-  });
+describe("RatingBar", () => {
+    test("Renders with default props", () => {
+        render(<RatingBar />);
 
-  test('renders with initial values', () => {
-    render(<RatingBar initialRating={3} totalRatings={10} initialAverage={4.2} />);
-    
-    expect(screen.getByText('4.2')).toBeInTheDocument();
-    expect(screen.getByText('10 ratings')).toBeInTheDocument();
-    expect(screen.getByText('You rated: 3 stars')).toBeInTheDocument();
-  });
+        const averageRating = screen.getByText("0.0");
+        const stars = screen.getAllByRole("button");
 
-  test('displays singular "rating" for count of 1', () => {
-    render(<RatingBar totalRatings={1} initialAverage={5} />);
-    
-    expect(screen.getByText('1 rating')).toBeInTheDocument();
-  });
+        expect(averageRating).toBeDefined();
+        expect(stars).toHaveLength(5);
+        expect(stars[0].getAttribute("aria-label")).toBe("Rate 1 star");
+        expect(stars[1].getAttribute("aria-label")).toBe("Rate 2 stars");
+    });
 
-  test('shows hover effect on stars when not voted', () => {
-    render(<RatingBar />);
-    
-    const thirdStar = screen.getByLabelText('Rate 3 stars');
-    fireEvent.mouseEnter(thirdStar);
-    
-    // Check that stars 1-3 should be highlighted (this would need to check CSS classes)
-    // In a real test environment, you might check for specific classes or styles
-    expect(thirdStar).toBeInTheDocument();
-  });
+    test("Renders with initial props correctly", () => {
+        render(<RatingBar initialRating={3} totalRatings={10} initialAverage={4.2} />);
 
-  test('allows user to click and rate', () => {
-    render(<RatingBar />);
-    
-    const fourthStar = screen.getByLabelText('Rate 4 stars');
-    fireEvent.click(fourthStar);
-    
-    expect(screen.getByText('You rated: 4 stars')).toBeInTheDocument();
-    expect(screen.getByText('4.0')).toBeInTheDocument();
-    expect(screen.getByText('1 rating')).toBeInTheDocument();
-  });
+        const averageRating = screen.getByText("4.2");
+        const hasVotedIndicator = screen.getByText((_, element) =>
+            element?.classList.contains("has-voted") &&
+            element?.textContent.replace(/\s+/g, "") === "AverageRating"
+        );
+        const stars = screen.getAllByRole("button");
 
-  test('prevents multiple ratings from same user', () => {
-    render(<RatingBar />);
-    
-    const fourthStar = screen.getByLabelText('Rate 4 stars');
-    const secondStar = screen.getByLabelText('Rate 2 stars');
-    
-    fireEvent.click(fourthStar);
-    expect(screen.getByText('You rated: 4 stars')).toBeInTheDocument();
-    
-    fireEvent.click(secondStar);
-    // Should still show 4 stars, not 2
-    expect(screen.getByText('You rated: 4 stars')).toBeInTheDocument();
-    expect(screen.queryByText('You rated: 2 stars')).not.toBeInTheDocument();
-  });
+        expect(averageRating).toBeDefined();
+        expect(hasVotedIndicator).toBeDefined();
+        expect(stars[0].disabled).toBe(true);
+        expect(stars[4].disabled).toBe(true);
+    });
 
-  test('calculates average correctly after user votes', () => {
-    render(<RatingBar totalRatings={2} initialAverage={3.0} />);
-    
-    const fiveStar = screen.getByLabelText('Rate 5 stars');
-    fireEvent.click(fiveStar);
-    
-    // Initial: 2 ratings with average 3.0 (total = 6)
-    // New: add rating of 5 (total = 11, count = 3)
-    // New average: 11/3 = 3.7
-    expect(screen.getByText('3.7')).toBeInTheDocument();
-    expect(screen.getByText('3 ratings')).toBeInTheDocument();
-  });
+    test("Handles star click when user hasn't voted", () => {
+        render(<RatingBar totalRatings={5} initialAverage={3.0} />);
 
-  test('handles mouse leave event', () => {
-    render(<RatingBar />);
-    
-    const starContainer = screen.getAllByLabelText(/Rate \d star/)[0].parentElement;
-    const thirdStar = screen.getByLabelText('Rate 3 stars');
-    
-    fireEvent.mouseEnter(thirdStar);
-    fireEvent.mouseLeave(starContainer);
-    
-    // After mouse leave, hover effect should be removed
-    // This would need to check CSS classes in a real implementation
-    expect(thirdStar).toBeInTheDocument();
-  });
+        const thirdStar = screen.getByRole("button", { name: "Rate 3 stars" });
+        fireEvent.click(thirdStar);
 
-  test('displays correct aria labels for accessibility', () => {
-    render(<RatingBar />);
-    
-    expect(screen.getByLabelText('Rate 1 star')).toBeInTheDocument();
-    expect(screen.getByLabelText('Rate 2 stars')).toBeInTheDocument();
-    expect(screen.getByLabelText('Rate 3 stars')).toBeInTheDocument();
-    expect(screen.getByLabelText('Rate 4 stars')).toBeInTheDocument();
-    expect(screen.getByLabelText('Rate 5 stars')).toBeInTheDocument();
-  });
+        const hasVotedIndicator = screen.getByText((_, element) =>
+            element?.classList.contains("has-voted") &&
+            element?.textContent.replace(/\s+/g, "") === "AverageRating"
+        );
+        const newAverageRating = screen.getByText("3.0");
+        const stars = screen.getAllByRole("button");
 
-  test('disables interaction after voting', () => {
-    render(<RatingBar />);
-    
-    const fourthStar = screen.getByLabelText('Rate 4 stars');
-    fireEvent.click(fourthStar);
-    
-    // Button should be disabled after voting
-    expect(fourthStar).toBeDisabled();
-  });
+        expect(hasVotedIndicator).toBeDefined();
+        expect(newAverageRating).toBeDefined();
+        expect(stars[0].disabled).toBe(true);
+        expect(stars[2].disabled).toBe(true);
+    });
 
-  test('starts with voting enabled when no initial rating', () => {
-    render(<RatingBar />);
-    
-    const firstStar = screen.getByLabelText('Rate 1 star');
-    expect(firstStar).not.toBeDisabled();
-  });
+    test("Prevents multiple votes from same user", () => {
+        render(<RatingBar initialRating={4} totalRatings={8} initialAverage={3.5} />);
 
-  test('starts with voting disabled when initial rating provided', () => {
-    render(<RatingBar initialRating={3} />);
-    
-    const firstStar = screen.getByLabelText('Rate 1 star');
-    expect(firstStar).toBeDisabled();
-  });
+        const firstStar = screen.getByRole("button", { name: "Rate 1 star" });
+        const fifthStar = screen.getByRole("button", { name: "Rate 5 stars" });
+
+        fireEvent.click(firstStar);
+        fireEvent.click(fifthStar);
+
+        const averageRating = screen.getByText("3.5");
+        expect(averageRating).toBeDefined();
+        expect(firstStar.disabled).toBe(true);
+        expect(fifthStar.disabled).toBe(true);
+    });
+
+    test("Calculates new average rating correctly after vote", () => {
+        render(<RatingBar totalRatings={2} initialAverage={4.0} />);
+
+        const fiveStarButton = screen.getByRole("button", { name: "Rate 5 stars" });
+        fireEvent.click(fiveStarButton);
+
+        // Original: (4.0 * 2) + 5 = 13, divided by 3 = 4.3
+        const newAverageRating = screen.getByText("4.3");
+        expect(newAverageRating).toBeDefined();
+    });
+
+    test("Handles mouse hover events when user hasn't voted", () => {
+        render(<RatingBar />);
+
+        const thirdStar = screen.getByRole("button", { name: "Rate 3 stars" });
+        const starContainer = screen.getByRole("button", { name: "Rate 3 stars" }).closest('.star-box');
+
+        fireEvent.mouseEnter(thirdStar);
+        // Mouse hover effects are visual (CSS classes), so we check the star is still clickable
+        expect(thirdStar.disabled).toBe(false);
+
+        if (starContainer) {
+            fireEvent.mouseLeave(starContainer);
+        }
+        expect(thirdStar.disabled).toBe(false);
+    });
+
+    test("Ignores hover events after user has voted", () => {
+        render(<RatingBar initialRating={2} totalRatings={5} initialAverage={3.0} />);
+
+        const fourthStar = screen.getByRole("button", { name: "Rate 4 stars" });
+        fireEvent.mouseEnter(fourthStar);
+
+        // Stars should remain disabled after voting
+        expect(fourthStar.disabled).toBe(true);
+    });
+
+    test("Displays correct aria-labels for all stars", () => {
+        render(<RatingBar />);
+
+        const oneStar = screen.getByRole("button", { name: "Rate 1 star" });
+        const twoStars = screen.getByRole("button", { name: "Rate 2 stars" });
+        const threeStars = screen.getByRole("button", { name: "Rate 3 stars" });
+        const fourStars = screen.getByRole("button", { name: "Rate 4 stars" });
+        const fiveStars = screen.getByRole("button", { name: "Rate 5 stars" });
+
+        expect(oneStar).toBeDefined();
+        expect(twoStars).toBeDefined();
+        expect(threeStars).toBeDefined();
+        expect(fourStars).toBeDefined();
+        expect(fiveStars).toBeDefined();
+    });
+
+    test("Shows average rating display when user has voted", () => {
+        render(<RatingBar initialRating={5} totalRatings={10} initialAverage={4.5} />);
+
+        const averageLabel = screen.getByText((_, element) =>
+          element?.classList.contains("has-voted") &&
+          element?.textContent.includes("Average")
+        );
+        const ratingLabel = screen.getByText((_, element) =>
+          element?.classList.contains("has-voted") &&
+          element?.textContent.includes("Rating")
+        );
+        const averageValue = screen.getByText("4.5");
+
+        expect(averageLabel).toBeDefined();
+        expect(ratingLabel).toBeDefined();
+        expect(averageValue).toBeDefined();
+    });
+
+    test("Hides average rating display when user hasn't voted", () => {
+        render(<RatingBar totalRatings={5} initialAverage={3.2} />);
+
+        const averageLabel = screen.queryByText((_, element) =>
+            element?.classList.contains("has-voted") &&
+            element?.textContent.includes("Average")
+        );
+        const ratingLabel = screen.queryByText("Rating");
+        const averageValue = screen.getByText("3.2");
+
+        expect(averageLabel).toBeNull();
+        expect(ratingLabel).toBeNull();
+        expect(averageValue).toBeDefined();
+    });
+
+    test("All props work together correctly", () => {
+        render(<RatingBar initialRating={0} totalRatings={0} initialAverage={0} />);
+
+        const averageRating = screen.getByText("0.0");
+        const stars = screen.getAllByRole("button");
+        const hasVotedIndicator = screen.queryByText("Average");
+
+        expect(averageRating).toBeDefined();
+        expect(stars).toHaveLength(5);
+        expect(hasVotedIndicator).toBeNull();
+        expect(stars[0].disabled).toBe(false);
+        expect(stars[4].disabled).toBe(false);
+
+        // Test voting functionality
+        fireEvent.click(stars[3]);
+        
+        const newHasVotedIndicator = screen.getByText((_, element) =>
+  element?.classList.contains("has-voted") && element?.textContent.includes("Average")
+);
+        expect(newHasVotedIndicator).toBeDefined();
+        expect(stars[3].disabled).toBe(true);
+    });
 });
