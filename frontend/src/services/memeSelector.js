@@ -7,15 +7,16 @@ async function getMeme(token, id) {
             Authorization: `Bearer ${token}`,
         }
     };
+    if (token) {
+        const response = await fetch(`${BACKEND_URL}/memes/${id}`, requestOptions);
 
-    const response = await fetch(`${BACKEND_URL}/memes/${id}`, requestOptions);
+        if (response.status !==200) {
+            throw new Error (`${response.status} Unable to fetch memes`);
+        }
 
-    if (response.status !==200) {
-        throw new Error (`${response.status} Unable to fetch memes`);
+        const data = await response.json();
+        return data;
     }
-
-    const data = await response.json();
-    return data;
 }
 
 export default getMeme;
