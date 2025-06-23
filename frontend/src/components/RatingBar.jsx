@@ -1,24 +1,85 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getAllRatingStats, getUserRating, submitUserRating } from '../services/ratingsService';
 
-export const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage = 0 }) => {
+export const RatingBar = ({ meme_id: meme, initialRating = 0, totalRatings = 0, initialAverage = 0 }) => {
   const [userRating, setUserRating] = useState(initialRating);
   const [hoveredStar, setHoveredStar] = useState(0);
   const [hasVoted, setHasVoted] = useState(initialRating > 0);
   const [averageRating, setAverageRating] = useState(initialAverage);
   const [ratingCount, setRatingCount] = useState(totalRatings);
 
-  const handleStarClick = (rating) => {
+  useEffect(() => {
+    const loadRatingData = async () => {
+      if (!meme) return;
+      
+      try {
+        // setIsLoading(true);
+        // Reset state when meme changes
+        setUserRating(0);
+        setHasVoted(false);
+        setHoveredStar(0);
+        setAverageRating(0);
+        
+        // Fetch stats first (this should always work)
+        const statsData = await getAllRatingStats(meme);
+        setAverageRating(statsData.averageRating);
+        setRatingCount(statsData.totalRatings);
+        
+        // Try to fetch user rating (might not exist)
+        try {
+          const userRatingData = await getUserRating(meme);
+          if (userRatingData.rating) {
+            setUserRating(userRatingData.rating);
+            setHasVoted(true);
+          }
+        } catch (userRatingError) {
+          // User hasn't rated yet - this is expected, not an error
+          if (userRatingError.message !== 'No meme found') {
+            console.log('User has not rated this meme yet');
+          }
+        }
+        
+      } catch (error) {
+        console.error('Failed to load rating data:', error);
+        // Keep the initial values if there's an error
+      } 
+    };
+
+    loadRatingData();
+  }, [meme]); // Include meme as dependency
+ 
+  // useEffect(() => {
+  // const loadRatingData = async () => {
+  //   const ratingData = await getAllRatingStats(meme);
+  //   setAverageRating(ratingData.averageRating);
+  //   setRatingCount(ratingData.totalRatings || 0);
+  //   };
+  //   loadRatingData();
+  // }, [meme]); // Include meme as a dependency
+  
+  
+  // const userRatingData = await getUserRating(meme_id);
+  // if (userRatingData.rating) {
+  //   setUserRating(userRatingData.rating);
+  //   setHasVoted(true);
+  // }
+  
+  const handleStarClick = async (rating) => {
     if (!hasVoted) {
-      setUserRating(rating);
-      setHasVoted(true);
+      // setUserRating(rating);
       
       // Calculate new average (basic simulation)
-      const newTotal = (averageRating * ratingCount) + rating;
-      const newCount = ratingCount + 1;
-      const newAverage = newTotal / newCount;
+      // const newTotal = (averageRating * ratingCount) + rating;
+      // const newCount = ratingCount + 1;
+      // const newAverage = newTotal / newCount;
       
-      setAverageRating(newAverage);
-      setRatingCount(newCount);
+      await submitUserRating(meme, rating) 
+      setUserRating(rating);
+      setHasVoted(true);
+      const statsData = await getAllRatingStats(meme)
+      setAverageRating(statsData.averageRating);
+      setRatingCount(statsData.totalRatings);
+      
     }
   };
 

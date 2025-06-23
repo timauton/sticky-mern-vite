@@ -11,7 +11,7 @@ const MemeDisplay = (props) => {
                 <img src={`${backendURL}/${props.meme.img}`} className="responsive-image" alt={props.meme.title} />
             </div>
             <div className="rating-bar-div">
-                <RatingBar />
+                <RatingBar meme_id={props.meme._id} />
             </div>
         </div>
     );
