@@ -9,6 +9,9 @@ const MemeSchema = new mongoose.Schema({
         required: true
     },
     created_at: Date,
+    tags: [{
+        type: String
+    }],
 });
 
 MemeSchema.virtual('rating', {
@@ -19,12 +22,6 @@ MemeSchema.virtual('rating', {
 
 //TODO: Uncomment the virtual fields when we implement these schemas
 /*
-
-MemeSchema.virtual('tags', {
-    ref: 'Tag',
-    localField: '_id',
-    foreignField: 'meme_id'
-});
 
 MemeSchema.virtual('comments', {
     ref: 'Comment',

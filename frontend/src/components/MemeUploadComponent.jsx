@@ -8,6 +8,7 @@ const MemeUpload = () => {
     // State related variables
   const [title, setTitle] = useState(''); // Title of the meme
   const [image, setImage] = useState(null); // The image file
+  const [tags, setTags] = useState(''); // The tags
   const fileInputRef = useRef(null); // To reset the file input element
   const [isSuccess, setIsSuccess] = useState(false); // To show success message
 
@@ -50,10 +51,11 @@ const MemeUpload = () => {
     }
 
     try {
-        await createMeme(token, title, image);
+        await createMeme(token, title, image, tags);
       // resets all fields state and the input element after successful upload
       setTitle('');
       setImage(null);
+      setTags('');
       resetValidation();
       fileInputRef.current.value = '';
 
@@ -93,6 +95,14 @@ const MemeUpload = () => {
                 data-testid="title-input"
                 aria-label="Meme title"/>
       
+              <input 
+                type="text" 
+                placeholder="Tags" 
+                value={tags} 
+                onChange={(e) => setTags(e.target.value)} 
+                data-testid="tags-input"
+                aria-label="Tags"/>
+
               <input 
                   type="file" 
                   accept="image/*" 

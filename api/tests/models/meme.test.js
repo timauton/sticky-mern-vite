@@ -14,8 +14,6 @@ describe("Meme model", () => {
         await testUser.save();
     });
 
-
-
     it("has an image path", () => {
         const meme = new Meme({
             img: "images/my_meme.jpeg",
@@ -55,6 +53,27 @@ describe("Meme model", () => {
             created_at: testDate
         });
         expect(meme.created_at).toEqual(testDate);
+    });
+
+    it("can hold multiple tags", () => {
+        const meme = new Meme({
+            img: "images/my_meme.jpeg",
+            title: "My Fab Meme",
+            user: testUser.id,
+            created_at: testDate,
+            tags: [ "tag1", "tag2" ]
+        });
+        expect(meme.tags[1]).toEqual("tag2");
+    });
+
+    it("gives an empty list when there are no tags", () => {
+        const meme = new Meme({
+            img: "images/my_meme.jpeg",
+            title: "My Fab Meme",
+            user: testUser.id,
+            created_at: testDate
+        });
+        expect(meme.tags).toEqual([]);
     });
 
     it("gives as empty list when there are no memes", async () => {
@@ -97,5 +116,44 @@ describe("Meme model", () => {
         expect(memes.length).toEqual(2);
     });
 
+    it("can find memes by tag", async () => {
+        const meme1 = new Meme({
+            img: "images/my_meme1.jpeg",
+            title: "My Fab Meme 1",
+            user: testUser.id,
+            created_at: testDate,
+            tags: [ "tag1", "tag2" ]
+        });
+        await meme1.save();
+        const meme2 = new Meme({
+            img: "images/my_meme2.jpeg",
+            title: "My Fab Meme 2",
+            user: testUser.id,
+            created_at: testDate,
+            tags: [ "tag2", "tag3" ]
+        });
+        await meme2.save();
+        const meme3 = new Meme({
+            img: "images/my_meme3.jpeg",
+            title: "My Fab Meme 3",
+            user: testUser.id,
+            created_at: testDate,
+            tags: [ "tag1", "tag2", "tag3" ]
+        });
+        await meme3.save();
+
+        const tag1Memes = await Meme.find({ tags: "tag1" });
+        expect(tag1Memes.length).toEqual(2);
+
+        const tag2Memes = await Meme.find({ tags: "tag2" });
+        expect(tag2Memes.length).toEqual(3);
+
+        const tags1or3Memes = await Meme.find({
+            tags: { $in: ["tag1", "tag3"] }
+        });
+        expect(tags1or3Memes.length).toEqual(3);
+
+
+    });
 
 });
