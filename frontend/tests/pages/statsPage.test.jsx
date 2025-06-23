@@ -11,7 +11,7 @@ describe("Stats Page", () => {
       </BrowserRouter>
     );
 
-    const heading = screen.getByRole("heading");
+    const heading = screen.getByRole("heading", {level: 1});
     expect(heading.textContent).toEqual("Stats page");
   });
 });
