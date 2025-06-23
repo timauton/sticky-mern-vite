@@ -57,9 +57,6 @@ body {
   z-index: 1;
 }
 
-/* bounding box for signup and login upper buttons and info input */
-/* .signup-and-login {
-
 /* signup link text */
 .signup-button {
   font-size: 2rem;
@@ -216,10 +213,11 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   max-height: 95px;
 }
 
-.button-text-shadow {
-  text-shadow: 8px 8px 0px 2px rgba(0,0,0,1);
-  font-size: 8rem;
-  display: inline-block;
+/* MEME DISPLAY STYLING */
+.meme-container h1 {
+  font-size: 3rem;
+  color: #ffffff;
+  text-shadow: 4px 4px #000000;
 }
 
 /* END OF LOGGED IN SPECIFIC FORMATTING */
@@ -285,7 +283,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   height: 80px;
 }
 
-  .avatar {
+.avatar {
   width: 200px;
   height: 200px;
   border-radius: 50%;
@@ -321,13 +319,6 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   width: 75%;
 }
 
-.responsive-image {
-  display: block;
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain; 
- }
 
 /* Holding box for rating bar */
 .rating-bar-box {

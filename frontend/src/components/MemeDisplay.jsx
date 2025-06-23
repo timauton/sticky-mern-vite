@@ -1,6 +1,7 @@
 // import getMeme from "../services/memeSelector";
 import { RatingBar } from "./RatingBar";
 // import { useState } from "react";
+import "../index.css";
 
 const MemeDisplay = (props) => {
     const backendURL = import.meta.env.VITE_BACKEND_URL;

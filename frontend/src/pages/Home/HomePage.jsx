@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react"
 import { Login } from "../../components/Login"
 import { Signup } from "../../components/Signup"
 import MemeDisplay from "../../components/MemeDisplay"
-import { RatingBar } from "../../components/RatingBar"
 import MemeUploadButton from "../../components/MemeUploadButtonComponent"
 import { useNavigate } from "react-router-dom"
 import getMeme from "../../services/memeSelector"
@@ -75,7 +74,7 @@ export function HomePage() {
       <div className="background-image"></div>
       <div className="background-area">
         <div className="view">
-          <div className="signup-and-login">
+          <div className="top-banner">
           <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
           {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
                         </div>}
@@ -103,9 +102,6 @@ export function HomePage() {
           className="filter-by-tags-button"
           buttonText="Filter Memes"
         />
-        <div className="meme-upload-button-wrapper">
-          <MemeUploadButton />
-        </div>
         <Button
           className="stats-nav-button"
           buttonText={"My\nStats"} // other text is available
@@ -118,27 +114,37 @@ export function HomePage() {
         />
       </div>
       <div className="title">Sticky Memes</div>
-      <div className="meme-interface">
-        {lastMeme !== null ? (<Button
-          className="back-and-forth"
-          buttonImage="./left-arrow.png"
-          onClick={handleBackClick}
-        />) : (
-          <Button
-          className="back-and-forth"
-          buttonImage="./left-arrow.png"
-          disabled={true}>
-            <span className="button-text-shadow">&lt;</span>
-          </Button>
-        )}
-        <MemeDisplay
-          meme={meme}
-        />
-        <Button
-          className="back-and-forth"
-          buttonImage="./right-arrow.png"
-          onClick={handleNextClick}
-        />
+{/* Start of the column layout */}
+      <div className="row">
+        <div className="column-view-left"></div>
+        <div className="column-view-middle">
+          <div className="meme-interface">
+            {lastMeme !== null ? (<Button
+              className="back-and-forth"
+              buttonImage="./left-arrow.png"
+              onClick={handleBackClick}
+            />) : (
+              <Button
+              className="back-and-forth"
+              buttonImage="./left-arrow.png"
+              disabled={true}>
+              </Button>
+            )}
+            <MemeDisplay
+              meme={meme}
+            />
+            <Button
+              className="back-and-forth"
+              buttonImage="./right-arrow.png"
+              onClick={handleNextClick}
+            />
+          </div>
+        </div>
+        <div className="column-view-right">
+          <div className="meme-upload-button-wrapper">
+            <MemeUploadButton />
+          </div>
+          </div>
       </div>
     </>
   );
