@@ -121,12 +121,12 @@ export function HomePage() {
       <div className="meme-interface">
         {lastMeme !== null ? (<Button
           className="back-and-forth"
-          buttonImage="../../../public/left-arrow.png"
+          buttonImage="./left-arrow.png"
           onClick={handleBackClick}
         />) : (
           <Button
           className="back-and-forth"
-          buttonImage="../../../public/left-arrow.png"
+          buttonImage="./left-arrow.png"
           disabled={true}>
             <span className="button-text-shadow">&lt;</span>
           </Button>
@@ -139,7 +139,7 @@ export function HomePage() {
         />
         <Button
           className="back-and-forth"
-          buttonText=">"
+          buttonImage="./right-arrow.png"
           onClick={handleNextClick}
         />
       </div>

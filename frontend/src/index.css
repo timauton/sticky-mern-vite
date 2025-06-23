@@ -216,21 +216,16 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 }
 
 .back-and-forth {
-  background-color: #ffffff;
-  /* box-shadow: 8px 8px 0px 2px rgba(0,0,0,1); */
-  border: 8px solid #000000;
+  background-color: #ffffff00;
+  border: 0px solid #000000;
   aspect-ratio: 1/1;
-  font-size: 8rem;
-  font-family: CandySeason, sans-serif;
-  color: #01b9e8;
-  -webkit-text-stroke-width: 5px;
-  -webkit-text-stroke-color: #000000;
-  /* line-height: 1.1; */
-  text-align: center;
   padding: 0;
-  /* margin: 1.5rem; */
-  /* margin-top: calc(2rem + 20px + 40px); */
-} /* made to mirror title styling */
+}
+
+.back-and-forth img {
+  max-width: 95px;
+  max-height: 95px;
+}
 
 .button-text-shadow {
   text-shadow: 8px 8px 0px 2px rgba(0,0,0,1);
