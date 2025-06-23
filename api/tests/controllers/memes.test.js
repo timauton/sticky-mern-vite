@@ -221,6 +221,30 @@ describe("GET, when token is present", () => {
         expect(response.body.memes.length).toEqual(3);
     });
 
+    test("retuns a 400 trying to find a meme that doesn't exist", async () => {
+        const response = await request(app)
+            .get("/memes/foo")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toEqual(400);
+    });
+
+    test("retuns a 400 trying to find memes for a user that doesn't exist", async () => {
+        const response = await request(app)
+            .get("/memes/user/1234556789abc")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toEqual(400);
+    });
+
+    test("retuns a 400 trying to find memes rated by a user that doesn't exist", async () => {
+        const response = await request(app)
+            .get("/memes/rated_by_user/1234556789abc")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toEqual(400);
+    });
+
 });
 
 describe("POST, when token is present", () => {
@@ -425,6 +449,25 @@ describe("DELETE, when token is present", () => {
 
         expect(fsError).toEqual(true);
 
+    });
+
+    test("retuns a 400 trying to delete a meme that doesn't exist", async () => {
+
+        const response = await request(app)
+            .delete("/memes/12345678abc")
+            .set("Authorization", `Bearer ${token}`)
+
+        expect(response.status).toEqual(400);
+    });
+
+});
+
+describe("GET, when token is missing", () => {
+
+    test("retuns a 401 when not logged in", async () => {
+        const response = await request(app).get("/memes/");
+
+        expect(response.status).toEqual(401);
     });
 
 });
