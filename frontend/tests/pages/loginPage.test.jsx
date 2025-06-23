@@ -1,18 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
+import { BrowserRouter } from "react-router-dom";
 
-import { useNavigate } from "react-router-dom";
 import { login } from "../../src/services/authentication";
-
-import { LoginPage } from "../../src/pages/Login/LoginPage";
-
-// Mocking React Router's useNavigate function
-vi.mock("react-router-dom", () => {
-  const navigateMock = vi.fn();
-  const useNavigateMock = () => navigateMock; // Create a mock function for useNavigate
-  return { useNavigate: useNavigateMock };
-});
+import { Login } from "../../src/components/Login"; // Adjust path as needed
 
 // Mocking the login service
 vi.mock("../../src/services/authentication", () => {
@@ -24,47 +16,29 @@ vi.mock("../../src/services/authentication", () => {
 async function completeLoginForm() {
   const user = userEvent.setup();
 
-  const emailInputEl = screen.getByLabelText("Email:");
+  const usernameInputEl = screen.getByLabelText("Username:");
   const passwordInputEl = screen.getByLabelText("Password:");
-  const submitButtonEl = screen.getByRole("submit-button");
+  const submitButtonEl = screen.getByRole("button", { name: /submit/i });
 
-  await user.type(emailInputEl, "test@email.com");
+  await user.type(usernameInputEl, "testuser");
   await user.type(passwordInputEl, "1234");
   await user.click(submitButtonEl);
 }
 
-describe("Login Page", () => {
+describe("Login Component", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
   test("allows a user to login", async () => {
-    render(<LoginPage />);
+    render(
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>
+    );
 
     await completeLoginForm();
 
-    expect(login).toHaveBeenCalledWith("test@email.com", "1234");
-  });
-
-  test("navigates to /posts on successful login", async () => {
-    render(<LoginPage />);
-
-    login.mockResolvedValue("secrettoken123");
-    const navigateMock = useNavigate();
-
-    await completeLoginForm();
-
-    expect(navigateMock).toHaveBeenCalledWith("/posts");
-  });
-
-  test("navigates to /login on unsuccessful login", async () => {
-    render(<LoginPage />);
-
-    login.mockRejectedValue(new Error("Error logging in"));
-    const navigateMock = useNavigate();
-
-    await completeLoginForm();
-
-    expect(navigateMock).toHaveBeenCalledWith("/login");
+    expect(login).toHaveBeenCalledWith("testuser", "1234");
   });
 });

@@ -15,6 +15,11 @@ vi.mock('../../src/Hooks/useImageValidationHook', () => ({
   useImageValidation: () => mockUseImageValidation()
 }))
 
+// Mock for memeSelector to prevent unhandled rejection
+vi.mock('../../src/services/memeSelector', () => ({
+  getMeme: vi.fn(() => Promise.resolve([]))
+}))
+
 describe('MemeUpload Component', () => {
   // Setup localStorage mock before each test
   beforeEach(() => {
