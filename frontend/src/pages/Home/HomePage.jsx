@@ -63,6 +63,7 @@ export function HomePage() {
     const token = localStorage.getItem("token");
     getMeme(token, id).then((data) => {
       setMeme(data.meme);
+      localStorage.setItem("token", data.token);
     })
   }
 
