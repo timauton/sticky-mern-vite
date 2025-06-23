@@ -192,7 +192,7 @@ describe("RatingBar", () => {
             element?.textContent.includes("Average")
         );
         const ratingLabel = screen.queryByText("Rating");
-        const averageValue = screen.getByText("3.2");
+        const averageValue = screen.getByText("0.0");
 
         expect(averageLabel).toBeNull();
         expect(ratingLabel).toBeNull();
