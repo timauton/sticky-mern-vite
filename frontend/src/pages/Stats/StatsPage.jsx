@@ -16,7 +16,7 @@ export const StatsPage = () => {
           onClick={() => navigate("/")}
         />
 
-        <div className="stats-title">Stats page</div>
+        <div className="stats-title" data-testID="title-text">Stats page</div>
 
         <div className="row">
 
