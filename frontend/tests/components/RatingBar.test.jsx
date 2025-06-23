@@ -1,8 +1,30 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, test, expect } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import RatingBar from "../../src/components/RatingBar";
 
+// Mock ratings service
+vi.mock('../../src/services/ratingsService', () => ({
+    getAllRatingStats: vi.fn(),
+    getUserRating: vi.fn(),
+    submitUserRating: vi.fn(),
+}));
+
+import * as ratingService from '../../src/services/ratingsService';
+
 describe("RatingBar", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+
+        //Mock token
+        Object.defineProperty(window, 'localStorage', {
+            value: {
+                getItem: vi.fn(() => 'fake-token'),
+                setItem: vi.fn(),
+            },
+            writable: true
+        });
+    });
+
     test("Renders with default props", () => {
         render(<RatingBar />);
 
@@ -31,24 +53,38 @@ describe("RatingBar", () => {
         expect(stars[4].disabled).toBe(true);
     });
 
-    test("Handles star click when user hasn't voted", () => {
+    test("Handles star click when user hasn't voted", async () => {
+        // Mock the service calls for this specific test
+        ratingService.submitUserRating.mockResolvedValue({ rating: 3 });
+        ratingService.getAllRatingStats.mockResolvedValue({
+            averageRating: 3.0,
+            totalRatings: 6
+        });
+
         render(<RatingBar totalRatings={5} initialAverage={3.0} />);
 
         const thirdStar = screen.getByRole("button", { name: "Rate 3 stars" });
         fireEvent.click(thirdStar);
 
-        const hasVotedIndicator = screen.getByText((_, element) =>
-            element?.classList.contains("has-voted") &&
-            element?.textContent.replace(/\s+/g, "") === "AverageRating"
-        );
-        const newAverageRating = screen.getByText("3.0");
-        const stars = screen.getAllByRole("button");
+        // Wait for ALL the async changes to happen
+        await waitFor(() => {
+            // Check that the "has voted" indicator appears
+            const hasVotedIndicator = screen.getByText((_, element) =>
+                element?.classList.contains("has-voted") &&
+                element?.textContent.replace(/\s+/g, "") === "AverageRating"
+            );
+            expect(hasVotedIndicator).toBeDefined();
 
-        expect(hasVotedIndicator).toBeDefined();
-        expect(newAverageRating).toBeDefined();
-        expect(stars[0].disabled).toBe(true);
-        expect(stars[2].disabled).toBe(true);
-    });
+            // Check that the average rating is still displayed
+            const newAverageRating = screen.getByText("3.0");
+            expect(newAverageRating).toBeDefined();
+
+            // Check that stars are now disabled
+            const stars = screen.getAllByRole("button");
+            expect(stars[0].disabled).toBe(true);
+            expect(stars[2].disabled).toBe(true);
+        });
+});
 
     test("Prevents multiple votes from same user", () => {
         render(<RatingBar initialRating={4} totalRatings={8} initialAverage={3.5} />);
@@ -65,15 +101,27 @@ describe("RatingBar", () => {
         expect(fifthStar.disabled).toBe(true);
     });
 
-    test("Calculates new average rating correctly after vote", () => {
-        render(<RatingBar totalRatings={2} initialAverage={4.0} />);
+    test("Updates display with new average after successful vote", async () => {
+        // Mock what happens after voting
+        ratingService.submitUserRating.mockResolvedValue({ rating: 5 });
+        ratingService.getAllRatingStats.mockResolvedValue({
+            averageRating: 3.7,  // Any different value to show it updated
+            totalRatings: 6
+        });
+
+        render(<RatingBar totalRatings={5} initialAverage={3.0} />);
 
         const fiveStarButton = screen.getByRole("button", { name: "Rate 5 stars" });
         fireEvent.click(fiveStarButton);
 
-        // Original: (4.0 * 2) + 5 = 13, divided by 3 = 4.3
-        const newAverageRating = screen.getByText("4.3");
-        expect(newAverageRating).toBeDefined();
+        await waitFor(() => {
+            // Test that the display updates (not the specific calculation)
+            const updatedRating = screen.getByText("3.7");
+            expect(updatedRating).toBeDefined();
+            
+            // Also test the behavioral changes
+            expect(fiveStarButton.disabled).toBe(true);
+        });
     });
 
     test("Handles mouse hover events when user hasn't voted", () => {
@@ -122,12 +170,12 @@ describe("RatingBar", () => {
         render(<RatingBar initialRating={5} totalRatings={10} initialAverage={4.5} />);
 
         const averageLabel = screen.getByText((_, element) =>
-          element?.classList.contains("has-voted") &&
-          element?.textContent.includes("Average")
+            element?.classList.contains("has-voted") &&
+            element?.textContent.includes("Average")
         );
         const ratingLabel = screen.getByText((_, element) =>
-          element?.classList.contains("has-voted") &&
-          element?.textContent.includes("Rating")
+            element?.classList.contains("has-voted") &&
+            element?.textContent.includes("Rating")
         );
         const averageValue = screen.getByText("4.5");
 
@@ -151,8 +199,15 @@ describe("RatingBar", () => {
         expect(averageValue).toBeDefined();
     });
 
-    test("All props work together correctly", () => {
-        render(<RatingBar initialRating={0} totalRatings={0} initialAverage={0} />);
+    test("All props work together correctly", async () => {
+        // Add mocks for this specific test
+        ratingService.submitUserRating.mockResolvedValue({ rating: 4 });
+        ratingService.getAllRatingStats.mockResolvedValue({
+            averageRating: 4.0,
+            totalRatings: 1
+        });
+        
+        render(<RatingBar/>);
 
         const averageRating = screen.getByText("0.0");
         const stars = screen.getAllByRole("button");
@@ -167,10 +222,12 @@ describe("RatingBar", () => {
         // Test voting functionality
         fireEvent.click(stars[3]);
         
+        await waitFor(() => {
         const newHasVotedIndicator = screen.getByText((_, element) =>
   element?.classList.contains("has-voted") && element?.textContent.includes("Average")
 );
         expect(newHasVotedIndicator).toBeDefined();
         expect(stars[3].disabled).toBe(true);
+        });
     });
 });
