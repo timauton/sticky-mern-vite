@@ -96,4 +96,4 @@ const deleteComment = async (req, res) => {
   }
 };
 
-module.exports = { createComment, getAllComments, getCommentsByMeme, getCommentsById, updateComment, deleteComment}
+module.exports = { createComment, getAllComments, getCommentsByMeme, getCommentsById, updateComment, deleteComment }
