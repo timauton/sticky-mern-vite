@@ -10,7 +10,7 @@ async function getMeme(tags ,token, id) {
     const query = tags ? `?tags=${encodeURIComponent(tags)}` : "";
     if (token) {
         const response = await fetch(`${BACKEND_URL}/memes/${id}${query}`, requestOptions);
-
+        console.log(`${BACKEND_URL}/memes/${id}${query}`)
         if (response.status !==200) {
             throw new Error (`${response.status} Unable to fetch memes`);
         }

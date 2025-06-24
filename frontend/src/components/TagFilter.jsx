@@ -1,14 +1,16 @@
-import { useState } from "react";
+// import { useState } from "react";
 
-export function TagFilter() {
-    const [tags, setTags] = useState("")
+export function TagFilter({ value, onTagChange }) {
 
-    function handleTagsChange(event) {
-        setTags(event.target.value)
-    }
+    console.log(value) // check data being input
     return (
         <form className="tagSearch">
-            <input id="tagInput" type="text" value={tags} onChange={handleTagsChange} placeholder="filter memes by tags" />
+            <input
+            id="tagInput"
+            type="text"
+            value={value}
+            onChange={(e) => onTagChange(e.target.value)}
+            placeholder="filter memes by tags" />
         </form>
     );
 }

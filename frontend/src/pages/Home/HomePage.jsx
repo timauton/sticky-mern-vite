@@ -52,6 +52,9 @@ export function HomePage() {
     setShowTagFilter((prev) => !prev);
   }
 
+  const [tags, setTags] = useState("");
+
+
   // Meme Display
   const [meme, setMeme] = useState([]);
   let lastMeme = useRef(null); // for back button
@@ -141,7 +144,7 @@ export function HomePage() {
           onClick={handleLogOutClick}
         />
       </div>
-      {showTagFilter && <TagFilter />}
+      {showTagFilter && <TagFilter value={tags} onTagChange={setTags}/>}
       <div className="title">Sticky Memes</div>
       <div className="meme-interface">
         {lastMeme !== null ? (<Button

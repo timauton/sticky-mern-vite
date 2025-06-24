@@ -80,11 +80,21 @@ async function deleteMeme(req, res) {
 }
 
 async function getNextMeme(req, res) {
-
     try {
-        const memes = await Meme.aggregate([
-            { $sample: { size:1 } }
-        ]);
+        const tags = req.query.tags?.split(",").map(tag => tag.trim().toLowerCase());
+
+        let memes;
+        if (tags && tags.length > 0) {
+            memes = await Meme.aggregate([
+                { $match: { tags: { $in: tags } } },
+                { $sample: { size:1 } }
+            ]);
+        } else {
+            memes = await Meme.aggregate([
+                { $sample: { size: 1} }
+            ])
+        }
+        
         const meme = memes[0];
 
         const token = generateToken(req.user_id);
