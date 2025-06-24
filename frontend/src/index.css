@@ -22,6 +22,7 @@ body {
   align-items: center;
   min-width: 320px;
   min-height: 100vh;
+  height: auto;
 }
 
 
@@ -41,7 +42,7 @@ body {
 }
 
 .background-area{
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
@@ -55,6 +56,48 @@ body {
   align-items: center;
   position: relative;
   z-index: 1;
+  width: 100%;
+  min-height: 100%;
+}
+
+.row {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  align-items: stretch;
+}
+
+.column-view-left,
+.column-view-middle,
+.column-view-right {
+  height: auto;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.column-view-left,
+.column-view-right {
+  flex: 1; /* 20% ratio */
+  background-color: #000000AE;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.column-view-middle {
+  flex: 3; /* 60% ratio */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #00ff00;
+  position: relative;
+}
+
+.meme-tags-title {
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff
 }
 
 /* signup link text */
@@ -124,21 +167,33 @@ body {
 /* meme formatting. Height will adjust to image OG max size without exceeding a width 
 of 900px to keep the ratings bar snug to the image bottom regardless of proportions*/
 .image-container {
-  padding: 0 5rem;
+  position: relative;
+  padding-top: 0.5rem;
+  padding-left: 80px;
+  padding-right: 80px;
   margin: 0 auto;
   display: flex;
   width: 100%;
-  max-width: 900px;
-  max-height: 500px;
+  max-width: 700px;
+  max-height: none;
   justify-content: center;
+  align-items: center;
   box-sizing: border-box;
+}
+
+.image-wrapper {
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position:relative;
 }
 
 .responsive-image {
   display: block;
   border-radius: 2rem;
   border: 6px solid #000000;
-  max-width: 100%;
+  max-width: 60%;
   width: auto;
   height: auto;
   object-fit: contain; 
@@ -193,37 +248,49 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   z-index: 1;
 }
 
-.meme-interface {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 100%;
-  padding: 0 1rem;
+.back-and-forth.left {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: none;
+  margin-right: 100px;
 }
 
-.back-and-forth {
-  background-color: #ffffff00;
-  border: 0px solid #000000;
-  aspect-ratio: 1/1;
-  padding: 0;
+.back-and-forth.right {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: none;
+  margin-left: 100px;
 }
 
 .back-and-forth img {
-  max-width: 95px;
-  max-height: 95px;
+  width: 60px;
+  height: 60px;
 }
 
-/* MEME DISPLAY STYLING */
+
+/* START OF MEME DISPLAY STYLING */
 .meme-container h1 {
   font-size: 3rem;
   color: #ffffff;
   text-shadow: 4px 4px #000000;
+  text-align: left;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding-left: px;
+  box-sizing: border-box;
+  text-align: center;
 }
+/* END OF MEME DISPLAY STYLING */
 
 /* END OF LOGGED IN SPECIFIC FORMATTING */
 
+
 /* START OF RATINGS BAR STYLING */
-.rating-bar-container {
+.rating-bar-container,
+.button-box {
   display: flex;
   align-items: center;
   background-color: #ffffff;
@@ -371,4 +438,6 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   right: 0;
   min-width: 300px;
 }
+
+
 

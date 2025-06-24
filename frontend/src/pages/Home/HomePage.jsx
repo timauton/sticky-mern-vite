@@ -73,7 +73,6 @@ export function HomePage() {
     <>
       <div className="background-image"></div>
       <div className="background-area">
-        <div className="view">
           <div className="top-banner">
           <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
           {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
@@ -89,7 +88,6 @@ export function HomePage() {
           {/* <div className="rating-bar-div">
             <RatingBar />
           </div> */} {/* Moved to logged in render */}
-        </div>
       </div>
   </>
   );
@@ -97,55 +95,67 @@ export function HomePage() {
   return (
     <>
       <div className="background-image"></div>
-      <div className="top-banner">
-        <Button
-          className="filter-by-tags-button"
-          buttonText="Filter Memes"
-        />
-        <Button
-          className="stats-nav-button"
-          buttonText={"My\nStats"} // other text is available
-          onClick={() => navigate("/stats")}
-        />
-        <Button
-          className="logout-button"
-          buttonText="Log Out"
-          onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
-        />
-      </div>
-      <div className="title">Sticky Memes</div>
-{/* Start of the column layout */}
-      <div className="row">
-        <div className="column-view-left"></div>
-        <div className="column-view-middle">
-          <div className="meme-interface">
-            {lastMeme !== null ? (<Button
-              className="back-and-forth"
-              buttonImage="./left-arrow.png"
-              onClick={handleBackClick}
-            />) : (
-              <Button
-              className="back-and-forth"
-              buttonImage="./left-arrow.png"
-              disabled={true}>
-              </Button>
-            )}
-            <MemeDisplay
-              meme={meme}
+        <div className="background-area">
+          <div className="top-banner">
+            <Button
+              className="filter-by-tags-button"
+              buttonText="Filter Memes"
             />
             <Button
-              className="back-and-forth"
-              buttonImage="./right-arrow.png"
-              onClick={handleNextClick}
+              className="stats-nav-button"
+              buttonText={"My\nStats"} // other text is available
+              onClick={() => navigate("/stats")}
+            />
+            <Button
+              className="logout-button"
+              buttonText="Log Out"
+              onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
             />
           </div>
+          <div className="title">Sticky Memes</div>
+    {/* Start of the column layout */}
+          <div className="row">
+            <div className="column-view-left">
+              <div className="meme-tags">
+                <p className="meme-tags-title">Tagged:
+                  {Array.isArray(meme.tags) && meme.tags.map( (tag, index) => {
+                    return <span className="meme-tag" key={index}>{tag} </span>
+                  })}
+                </p>
+              </div>
+            </div>
+            <div className="column-view-middle">
+              <div className="meme-interface">
+                <MemeDisplay
+                  meme={meme}
+                />
+              </div>
+              <div className="button-box">
+                {lastMeme !== null ? (<Button
+                  className="back-and-forth left"
+                  buttonImage="./left-arrow.png"
+                  onClick={handleBackClick}
+                />) : (
+                  <Button
+                  className="back-and-forth left"
+                  buttonImage="./left-arrow.png"
+                  disabled={true}>
+                  </Button>
+                )}
+                  <Button
+                  className="back-and-forth right"
+                  buttonImage="./right-arrow.png"
+                  onClick={handleNextClick}
+                />
+              </div>
+            </div>
+            <div className="column-view-right">
+              <div className="meme-upload-button-wrapper">
+                <MemeUploadButton />
+              </div>
+          </div>
         </div>
-        <div className="column-view-right">
-          <div className="meme-upload-button-wrapper">
-            <MemeUploadButton />
-          </div>
-          </div>
-      </div>
+      </div>  
     </>
   );
 }

@@ -11,13 +11,6 @@ const MemeDisplay = (props) => {
             <div className="image-container">
                 <img src={`${backendURL}/${props.meme.img}`} className="responsive-image" alt={props.meme.title} />
             </div>
-            <div className="meme-tags">
-                <p className="meme-tags-title">Tagged:
-                    {Array.isArray(props.meme.tags) && props.meme.tags.map( (tag, index) => {
-                        return <span className="meme-tag" key={index}>{tag} </span>
-                    })}
-                </p>
-            </div>
             <div className="rating-bar-div">
                 <RatingBar />
             </div>
