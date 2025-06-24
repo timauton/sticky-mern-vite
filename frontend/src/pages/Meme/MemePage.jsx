@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import getMeme from "../../services/memeSelector"
+import MemeDisplay from "../../components/MemeDisplay";
 
 const MemePage = () => {
     // Get meme ID from URL
@@ -27,7 +28,11 @@ const MemePage = () => {
     }
     
     // Display the meme title (simplest possible)
-    return <div>{meme.title}</div>;
+    return(
+        <div>
+            <MemeDisplay meme={meme} />
+        </div>
+    )
 };
 
 export default MemePage;
