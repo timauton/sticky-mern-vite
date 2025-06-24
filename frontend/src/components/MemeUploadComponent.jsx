@@ -81,56 +81,59 @@ const MemeUpload = () => {
             <div className="meme-upload-title">
                 <h3>Upload your meme</h3>
             </div>
-            
-            <form 
-              className="meme-upload-form" 
-              onSubmit={handleSubmit}
-              aria-label="Upload meme form">
-              
-              <input 
-                type="text" 
-                placeholder="Meme title" 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-                data-testid="title-input"
-                aria-label="Meme title"/>
-      
-              <input 
-                type="text" 
-                placeholder="Tags" 
-                value={tags} 
-                onChange={(e) => setTags(e.target.value)} 
-                data-testid="tags-input"
-                aria-label="Tags"/>
+            <div className="form-holder">
+              <form 
+                className="meme-upload-form" 
+                onSubmit={handleSubmit}
+                aria-label="Upload meme form">
+                
+                <input 
+                  type="text" 
+                  placeholder="Meme title" 
+                  value={title} 
+                  onChange={(e) => setTitle(e.target.value)} 
+                  data-testid="title-input"
+                  aria-label="Meme title"/>
 
-              <input 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleFileChange} 
-                  ref={fileInputRef} 
-                  data-testid="file-input"
-                  aria-label="Choose meme image file"
-                  required/>
-        
-              <input 
-                  type="submit" 
-                  disabled={!image || imageError} 
-                  data-testid="submit-button"
-                  value="Upload Meme"
-                  aria-label="Upload meme to randomizer"
-              />
-        
-              <div aria-live="polite"> 
-                  {isSuccess && (
-                      <div 
-                          className="success-message"
-                          role="status"
-                          aria-label="Upload successful">
-                          ✨✨🥳 Your meme is now in the RANDOMIZER! 🥳✨✨
-                      </div>
-                  )}                       
-              </div>
-            </form>
+                <br />
+
+                <input 
+                  type="text" 
+                  placeholder="Tags" 
+                  value={tags} 
+                  onChange={(e) => setTags(e.target.value)} 
+                  data-testid="tags-input"
+                  aria-label="Tags"/>
+
+                <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleFileChange} 
+                    ref={fileInputRef} 
+                    data-testid="file-input"
+                    aria-label="Choose meme image file"
+                    required/>
+          
+                <input 
+                    type="submit" 
+                    disabled={!image || imageError} 
+                    data-testid="submit-button"
+                    value="Upload Meme"
+                    aria-label="Upload meme to randomizer"
+                />
+          
+                <div aria-live="polite"> 
+                    {isSuccess && (
+                        <div 
+                            className="success-message"
+                            role="status"
+                            aria-label="Upload successful">
+                            ✨✨🥳 Your meme is now in the RANDOMIZER! 🥳✨✨
+                        </div>
+                    )}                       
+                </div>
+              </form>
+            </div>
         </div>
     )
 };
