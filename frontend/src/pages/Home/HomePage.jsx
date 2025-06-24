@@ -52,7 +52,7 @@ export function HomePage() {
     setShowTagFilter((prev) => !prev);
   }
 
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState([]);
 
 
   // Meme Display
@@ -63,6 +63,7 @@ export function HomePage() {
     if (isLoggedIn) {
       updateMeme("next");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn])
 
   // Back and forth buttons
@@ -71,7 +72,7 @@ export function HomePage() {
       return;
     }
     const token = localStorage.getItem("token");
-    getMeme(tags, token, id).then((data) => {
+    getMeme(tags.join(","), token, id).then((data) => {
       setMeme(data.meme);
     })
   }
