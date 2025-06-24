@@ -105,7 +105,26 @@ async function getNextMeme(req, res) {
         token = generateToken(req.user_id);
 
         const memes = await Meme.aggregate([
-            { $sample: { size:1 } }
+            // match with the Ratings schema
+            { $lookup: {
+                    from: 'ratings',
+                    localField: '_id',
+                    foreignField: 'meme',
+                    as: 'ratings'
+                }
+            },
+            // exclude the ones this user has rated
+            { $match: {
+                    'ratings.user': {
+                        $ne: new mongoose.Types.ObjectId(req.user_id)
+                    }
+                }
+            },
+            // pick one at random
+            { $sample: {
+                    size:1
+                }
+            }
         ]);
         const meme = memes[0];
 
