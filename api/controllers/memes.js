@@ -1,4 +1,6 @@
 const Meme = require("../models/meme");
+const User = require("../models/user");
+const Rating = require("../models/rating");
 const { generateToken } = require("../lib/token");
 const fs = require('fs').promises;
 const mongoose = require('mongoose');
@@ -104,29 +106,12 @@ async function getNextMeme(req, res) {
     try {
         token = generateToken(req.user_id);
 
-        const memes = await Meme.aggregate([
-            // match with the Ratings schema
-            { $lookup: {
-                    from: 'ratings',
-                    localField: '_id',
-                    foreignField: 'meme',
-                    as: 'ratings'
-                }
-            },
-            // exclude the ones this user has rated
-            { $match: {
-                    'ratings.user': {
-                        $ne: new mongoose.Types.ObjectId(req.user_id)
-                    }
-                }
-            },
-            // pick one at random
-            { $sample: {
-                    size:1
-                }
-            }
-        ]);
-        const meme = memes[0];
+        // get this user's ratings
+        const nextTag = await getNextRandomMemeTag(req.user_id);
+        console.log("Next tag is: " + nextTag);
+
+        // get any random meme
+        const meme = await getRandomUnratedMeme(req.user_id);
 
         res.status(200).json({ meme: meme, token: token });
     }
@@ -206,6 +191,117 @@ async function getMemesByTags(req, res) {
         console.error(err);
         res.status(400).json({ message: "Error finding memes", token: token });
     }
+
+}
+
+async function getRandomUnratedMeme(user_id) {
+    const memes = await Meme.aggregate([
+        // match with the Ratings schema
+        { $lookup: {
+                from: 'ratings',
+                localField: '_id',
+                foreignField: 'meme',
+                as: 'ratings'
+            }
+        },
+        // exclude the ones this user has rated
+        { $match: {
+                'ratings.user': {
+                    $ne: new mongoose.Types.ObjectId(user_id)
+                }
+            }
+        },
+        // pick one at random
+        { $sample: {
+                size:1
+            }
+        }
+    ]);
+    const meme = memes[0];
+
+    return meme;
+}
+
+async function getRatedTags(user_id) {
+
+    const tags = await Rating.aggregate([
+
+        // filter to just the user's ratings
+        { $match: {"user": new mongoose.Types.ObjectId(user_id) } },
+        // match with the meme schema
+        { $lookup: {
+                from: 'memes',
+                localField: 'meme',
+                foreignField: '_id',
+                as: 'meme'
+            }
+        },
+        // unwind to expand out so we get one row per meme+tag
+        { $unwind: "$meme" },
+        { $unwind: "$meme.tags" },
+        // project so we only get the fields we want
+        { $project: {
+                tag: "$meme.tags",
+                rating: "$rating"
+            }
+        },
+        // group by tag and do the maths
+        { $group: {
+                _id: "$tag",
+                count: { $count: {} },
+                avg: { $avg: "$rating" }
+            }
+        }
+    ]);
+
+    console.log(tags);
+
+    return tags;
+}
+
+async function getNextRandomMemeTag(user_id) {
+
+    // we add up all the ratings to get a total rating score
+    // then we add 20% to ensure a user doesn't always see the same memes
+    // then we pick a random number between 0 and the total score
+    // we work through the array starting at the highest rating and stop
+    // when we get to the random number
+
+    // Eg. a user has rated cats 5* and programming 1*
+    // Total number will be ( 5 + 1 ) * 1.2 = 7.2
+    // 3 would be cats
+    // 5.5 would be programming
+    // 6.4 would be random
+
+    // I have no idea how well this works in practice, but it does bias
+    // results towards the memes users like
+
+    // 1.25 here would give a 20% chance of totally random meme
+    const randomUnratedTagMultiplier = 1.25;
+
+    let totalRating = 0;
+    const ratedTags = await getRatedTags(user_id);
+
+    ratedTags.forEach((tag) => totalRating += tag.avg );
+
+    tagPickNumber = Math.random() * totalRating * randomUnratedTagMultiplier;
+
+    console.log("Pick number is: " + tagPickNumber);
+    console.log("Total rating is: " + totalRating);
+
+    nextTag = "";
+
+    for (const tag of ratedTags) {
+        tagPickNumber -= tag.avg;
+        if (tagPickNumber < 0) {
+            nextTag = tag._id;
+            break;
+        }
+    }
+
+    console.log(nextTag);
+
+    return nextTag;
 
 }
 
