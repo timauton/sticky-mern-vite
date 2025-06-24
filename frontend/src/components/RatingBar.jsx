@@ -1,24 +1,71 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getAllRatingStats, getUserRating, submitUserRating } from '../services/ratingsService';
 
-export const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage = 0 }) => {
+export const RatingBar = ({ meme_id: meme, initialRating = 0, totalRatings = 0, initialAverage = 0 }) => {
   const [userRating, setUserRating] = useState(initialRating);
   const [hoveredStar, setHoveredStar] = useState(0);
   const [hasVoted, setHasVoted] = useState(initialRating > 0);
   const [averageRating, setAverageRating] = useState(initialAverage);
   const [ratingCount, setRatingCount] = useState(totalRatings);
 
-  const handleStarClick = (rating) => {
+  useEffect(() => {
+    const loadRatingData = async () => {
+      if (!meme) return;
+      
+      try {
+        // Reset state when meme changes
+        setUserRating(0);
+        setHasVoted(false);
+        setHoveredStar(0);
+        setAverageRating(0);
+        
+        // Fetch stats first (this should always work)
+        const statsData = await getAllRatingStats(meme);
+        setAverageRating(statsData.averageRating);
+        setRatingCount(statsData.totalRatings);
+        
+        // Try to fetch user rating (might not exist)
+        try {
+          const userRatingData = await getUserRating(meme);
+          if (userRatingData.rating && userRatingData.rating > 0) {
+            setUserRating(userRatingData.rating);
+            setHasVoted(true);
+          } else {
+            setUserRating(0);
+            setHasVoted(false)
+          }
+        } catch (userRatingError) {
+          // User hasn't rated yet - this is expected, not an error
+          if (userRatingError.message !== 'No meme found') {
+            console.log('User has not rated this meme yet');
+          }
+        }
+        
+      } catch (error) {
+        console.error('Failed to load rating data:', error);
+        // Keep the initial values if there's an error
+      } 
+    };
+
+    loadRatingData();
+  }, [meme]);
+
+  
+  const handleStarClick = async (rating) => {
     if (!hasVoted) {
-      setUserRating(rating);
-      setHasVoted(true);
-      
-      // Calculate new average (basic simulation)
-      const newTotal = (averageRating * ratingCount) + rating;
-      const newCount = ratingCount + 1;
-      const newAverage = newTotal / newCount;
-      
-      setAverageRating(newAverage);
-      setRatingCount(newCount);
+      try {
+        await submitUserRating(meme, rating) 
+        setUserRating(rating);
+        setHasVoted(true);
+
+        const statsData = await getAllRatingStats(meme)
+        if (statsData) {
+          setAverageRating(statsData.averageRating);
+          setRatingCount(statsData.totalRatings);
+        }
+      } catch (error) {
+        console.error('Failed to submit rating: ', error);
+      }
     }
   };
 
@@ -34,7 +81,7 @@ export const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage 
     }
   };
 
-  //integrated styling for reactive render
+  // Styling functions
   const getStarFill = (starIndex) => {
     if (hasVoted) {
       return starIndex <= userRating ? '#ff0f5c' : 'none';
@@ -48,17 +95,17 @@ export const RatingBar = ({ initialRating = 0, totalRatings = 0, initialAverage 
     return starIndex <= hoveredStar ? 'text-yellow-400' : 'text-gray-300';
   };
 
-
   return (
     <div className="rating-bar-container">
       {/* Average Rating Display */}
       <div className="info-box">
-              {/* User Status */}
-      {hasVoted && (
-        <div className="has-voted">Average<br />Rating</div>
-      )}
+        {/* User Status */}
+        {hasVoted && (
+          <div className="has-voted">Average<br />Rating</div>
+        )}
+        
         <div className="average-rating">
-          {averageRating > 0 ? averageRating.toFixed(1) : '0.0'}
+          {hasVoted ? averageRating.toFixed(1) : '0.0'}
         </div>
       </div>
 

@@ -22,7 +22,8 @@ export function HomePage() {
   const updateMeme = (id) => {
     const token = localStorage.getItem("token");
     getMeme(token, id).then((data) => {
-      setMeme(data.meme)
+      setMeme(data.meme);
+      localStorage.setItem("token", data.token);
     })
   }
 
