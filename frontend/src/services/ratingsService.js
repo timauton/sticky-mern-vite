@@ -12,7 +12,7 @@ export const getAllRatingStats = async (meme_id) => {
     // Sends off the form data to the route /memes/stats. And stores response
     const response = await fetch(`${BACKEND_URL}/ratings/meme/${meme_id}/stats`, requestOptions)
 
-    if (response.status !==200) {
+    if (response.status !== 200) {
         throw new Error ('Unable to fetch stats');
     }
 
@@ -34,7 +34,7 @@ export const submitUserRating = async(meme_id, rating) => {
     const response = await fetch(`${BACKEND_URL}/ratings`, requestOptions)
 
     if (response.status !==201) {
-        throw new Error ('Unable to fetch ratings');
+        throw new Error ('Unable to submit rating');
     }
 
     const data = await response.json();
