@@ -1,27 +1,71 @@
-import Button from "../../components/ButtonComponent"
-import { useState, useEffect, useRef } from "react"
-import { Login } from "../../components/Login"
-import { Signup } from "../../components/Signup"
-import MemeDisplay from "../../components/MemeDisplay"
-import MemeUploadButton from "../../components/MemeUploadButtonComponent"
-import { useNavigate } from "react-router-dom"
-import getMeme from "../../services/memeSelector"
-
+import Button from "../../components/ButtonComponent";
+import { useState, useEffect, useRef } from "react";
+import { Login } from "../../components/Login";
+import { Signup } from "../../components/Signup";
+import MemeDisplay from "../../components/MemeDisplay";
+// import { RatingBar } from "../../components/RatingBar";
+import MemeUploadButton from "../../components/MemeUploadButtonComponent";
+import { useNavigate } from "react-router-dom";
+import getMeme from "../../services/memeSelector";
+import { TagFilter } from "../../components/TagFilter"
 import "../../index.css";
 
-// logged out render
 export function HomePage() {
+  // Login function
+  const [showLogin, setShowLogin] = useState(false);
+  const handleLoginClick = () => {
+    setShowLogin((prev) => !prev);
+    setShowSignup(false);
+  };
+
+  // Log out function
+  const handleLogOutClick = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+  }
+
+  // Signup function
+  const [showSignup, setShowSignup] = useState(false);
+  const handleSignupClick = () => {
+    setShowSignup((prev) => !prev);
+    setShowLogin(false);
+  };
+
+  // This function will be passed to the Signup component
+  const handleSignupSuccess = () => {
+    setShowSignup(false); // Hide form
+    setShowLogin(true); // Show login form
+  };
+  
+  // For conditional rendering of page
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
+    setIsLoggedIn(true);
+  };
+
+  // Filter by tags
+  const [showTagFilter, setShowTagFilter] = useState(false);
+  const handleTagFilter = () => {
+    setShowTagFilter((prev) => !prev);
+  }
+
+  const [tags, setTags] = useState([]);
+
   // Meme Display
   const [meme, setMeme] = useState([]);
   let lastMeme = useRef(null);
   useEffect(() => {
-    updateMeme("next");
-  }, [])
+    if (isLoggedIn) {
+      updateMeme("next");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn])
 
   // Back and forth buttons
   const updateMeme = (id) => {
     const token = localStorage.getItem("token");
-    getMeme(token, id).then((data) => {
+    getMeme(tags.join(","), token, id).then((data) => {
       setMeme(data.meme);
       localStorage.setItem("token", data.token);
     })
@@ -39,33 +83,8 @@ export function HomePage() {
       lastMeme.current = null;
     }
   }
-
-  // Login function
-  const [showLogin, setShowLogin] = useState(false);
-  const handleLoginClick = () => {
-    setShowLogin((prev) => !prev);
-    setShowSignup(false)
-  };
-
-  // Signup function
-  const [showSignup, setShowSignup] = useState(false);
-  const handleSignupClick = () => {
-    setShowSignup((prev) => !prev);
-    setShowLogin(false)
-  };
-
-  // This function will be passed to the Signup component
-  const handleSignupSuccess = () => {
-    setShowSignup(false); // Hide form
-    setShowLogin(true); // Show login form
-  };
   
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-
-  const handleLoginSuccess = () => {
-    setShowLogin(false)
-    setIsLoggedIn(true)
-  };
 
   const navigate = useNavigate();
   
@@ -98,6 +117,7 @@ export function HomePage() {
             <Button
               className="filter-by-tags-button"
               buttonText="Filter Memes"
+              onClick={handleTagFilter}
             />
             <Button
               className="stats-nav-button"
@@ -107,7 +127,7 @@ export function HomePage() {
             <Button
               className="logout-button"
               buttonText="Log Out"
-              onClick={() => {localStorage.removeItem("token"); setIsLoggedIn(false);}}
+              onClick={handleLogOutClick}
             />
           </div>
           <div className="title">Sticky Memes</div>
@@ -120,6 +140,7 @@ export function HomePage() {
                     return <span className="meme-tag" key={index}>{tag} </span>
                   })}
                 </p>
+                {showTagFilter && <TagFilter value={tags} onTagChange={setTags}/>}
               </div>
             </div>
             <div className="column-view-middle">
