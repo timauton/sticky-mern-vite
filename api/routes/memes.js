@@ -36,4 +36,5 @@ router.post("/", tokenChecker, uploadConfigs.memes.single("image"), handleUpload
 // deletes a meme and deletes the file from the uploads fodler
 router.delete("/:meme_id", tokenChecker, MemesController.deleteMeme);
 
+
 module.exports = router;

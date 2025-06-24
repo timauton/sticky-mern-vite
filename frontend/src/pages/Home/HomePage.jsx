@@ -3,14 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import { Login } from "../../components/Login";
 import { Signup } from "../../components/Signup";
 import MemeDisplay from "../../components/MemeDisplay";
-import { RatingBar } from "../../components/RatingBar";
+// import { RatingBar } from "../../components/RatingBar";
 import MemeUploadButton from "../../components/MemeUploadButtonComponent";
 import { useNavigate } from "react-router-dom";
 import getMeme from "../../services/memeSelector";
-
+import { TagFilter } from "../../components/TagFilter"
 import "../../index.css";
 
-// logged out render
 export function HomePage() {
   // Login function
   const [showLogin, setShowLogin] = useState(false);
@@ -45,23 +44,28 @@ export function HomePage() {
     setIsLoggedIn(true);
   };
 
+  // Filter by tags
+  const [showTagFilter, setShowTagFilter] = useState(false);
+  const handleTagFilter = () => {
+    setShowTagFilter((prev) => !prev);
+  }
+
+  const [tags, setTags] = useState([]);
+
   // Meme Display
   const [meme, setMeme] = useState([]);
-  let lastMeme = useRef(null); // for back button
-  let nextMeme = useRef(null); // for forwards button after having pressed back
+  let lastMeme = useRef(null);
   useEffect(() => {
     if (isLoggedIn) {
       updateMeme("next");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn])
 
   // Back and forth buttons
   const updateMeme = (id) => {
-    if (!isLoggedIn) {
-      return;
-    }
     const token = localStorage.getItem("token");
-    getMeme(token, id).then((data) => {
+    getMeme(tags.join(","), token, id).then((data) => {
       setMeme(data.meme);
       localStorage.setItem("token", data.token);
     })
@@ -69,15 +73,11 @@ export function HomePage() {
 
   const handleNextClick = () => {
     lastMeme.current = meme;
-    if (nextMeme.current) {
-      updateMeme(nextMeme.current._id)
-      nextMeme.current = null;
-    }
+    console.log("LAST MEME", lastMeme)
     updateMeme("next");
   }
 
   const handleBackClick = () => {
-    nextMeme.current = meme // sets 'next' button to be previously seen meme
     if (lastMeme.current) {
       updateMeme(lastMeme.current._id);
       lastMeme.current = null;
@@ -91,8 +91,7 @@ export function HomePage() {
     <>
       <div className="background-image"></div>
       <div className="background-area">
-        <div className="view">
-          <div className="signup-and-login">
+          <div className="top-banner">
           <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
           {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
                         </div>}
@@ -101,13 +100,9 @@ export function HomePage() {
           <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
           </div>
           <div className="title">Sticky Memes</div>
-          <div className="image-container">TEXT
+          <div className="image-container">
             <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
           </div>
-          <div className="rating-bar-div">
-            <RatingBar />
-          </div>
-        </div>
       </div>
   </>
   );
@@ -115,47 +110,71 @@ export function HomePage() {
   return (
     <>
       <div className="background-image"></div>
-      <div className="top-banner">
-        <Button
-          className="filter-by-tags-button"
-          buttonText="Filter Memes"
-        />
-        <div className="meme-upload-button-wrapper">
-          <MemeUploadButton />
+        <div className="background-area">
+          <div className="top-banner">
+            <Button
+              className="filter-by-tags-button"
+              buttonText="Filter Memes"
+              onClick={handleTagFilter}
+            />
+            <Button
+              className="stats-nav-button"
+              buttonText={"My\nStats"} // other text is available
+              onClick={() => navigate("/stats")}
+            />
+            <Button
+              className="logout-button"
+              buttonText="Log Out"
+              onClick={handleLogOutClick}
+            />
+          </div>
+          <div className="title">Sticky Memes</div>
+    {/* Start of the column layout */}
+          <div className="row">
+            <div className="column-view-left">
+              <div className="meme-tags">
+                <p className="meme-tags-title">Tagged:
+                  {Array.isArray(meme.tags) && meme.tags.map( (tag, index) => {
+                    return <span className="meme-tag" key={index}>{tag} </span>
+                  })}
+                </p>
+                {showTagFilter && <TagFilter value={tags} onTagChange={setTags}/>}
+              </div>
+            </div>
+            <div className="column-view-middle">
+              <div className="meme-interface">
+                <MemeDisplay
+                  meme={meme}
+                />
+              </div>
+              <div className="button-box">
+                {lastMeme !== null ? (<Button
+                  className="back-and-forth left"
+                  buttonImage="./left-arrow.png"
+                  onClick={handleBackClick}
+                />) : (
+                  <Button
+                  className="back-and-forth left"
+                  buttonImage="./left-arrow.png"
+                  disabled={true}>
+                  </Button>
+                )}
+                  <Button
+                  className="back-and-forth right"
+                  buttonImage="./right-arrow.png"
+                  onClick={handleNextClick}
+                />
+              </div>
+            </div>
+            <div className="column-view-right">
+              <div className="meme-upload-button-wrapper">
+                <MemeUploadButton />
+              </div>
+          </div>
         </div>
-        <Button
-          className="stats-nav-button"
-          buttonText="My Stats" // other text is available
-          onClick={() => navigate("/stats")}
-        />
-        <Button
-          className="logout-button"
-          buttonText="Log Out"
-          onClick={handleLogOutClick}
-        />
-      </div>
-      <div className="title">Sticky Memes</div>
-      <div className="meme-interface">
-        {lastMeme !== null ? (<Button
-          className="back-and-forth"
-          buttonText="<"
-          onClick={handleBackClick}
-        />) : (
-          <Button
-          className="back-and-forth"
-          buttonText="<"
-          disabled={true}/>
-        )}
-        <MemeDisplay
-          meme={meme}
-        />
-        <Button
-          className="back-and-forth"
-          buttonText=">"
-          onClick={handleNextClick}
-        />
-      </div>
+      </div>  
     </>
   );
 }
+
 

@@ -7,7 +7,8 @@ const Button = ({
     ariaHidden, // set to true if image is purely decorative
     disabled,
     type="button", // by default, but can be overridden
-    ariaLabel
+    ariaLabel,
+    style 
 }) => {
 return (
     <button
@@ -16,6 +17,7 @@ return (
         disabled={disabled}
         type={type}
         aria-label={ariaLabel}
+        style={style} 
     >
         {buttonImage && 
         <img

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MemeUpload from "./MemeUploadComponent";
 
+
 const MemeUploadButton = () => {
   // Controls whether the form is visible
   const [isVisible, setIsVisible] = useState(false);

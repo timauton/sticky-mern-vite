@@ -98,15 +98,23 @@ async function deleteMeme(req, res) {
 }
 
 async function getNextMeme(req, res) {
-
     let token;
-
     try {
         token = generateToken(req.user_id);
+        const tags = req.query.tags?.split(",").map(tag => tag.trim().toLowerCase());
 
-        const memes = await Meme.aggregate([
-            { $sample: { size:1 } }
-        ]);
+        let memes;
+        if (tags && tags.length > 0) {
+            memes = await Meme.aggregate([
+                { $match: { tags: { $all: tags } } },
+                { $sample: { size:1 } }
+            ]);
+        } else {
+            memes = await Meme.aggregate([
+                { $sample: { size: 1} }
+            ])
+        }
+
         const meme = memes[0];
 
         res.status(200).json({ meme: meme, token: token });
@@ -190,6 +198,18 @@ async function getMemesByTags(req, res) {
 
 }
 
+async function getAllTags(req, res) {
+
+    try {
+        const tags = await Meme.distinct("tags");
+        res.status(200).json({ tags: tags });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Failed to fetch tags"})
+    }
+
+}
+
 const MemesController = {
     getAllMemes: getAllMemes,
     getMemeByID: getMemeByID,
@@ -198,7 +218,8 @@ const MemesController = {
     getNextMeme, getNextMeme,
     getMemesCreatedByUser, getMemesCreatedByUser,
     getMemesRatedByUser, getMemesRatedByUser,
-    getMemesByTags, getMemesByTags
+    getMemesByTags, getMemesByTags,
+    getAllTags, getAllTags
 };
 
 module.exports = MemesController;
