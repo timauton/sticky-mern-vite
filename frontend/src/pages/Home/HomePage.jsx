@@ -83,8 +83,6 @@ export function HomePage() {
       lastMeme.current = null;
     }
   }
-  
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   const navigate = useNavigate();
   
