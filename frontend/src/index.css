@@ -15,16 +15,6 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
   display: flex;
@@ -32,6 +22,7 @@ body {
   align-items: center;
   min-width: 320px;
   min-height: 100vh;
+  height: auto;
 }
 
 
@@ -51,11 +42,14 @@ body {
 }
 
 .background-area{
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  padding-left: 20px;
+  padding-right: 20px;
+  width: 100%;
   height: 100vh;
+  box-sizing: border-box;
 }
 
 .stats-page-wrapper,
@@ -65,10 +59,51 @@ body {
   align-items: center;
   position: relative;
   z-index: 1;
+  width: 100%;
+  min-height: 100%;
 }
 
-/* bounding box for signup and login upper buttons and info input */
-/* .signup-and-login {
+
+.row {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  align-items: stretch;
+}
+
+.column-view-left,
+.column-view-middle,
+.column-view-right {
+  height: auto;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.column-view-left,
+.column-view-right {
+  flex: 1; /* 20% ratio */
+  background-color: #000000AE;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.column-view-middle {
+  flex: 3; /* 60% ratio */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #000000AE;
+  position: relative;
+}
+
+.meme-tags-title {
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff
+}
+
 
 /* signup link text */
 .signup-button {
@@ -77,6 +112,7 @@ body {
   left: 0px;
   padding: 10px;
   border: 4px solid #000000;
+  box-shadow: 2px 2px 2px rgba(0,0,0,1);
   z-index: 1;
 }
 
@@ -88,6 +124,7 @@ body {
   line-height: 1.6rem;
   background-color: #ffffff;
   border: 4px solid #000000;
+  box-shadow: 2px 2px 2px rgba(0,0,0,1);
 }
 
 .email-input {
@@ -106,6 +143,7 @@ body {
   padding: 10px;
   background-color: #ffffff;
   border: 4px solid #000000;
+  box-shadow: 2px 2px 2px rgba(0,0,0,1);
 }
 
 .login-submit-button {
@@ -118,40 +156,54 @@ body {
   right: 0px;
   padding: 10px;
   border: 4px solid #000000;
+  box-shadow: 2px 2px 2px rgba(0,0,0,1);
   z-index: 1;
 }
 
-.title {
+.title, .stats-title {
   font-size: 5rem;
-  /* font-weight: bold; */
   font-family: CandySeason, sans-serif;
+  text-shadow: 6px 6px 2px #000000;
   color: #01b9e8;
   -webkit-text-stroke-width: 5px;
   -webkit-text-stroke-color: #000000;
   line-height: 1.1;
   text-align: center;
   margin: 1.5rem;
-  margin-top: calc(2rem + 20px + 40px);
+  margin-top: calc(2rem + 40px);
 }
 
 /* meme formatting. Height will adjust to image OG max size without exceeding a width 
-of 900px to keep the ratings bar snug to the image bottom regardless of proportions*/
+of 12 to keep the ratings bar snug to the image bottom regardless of proportions*/
+
 .image-container {
-  padding: 0 5rem;
+  position: relative;
+  padding-top: 0.5rem;
+  padding-left: 10px;
+  padding-right: 10px;
   margin: 0 auto;
   display: flex;
-  width: 100%;
-  max-width: 900px;
-  max-height: 500px;
+  width: 60%;
+  max-width: 800px;
+  max-height: none;
   justify-content: center;
+  align-items: center;
   box-sizing: border-box;
+}
+
+.image-wrapper {
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position:relative;
 }
 
 .responsive-image {
   display: block;
   border-radius: 2rem;
   border: 6px solid #000000;
-  max-width: 100%;
+  max-width: 60%;
   width: auto;
   height: auto;
   object-fit: contain; 
@@ -161,7 +213,7 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 .rating-bar-div {
   width: 100vw;
   height: 6rem;
-  max-width: 900px;
+  max-width: 12;
   margin: 1rem auto;
   padding: 1px;
   box-sizing: border-box;
@@ -184,16 +236,18 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 }
 
 .stats-nav-button {
-  font-size: 1rem;
+  background-color: #00ff00;
+  font-size: 1.1rem;
+  white-space: pre-line;
   position: absolute;
   right: 150px;
-  padding: 1px;
-  padding-top: 21px;
-  padding-bottom: 21px;
+  aspect-ratio: 1/1;  
+  padding: 9px;
   border: 4px solid #000000;
-  border-radius: 100%;
+  border-radius: 50%;
   z-index: 1;
 }
+
 
 .logout-button {
   font-size: 2rem;
@@ -204,31 +258,45 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
   z-index: 1;
 }
 
-.meme-interface {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 100%;
-  padding: 0 1rem;
+.back-and-forth.left {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: none;
+  margin-right: 110px;
 }
 
-.back-and-forth {
-  /* background: transparent; */
-  background-color: yellow; /* temporary colouring for visibility */
+.back-and-forth.right {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
   border: none;
+  margin-left: 110px;
+}
 
-  font-size: 8rem;
-  font-family: CandySeason, sans-serif;
-  color: #01b9e8;
-  -webkit-text-stroke-width: 5px;
-  -webkit-text-stroke-color: #000000;
-  line-height: 1.1;
+.back-and-forth img {
+  width: 60px;
+  height: 60px;
+}
+
+
+/* START OF MEME DISPLAY STYLING */
+.meme-container h1 {
+  font-size: 3rem;
+  color: #ffffff;
+  text-shadow: 4px 4px #000000;
+  text-align: left;
+  max-width: 12;
+  width: 100%;
+  margin: 0 auto;
+  padding-left: px;
+  box-sizing: border-box;
   text-align: center;
-  margin: 1.5rem;
-  margin-top: calc(2rem + 20px + 40px);
-} /* made to mirror title styling */
+}
+/* END OF MEME DISPLAY STYLING */
 
 /* END OF LOGGED IN SPECIFIC FORMATTING */
+
 
 /* START OF RATINGS BAR STYLING */
 .rating-bar-container {
@@ -269,38 +337,71 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 
 /* START OF STATS PAGE STYLING */
 
+.homepage-nav-button {
+  font-size: 2rem;
+  position: absolute;
+  right: 0px;
+  padding: 10px;
+  box-shadow: 2px 2px 2px rgba(0,0,0,1);
+  background-color: #ffffff;
+  border: 4px solid #000000;
+  z-index: 1;
+}
+
+/* StatsPage test: */
+
+.my-profile-card h2, .stats-card h2, .my-memes-card h2
+  {
+  font-size: 2.2rem;
+  font-style: normal;
+  color: #ffffff;
+}
+
+.my-profile-card h3, .meme-upload-title h3 {
+  font-size: 1.4rem;
+  font-style: normal;
+  color: #ffffff;
+  word-break: break-all;
+}
+
 /* StatsPage cards: */
+
 .card {
-  background: rgb(232, 232, 232);
+  background: #000000BF;
   padding: 1rem;
   margin-bottom: 1rem;
+  margin-right: 1rem;
   text-align: center;
 }
 
 .my-meme {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  border-radius: 15px;
+  gap: 1.5rem;
   padding-right: 1rem;
   margin-bottom: 1rem;
-  background-color: #f9f9f9ef;
+  background-color: #ffffff;
 }
 
 .my-meme img {
   width: 80px;
   height: 80px;
+  border-radius: 5px;
+  margin: 1rem;
 }
 
-  .avatar {
+.avatar {
   width: 200px;
   height: 200px;
   border-radius: 50%;
+  border: 8px solid #ffffff;
   object-fit: cover;
 }
 
-/* .stats-card {
-  text-align: center;
-} */
+.stats-card {
+  margin-top: 2rem;
+}
 
 .stats-card img {
   width: 100%;
@@ -312,34 +413,25 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 /* StatsPage columns & rows */
 .row {
   display: flex;
-   gap: 1rem;
+   gap: 2rem;
 }
 
-.column {
+.column-left {
   float: left;
+  width: 60%;
 }
 
-.left {
-  width: 75%;
+.column-right{
+  float: right;
+  width: 40%;
 }
 
-.right{
-  width: 75%;
-}
-
-.responsive-image {
-  display: block;
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain; 
- }
 
 /* Holding box for rating bar */
 .rating-bar-box {
   width: 100vw;
   height: 4rem;
-  max-width: 900px;
+  max-width: 12;
   margin: 1rem auto;
   padding: 1px;
   background-color: #f9f9f9ef;
@@ -354,10 +446,9 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 
 /* Meme upload button */
 .meme-upload-button {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%); /* Moves button up by half its height */
-  right: 5rem;
+  position: static;
+  display: block;
+  margin: 40px;
   z-index: 1000;
 }
 
@@ -376,14 +467,28 @@ of 900px to keep the ratings bar snug to the image bottom regardless of proporti
 
 .meme-fab-button:hover {
   /* background-color: rgb(255, 255, 0); <--- Not chosen to use this ... but could*/
-  transform: scale(2);
+  transform: scale(1.5);
 }
 
 /* Position the upload form relative to the FAB */
 .meme-upload-button > .meme-upload-wrapper {
-  position: absolute;
-  bottom: 70px; /* Position above the FAB */
-  right: 0;
+  position: static;
+  top: 100px; /* Position above the FAB */
   min-width: 300px;
+  margin-left: -30px;
 }
+
+/* meme upload body text */
+.meme-upload-form.{
+  colour: #ffffff;
+}
+
+.form-holder {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  border: 4px solid #000000;
+  padding: 20px;
+  width: 180px;
+}
+
 
