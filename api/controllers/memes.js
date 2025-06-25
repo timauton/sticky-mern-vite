@@ -100,18 +100,30 @@ async function deleteMeme(req, res) {
 }
 
 async function getNextMeme(req, res) {
-
     let token;
-
     try {
         token = generateToken(req.user_id);
+        const tags = req.query.tags?.split(",").map(tag => tag.trim().toLowerCase());
 
+        let memes;
+        if (tags && tags.length > 0) {
+            memes = await Meme.aggregate([
+                { $match: { tags: { $all: tags } } },
+                { $sample: { size:1 } }
+            ]);
+        } else {
+            memes = await Meme.aggregate([
+                { $sample: { size: 1} }
+            ])
+        }
+
+        const meme = memes[0];
         // get this user's ratings
         const nextTag = await getNextRandomMemeTag(req.user_id);
         console.log("Next tag is: " + nextTag);
 
         // get any random meme
-        const meme = await getRandomUnratedMeme(req.user_id);
+        //const meme = await getRandomUnratedMeme(req.user_id);
 
         res.status(200).json({ meme: meme, token: token });
     }
@@ -192,6 +204,17 @@ async function getMemesByTags(req, res) {
         res.status(400).json({ message: "Error finding memes", token: token });
     }
 
+}
+
+async function getAllTags(req, res) {
+
+    try {
+        const tags = await Meme.distinct("tags");
+        res.status(200).json({ tags: tags });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Failed to fetch tags"})
+    }
 }
 
 async function getRandomUnratedMeme(user_id) {
@@ -302,7 +325,6 @@ async function getNextRandomMemeTag(user_id) {
     console.log(nextTag);
 
     return nextTag;
-
 }
 
 const MemesController = {
@@ -313,7 +335,8 @@ const MemesController = {
     getNextMeme, getNextMeme,
     getMemesCreatedByUser, getMemesCreatedByUser,
     getMemesRatedByUser, getMemesRatedByUser,
-    getMemesByTags, getMemesByTags
+    getMemesByTags, getMemesByTags,
+    getAllTags, getAllTags
 };
 
 module.exports = MemesController;
