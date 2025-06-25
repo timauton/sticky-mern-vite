@@ -66,10 +66,18 @@ export function HomePage() {
   // Back and forth buttons
   const updateMeme = (id) => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      return;
+    }
+
     getMeme(tags.join(","), token, id).then((data) => {
-      setMeme(data.meme);
-      localStorage.setItem("token", data.token);
-    })
+      if (isLoggedIn && localStorage.getItem("token")) {
+        setMeme(data.meme);
+        localStorage.setItem("token", data.token);
+      }
+    }).catch((error) => {
+      console.error("Error fetching meme:", error);
+    });
   }
 
   const handleNextClick = () => {
