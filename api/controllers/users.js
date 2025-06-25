@@ -1,8 +1,11 @@
 const User = require("../models/user"); // interacts with users collection on mongodb
 const bcrypt = require("bcrypt"); //hash passwords securely
 const jwt = require("jsonwebtoken"); //creates tokens that keeps users logged in using jwts
-
+const { generateToken } = require("../lib/token");
+const mongoose = require("mongoose");
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret"; //jwtcode reads from .env file and uses supersecret as a fallback
+const Meme = require("../models/meme")
+const Rating = require("../models/rating")
 
 //registering new users
 const registerUser = async (req, res) => {
@@ -32,12 +35,10 @@ const registerUser = async (req, res) => {
 
 //login
 const login = async (req, res) => {
-    console.log("Received Login info", req.body )
   try {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username });
-    console.log("user exists", user)
     if (!user) return res.status(400).json({ message: "Invalid username or password" });
 
     const isAMatch = await bcrypt.compare(password, user.password);
@@ -108,6 +109,98 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// GET user activity: returns #ratings and #postings over time
+const getUserActivity = async (req, res) => {
+    try {
+        const token = generateToken(req.user_id);
+        const userId = new mongoose.Types.ObjectId(req.params.user_id);
+
+        // Get memes created by month
+        const memesData = await Meme.aggregate([
+            { $match: { user: userId }},
+            { $group: {
+                _id: { 
+                    year: { $year: "$created_at" },
+                    month: { $month: "$created_at" }
+                },
+                memesCreated: { $sum: 1 }
+            }},
+            { $addFields: {
+                period: { 
+                    $concat: [
+                        { $toString: "$_id.year" },
+                        "-",
+                        { $cond: {
+                            if: { $lt: ["$_id.month", 10] },
+                            then: { $concat: ["0", { $toString: "$_id.month" }] },
+                            else: { $toString: "$_id.month" }
+                        }}
+                    ]
+                }
+            }},
+            { $project: { period: 1, memesCreated: 1 }}
+        ]);
+
+        // Get ratings made by month
+        const ratingsData = await Rating.aggregate([
+            { $match: { user: userId }},
+            { $group: {
+                _id: { 
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" }
+                },
+                memesRated: { $sum: 1 }
+            }},
+            { $addFields: {
+                period: { 
+                    $concat: [
+                        { $toString: "$_id.year" },
+                        "-",
+                        { $cond: {
+                            if: { $lt: ["$_id.month", 10] },
+                            then: { $concat: ["0", { $toString: "$_id.month" }] },
+                            else: { $toString: "$_id.month" }
+                        }}
+                    ]
+                }
+            }},
+            { $project: { period: 1, memesRated: 1 }}
+        ]);
+        
+        // Combine the data
+        const periodMap = {};
+        
+        memesData.forEach(item => {
+            periodMap[item.period] = { 
+                period: item.period, 
+                memesCreated: item.memesCreated, 
+                memesRated: 0 
+            };
+        });
+        
+        ratingsData.forEach(item => {
+            if (periodMap[item.period]) {
+                periodMap[item.period].memesRated = item.memesRated;
+            } else {
+                periodMap[item.period] = { 
+                    period: item.period, 
+                    memesCreated: 0, 
+                    memesRated: item.memesRated 
+                };
+            }
+        });
+        
+        // Put the data in a nicer format
+        const chartData = Object.values(periodMap).sort((a, b) => a.period.localeCompare(b.period));
+
+        res.status(200).json({ chartData, token });
+        
+    } catch (error) {
+        console.error('Error getting user activity:', error);
+        res.status(400).json({ message: "Error finding user activity", token: generateToken(req.user_id) });
+    }
+}
+
 module.exports = {
   registerUser,
   login,
@@ -115,4 +208,5 @@ module.exports = {
   getUserById,
   updateUser,
   deleteUser,
+  getUserActivity,
 }

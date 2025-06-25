@@ -10,6 +10,7 @@ const {
     getUserById,
     updateUser,
     deleteUser,
+    getUserActivity,
 } = require("../controllers/users");
 
 //authorization
@@ -21,5 +22,8 @@ router.get("/", tokenChecker, getAllUsers); // gets all users
 router.get("/:id", tokenChecker, getUserById); // gets users by id
 router.put("/:id", tokenChecker, updateUser); // puts users by id
 router.delete("/:id", tokenChecker, deleteUser); //deletes user by id
+
+// GETs user activity: returns ratings and memes over time as an array
+router.get("/:user_id/activity", tokenChecker, getUserActivity);
 
 module.exports = router;
