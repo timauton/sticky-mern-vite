@@ -173,9 +173,13 @@ body {
   margin-top: calc(2rem + 40px);
 }
 
+.tag-filter {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 /* meme formatting. Height will adjust to image OG max size without exceeding a width 
 of 12 to keep the ratings bar snug to the image bottom regardless of proportions*/
-
 .image-container {
   position: relative;
   padding-top: 0.5rem;
@@ -350,7 +354,7 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
 
 /* StatsPage test: */
 
-.my-profile-card h2, .stats-card h2, .my-memes-card h2
+.my-profile-card h2, .stats-card h2, .my-memes-card h2, .tag-filter
   {
   font-size: 2.2rem;
   font-style: normal;
@@ -479,8 +483,8 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
 }
 
 /* meme upload body text */
-.meme-upload-form.{
-  colour: #ffffff;
+.meme-upload-form{
+  color: #ffffff;
 }
 
 .form-holder {
