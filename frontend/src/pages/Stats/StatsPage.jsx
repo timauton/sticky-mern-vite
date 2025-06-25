@@ -1,5 +1,7 @@
 import Button from "../../components/ButtonComponent";
 import { useNavigate } from "react-router-dom";
+import MyMemesSection from "../../components/MyMemesSection";
+
 
 export const StatsPage = () => {
   const navigate = useNavigate();
@@ -39,19 +41,7 @@ export const StatsPage = () => {
         <div className="column-right">
           <div className="card my-memes-card">
             <div className="my-memes">
-              <h2>My Memes</h2>
-              <div className="my-meme">
-                <img src="/temp-images/temp-meme-image.jpeg" alt="Meme 1" />
-                <h3>This is one of my memes</h3>
-              </div>
-              <div className="my-meme">
-                <img src="/temp-images/temp-meme-image.jpeg" alt="Meme 2" />
-                <h3>This is one of my memes</h3>
-              </div>
-              <div className="my-meme">
-                <img src="/temp-images/temp-meme-image.jpeg" alt="Meme 3" />
-                <h3>This is one of my memes</h3>
-              </div>
+              <MyMemesSection />
             </div>  
           </div>
         </div>
