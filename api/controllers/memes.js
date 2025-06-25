@@ -211,6 +211,28 @@ async function getAllTags(req, res) {
 
 }
 
+async function getUserMemesRanked(req, res) {
+    try {
+        const token = generateToken(req.user_id);
+        
+        console.log("Looking for user ID:", req.params.user_id);
+        console.log("User ID type:", typeof req.params.user_id);
+        
+        const memes = await Meme.aggregate([
+            { $match: { user: new mongoose.Types.ObjectId(req.params.user_id) }},
+            { $sort: { created_at: -1 }}
+        ]);
+
+        console.log("Found memes:", memes.length);
+        console.log("First meme:", memes[0]);
+
+        res.status(200).json({ memes: memes, token: token });
+    } catch (error) {
+        console.error('Error getting ranked memes:', error);
+        res.status(400).json({ message: "Error finding ranked memes", token: generateToken(req.user_id) });
+    }
+}
+
 const MemesController = {
     getAllMemes: getAllMemes,
     getMemeByID: getMemeByID,
@@ -220,7 +242,8 @@ const MemesController = {
     getMemesCreatedByUser, getMemesCreatedByUser,
     getMemesRatedByUser, getMemesRatedByUser,
     getMemesByTags, getMemesByTags,
-    getAllTags, getAllTags
+    getAllTags, getAllTags,
+    getUserMemesRanked: getUserMemesRanked
 };
 
 module.exports = MemesController;

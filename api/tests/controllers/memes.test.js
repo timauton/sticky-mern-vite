@@ -472,13 +472,92 @@ describe("GET, when token is missing", () => {
 
 });
 
-const makeTestMeme = async ( suffix = "", tags = [ "tag" + suffix ] ) => {
+describe("GET /memes/user/:user_id/ranked", () => {
+    let testUser;
+    let testMemes = [];
+    let token;
 
+    //Test dates
+    const oldestDate = new Date('2025-01-02');
+    const middleDate = new Date('2025-03-23');
+    const newestDate = new Date('2025-06-24');
+
+    beforeEach(async () => {
+        // Clean up first
+        await User.deleteMany({});
+        await Meme.deleteMany({});
+        await Rating.deleteMany({});
+
+        testUser = new User({
+            username: 'testuser',
+            email: 'test@test.com',
+            password: '12345678'
+        });
+        await testUser.save();
+        token = createToken(testUser.id);
+        
+        const meme1 = await makeTestMeme("1", ["comedy"], oldestDate, testUser);
+        const meme2 = await makeTestMeme("2", ["cats"], middleDate, testUser);
+        const meme3 = await makeTestMeme("3", ["programming"], newestDate, testUser);
+        
+        testMemes = [meme1, meme2, meme3];
+
+        const rater1 = new User({username: "rater1", email: "rater1@test.com", password: "12345678"});
+        await rater1.save();
+        const rater2 = new User({username: "rater2", email: "rater2@test.com", password: "12345678"});
+        await rater2.save();    
+        const rater3 = new User({username: "rater3", email: "rater3@test.com", password: "12345678"});
+        await rater3.save();
+
+        // Create ratings
+        const rating1 = new Rating({meme: meme1._id, user: rater1._id, rating: 4});
+        await rating1.save();
+        const rating2 = new Rating({meme: meme1._id, user: rater3._id, rating: 5});
+        await rating2.save();
+        const rating3 = new Rating({meme: meme2._id, user: rater2._id, rating: 2});
+        await rating3.save();
+        const rating4 = new Rating({meme: meme2._id, user: rater3._id, rating: 2});
+        await rating4.save();
+        const rating5 = new Rating({meme: meme3._id, user: rater1._id, rating: 3});
+        await rating5.save();
+        const rating6 = new Rating({meme: meme3._id, user: rater2._id, rating: 4});
+        await rating6.save();  
+    });
+
+    it("returns user's memes ordered by most recent by default", async () => {
+        console.log("Test user ID:", testUser._id);
+        console.log("Test user ID (via .id):", testUser.id);
+        console.log("First meme user field:", testMemes[0].user);
+        
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked`)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toEqual(200);
+        expect(response.body.memes).toHaveLength(3);
+
+        expect(response.body.memes[0].title).toEqual("My Fab Meme 3"); // newest
+        expect(response.body.memes[1].title).toEqual("My Fab Meme 2"); 
+        expect(response.body.memes[2].title).toEqual("My Fab Meme 1"); // oldest
+
+        // Verifies dates are in descending order
+        const dates = response.body.memes.map(m => new Date(m.created_at));
+        expect(dates[0] >= dates[1] && dates[1] >= dates[2]).toBe(true);
+    });
+
+    it("returns user's memes ordered by highest rating when specified", async () => {
+        // Same data, different sorting
+    });
+});
+
+const makeTestMeme = async ( suffix = "", tags = [ "tag" + suffix ], created_at = testDate, user = testUser ) => {
+    console.log("makeTestMeme - user parameter:", user?.id);
+    console.log("makeTestMeme - global testUser:", testUser?.id);
     const meme = new Meme({
         img: "images/my_meme" + suffix + ".jpeg",
         title: "My Fab Meme " + suffix,
-        user: testUser.id,
-        created_at: testDate,
+        user: user.id,
+        created_at: created_at,
         tags: tags
     });
     await meme.save();
