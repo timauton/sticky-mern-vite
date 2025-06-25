@@ -156,6 +156,7 @@ export function HomePage() {
                     return <span className="meme-tag" key={index}>{tag} </span>
                   })}
                 </p>
+                <br />
               </div>
               <ShareButton meme={meme}/>
             </div>
