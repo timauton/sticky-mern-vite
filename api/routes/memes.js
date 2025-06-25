@@ -33,6 +33,10 @@ router.get("/rated_by_user/:user_id", tokenChecker, MemesController.getMemesRate
 // returns an array of memes
 router.get("/tagged/:tags", tokenChecker, MemesController.getMemesByTags);
 
+// gets ranked memes for a user
+// returns an array of memes
+router.get("/user/:user_id/ranked", tokenChecker, MemesController.getUserMemesRanked);
+
 // post a new meme, including the image
 router.post("/", tokenChecker, uploadConfigs.memes.single("image"), handleUploadError, MemesController.createMeme);
 
