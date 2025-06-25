@@ -10,8 +10,7 @@ const {
     getCommentsById, 
     updateComment, 
     deleteComment,
-    getCommentsById,
-} = require ("../controllers/commentsController");
+} = require ("../controllers/comments");
 
 // CRUDs:
 // Create comment:

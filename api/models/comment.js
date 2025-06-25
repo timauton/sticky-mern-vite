@@ -12,16 +12,16 @@ const CommentSchema = new mongoose.Schema({
     },
     meme_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Our meme",
+        ref: "Meme",
         required: [true],
     },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Username",
+        ref: "User",
         required: [true],
     },
 });
 
-const CommentsController = mongoose.model('CommentsController', CommentSchema);
+const Comment = mongoose.model('Comment', CommentSchema);
 
-module.exports = CommentsController;
+module.exports = Comment;

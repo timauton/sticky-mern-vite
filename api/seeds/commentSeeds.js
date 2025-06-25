@@ -1,6 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const CommentController = ("../models/commentModel");
+const Comment = require("../models/comment");
 const User = require("../models/user");
 const Meme = require("../models/meme");
 const { connectDB } = require("../db/db");
@@ -9,11 +9,11 @@ const { connectDB } = require("../db/db");
 const seedComments = async () => {
     await connectDB();
 
-    await CommentController.deleteMany({}); // Clear existing ratings
+    await Comment.deleteMany({}); // Clear existing ratings
     console.log("Existing comments removed");
 
     // Get all users and memes (they should exist from previous seeds)
-    const user = await User.find({});
+    const users = await User.find({});
     const memes = await Meme.find({});
 
     if (users.length === 0 || memes.length === 0) {
@@ -65,7 +65,7 @@ const seedComments = async () => {
 
 
     console.log("Inserting seed comments into database");
-    await CommentController.insertMany(comments);
+    await Comment.insertMany(comments);
     console.log(`Seeded ${comments.length} comments successfully!`);
 
     mongoose.connection.close();
