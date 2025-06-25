@@ -33,6 +33,12 @@ router.get("/rated_by_user/:user_id", tokenChecker, MemesController.getMemesRate
 // returns an array of memes
 router.get("/tagged/:tags", tokenChecker, MemesController.getMemesByTags);
 
+// posts a comment connected to the active meme
+router.post("/:meme_id/comments", tokenChecker, MemesController.createComment);
+
+// gets all the comments associated with the active meme
+router.get("/:meme_id/comments", tokenChecker, MemesController.getCommentsByMeme);
+
 // post a new meme, including the image
 router.post("/", tokenChecker, uploadConfigs.memes.single("image"), handleUploadError, MemesController.createMeme);
 
