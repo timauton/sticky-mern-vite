@@ -10,7 +10,6 @@ vi.mock("../../src/utils/shareUtils", () => ({
 }));
 
 import { generateShareableUrl } from "../../src/utils/shareUtils";
-import { use } from "react";
 
 describe("ShareButton", () => {
   const mockMeme = {
@@ -27,7 +26,15 @@ describe("ShareButton", () => {
   it("displays a share button", () => {
     render(<ShareButton meme={mockMeme} />);
     
-    expect(screen.getByRole("button", { name: /share/i })).toBeInTheDocument();
+    expect(screen.getByTestId("share-button")).toBeInTheDocument();
+  });
+
+  it("renders share button with FAB styling", () => {
+    render(<ShareButton meme={mockMeme} />);
+    
+    const shareButton = screen.getByTestId("share-button");
+    expect(shareButton).toHaveClass("share-fab-button");
+    expect(shareButton).toHaveAttribute("aria-label", "Share this meme");
   });
 
   it("shows share dialogue when clicked", async () => {
@@ -48,7 +55,7 @@ describe("ShareButton", () => {
     // Check dialog isn't initially visible
     expect(screen.queryByTestId("share-dialogue")).not.toBeInTheDocument();
     
-    const shareButton = screen.getByRole("button", { name: /share/i });
+    const shareButton = screen.getByTestId("share-button");
     await user.click(shareButton);
     
     // Check dialog appears with copy option
@@ -74,7 +81,7 @@ describe("ShareButton", () => {
     generateShareableUrl.mockReturnValue("http://localhost:5173/meme/507f1f77bcf86cd799439011");
     
     render(<ShareButton meme={mockMeme} />);
-    const shareButton = screen.getByRole("button", { name: /share/i });
+    const shareButton = screen.getByTestId("share-button");
     await user.click(shareButton);
     const copyButton = screen.getByRole("button", { name: /copy/i });
     await user.click(copyButton);
@@ -101,7 +108,7 @@ describe("ShareButton", () => {
     generateShareableUrl.mockReturnValue("http://localhost:5173/meme/507f1f77bcf86cd799439011");
     
     render(<ShareButton meme={mockMeme} />);
-    const shareButton = screen.getByRole("button", { name: /share/i });
+    const shareButton = screen.getByTestId("share-button");
     await user.click(shareButton);
     
     // Dialog should open
@@ -112,6 +119,85 @@ describe("ShareButton", () => {
 
     // Dialog should close
     expect(screen.queryByTestId("share-dialogue")).not.toBeInTheDocument();
-
   })
+
+  it("closes dialog when Escape key is pressed", async () => {
+    const user = userEvent.setup();
+    
+    render(<ShareButton meme={mockMeme} />);
+    
+    // Open dialog
+    const shareButton = screen.getByRole("button", { name: /share this meme/i });
+    await user.click(shareButton);
+    
+    expect(screen.getByTestId("share-dialogue")).toBeInTheDocument();
+    
+    // Press Escape key
+    await user.keyboard('{Escape}');
+    
+    // Dialog should close
+    expect(screen.queryByTestId("share-dialogue")).not.toBeInTheDocument();
+  });
+
+  it("shows all social platform buttons in dialog", async () => {
+  const user = userEvent.setup();
+  
+  render(<ShareButton meme={mockMeme} />);
+  
+  // Open dialog
+  const shareButton = screen.getByRole("button", { name: /share this meme/i });
+  await user.click(shareButton);
+  
+  // Should have all 5 share options
+  expect(screen.getByRole("button", { name: /copy to clipboard/i })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /share on whatsapp/i })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /share on facebook/i })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /share on twitter/i })).toBeInTheDocument();
+});
+
+  it("opens WhatsApp when WhatsApp button is clicked", async () => {
+    const user = userEvent.setup();
+    
+    // Mock window.open
+    const mockOpen = vi.fn();
+    Object.defineProperty(window, 'open', { value: mockOpen });
+    
+    generateShareableUrl.mockReturnValue("http://localhost:5173/meme/123");
+    
+    render(<ShareButton meme={mockMeme} />);
+    
+    const shareButton = screen.getByRole("button", { name: /share this meme/i });
+    await user.click(shareButton);
+    
+    const whatsappButton = screen.getByRole("button", { name: /share on whatsapp/i });
+    await user.click(whatsappButton);
+    
+    expect(mockOpen).toHaveBeenCalledWith(
+      "https://wa.me/?text=Check%20out%20this%20meme%3A%20http%3A%2F%2Flocalhost%3A5173%2Fmeme%2F123",
+      "_blank"
+    );
+  });
+
+  it("opens twitter when button is clicked", async () => {
+    const user = userEvent.setup();
+    
+    // Mock window.open
+    const mockOpen = vi.fn();
+    Object.defineProperty(window, 'open', { value: mockOpen });
+    
+    generateShareableUrl.mockReturnValue("http://localhost:5173/meme/123");
+    
+    render(<ShareButton meme={mockMeme} />);
+    
+    const shareButton = screen.getByRole("button", { name: /share this meme/i });
+    await user.click(shareButton);
+    
+    const twitterButton = screen.getByRole("button", { name: /share on Twitter/i });
+    await user.click(twitterButton);
+    
+    expect(mockOpen).toHaveBeenCalledWith(
+      "https://twitter.com/intent/tweet?text=Check%20out%20this%20hilarious%20meme!%20http%3A%2F%2Flocalhost%3A5173%2Fmeme%2F123",
+      "_blank"
+    );
+  });
 })
