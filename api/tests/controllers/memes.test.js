@@ -472,13 +472,155 @@ describe("GET, when token is missing", () => {
 
 });
 
-const makeTestMeme = async ( suffix = "", tags = [ "tag" + suffix ] ) => {
+describe("GET /memes/user/:user_id/ranked", () => {
+    let testUser;
+    let testMemes = [];
+    let token;
 
+    //Test dates
+    const oldestDate = new Date('2025-01-02');
+    const middleDate = new Date('2025-03-23');
+    const newestDate = new Date('2025-06-24');
+
+    beforeEach(async () => {
+        // Clean up first
+        await User.deleteMany({});
+        await Meme.deleteMany({});
+        await Rating.deleteMany({});
+
+        testUser = new User({
+            username: 'testuser',
+            email: 'test@test.com',
+            password: '12345678'
+        });
+        await testUser.save();
+        token = createToken(testUser.id);
+        
+        const meme1 = await makeTestMeme("1", ["comedy"], oldestDate, testUser);
+        const meme2 = await makeTestMeme("2", ["cats"], middleDate, testUser);
+        const meme3 = await makeTestMeme("3", ["programming"], newestDate, testUser);
+        
+        testMemes = [meme1, meme2, meme3];
+
+        const rater1 = new User({username: "rater1", email: "rater1@test.com", password: "12345678"});
+        await rater1.save();
+        const rater2 = new User({username: "rater2", email: "rater2@test.com", password: "12345678"});
+        await rater2.save();    
+        const rater3 = new User({username: "rater3", email: "rater3@test.com", password: "12345678"});
+        await rater3.save();
+
+        // Create ratings
+        const rating1 = new Rating({meme: meme1._id, user: rater1._id, rating: 4});
+        await rating1.save();
+        const rating2 = new Rating({meme: meme1._id, user: rater3._id, rating: 5});
+        await rating2.save();
+        const rating3 = new Rating({meme: meme2._id, user: rater2._id, rating: 2});
+        await rating3.save();
+        const rating4 = new Rating({meme: meme2._id, user: rater3._id, rating: 2});
+        await rating4.save();
+        const rating5 = new Rating({meme: meme3._id, user: rater1._id, rating: 3});
+        await rating5.save();
+        const rating6 = new Rating({meme: meme3._id, user: rater2._id, rating: 4});
+        await rating6.save();  
+    });
+
+    it("returns user's memes ordered by most recent by default", async () => {        
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked`)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toEqual(200);
+        expect(response.body.memes).toHaveLength(3);
+
+        expect(response.body.memes[0].title).toEqual("My Fab Meme 3"); // newest
+        expect(response.body.memes[1].title).toEqual("My Fab Meme 2"); 
+        expect(response.body.memes[2].title).toEqual("My Fab Meme 1"); // oldest
+
+        // Verifies dates are in descending order
+        const dates = response.body.memes.map(m => new Date(m.created_at));
+        expect(dates[0] >= dates[1] && dates[1] >= dates[2]).toBe(true);
+    });
+
+    it("returns user's memes ordered by highest rating when specified", async () => {
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked?order=rating`)
+            .set("Authorization", `Bearer ${token}`);
+            
+        expect(response.status).toEqual(200);
+        expect(response.body.memes).toHaveLength(3);
+        
+        // Should be ordered by rating: Meme1 (4.5) → Meme3 (3.5) → Meme2 (2.0)
+        expect(response.body.memes[0].title).toEqual("My Fab Meme 1"); // highest: 4.5
+        expect(response.body.memes[1].title).toEqual("My Fab Meme 3"); // middle: 3.5  
+        expect(response.body.memes[2].title).toEqual("My Fab Meme 2"); // lowest: 2.0
+        
+        // Also check that averageRating is included
+        expect(response.body.memes[0].averageRating).toEqual(4.5);
+        expect(response.body.memes[1].averageRating).toEqual(3.5);
+        expect(response.body.memes[2].averageRating).toEqual(2.0);
+    });
+
+    it("returns paginated results with page and limit parameters", async () => {
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked?page=1&limit=2`)
+            .set("Authorization", `Bearer ${token}`);
+            
+        expect(response.status).toEqual(200);
+        expect(response.body.memes).toHaveLength(2); // Only 2 memes, not 3
+        expect(response.body.pagination).toEqual({
+            currentPage: 1,
+            totalPages: 2,  // 3 memes at 2 per page = 2 pages (rounded up)
+            totalMemes: 3,
+            limit: 2
+        });
+        
+        // Should get newest 2 memes first
+        expect(response.body.memes[0].title).toEqual("My Fab Meme 3");
+        expect(response.body.memes[1].title).toEqual("My Fab Meme 2");
+    });
+
+    it("returns second page of results correctly", async () => {
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked?page=2&limit=2`)
+            .set("Authorization", `Bearer ${token}`);
+            
+        expect(response.status).toEqual(200);
+        expect(response.body.memes).toHaveLength(1); // Only 1 meme on page 2
+        expect(response.body.pagination).toEqual({
+            currentPage: 2,
+            totalPages: 2,
+            totalMemes: 3,
+            limit: 2
+        });
+        
+        // Should get the oldest meme (My Fab Meme 1)
+        expect(response.body.memes[0].title).toEqual("My Fab Meme 1");
+    });
+
+    it("returns 400 error when aggregation fails", async () => {
+        // Mock the Meme.aggregate to throw an error
+        const mockError = new Error("Database connection lost");
+        jest.spyOn(Meme, 'aggregate').mockRejectedValueOnce(mockError);
+        
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked`)
+            .set("Authorization", `Bearer ${token}`);
+            
+        expect(response.status).toEqual(400);
+        expect(response.body.message).toEqual("Error finding ranked memes");
+        expect(response.body.token).toBeDefined(); // Should still return a token
+        
+        // Restore the original function
+        Meme.aggregate.mockRestore();
+    });
+});
+
+const makeTestMeme = async ( suffix = "", tags = [ "tag" + suffix ], created_at = testDate, user = testUser ) => {
     const meme = new Meme({
         img: "images/my_meme" + suffix + ".jpeg",
         title: "My Fab Meme " + suffix,
-        user: testUser.id,
-        created_at: testDate,
+        user: user.id,
+        created_at: created_at,
         tags: tags
     });
     await meme.save();

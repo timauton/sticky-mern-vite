@@ -14,8 +14,8 @@ const MemeSchema = new mongoose.Schema({
     }],
 });
 
-MemeSchema.virtual('ratings', {
-    ref: 'Rating',
+MemeSchema.virtual('rating', {
+    ref: 'rating',
     localField: '_id',
     foreignField: 'meme',
     justOne: false

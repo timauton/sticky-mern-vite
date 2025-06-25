@@ -398,6 +398,7 @@ describe("/ratings", () => {
       expect(response.status).toEqual(401);
     })
   });
+
   describe("GET, a meme's stats", () => {
     it("returns an average for a meme", async () => {
       await createMultipleRatings(memeId, [1, 2, 3]);
@@ -476,6 +477,148 @@ describe("/ratings", () => {
         totalRatings: 0,
         ratingBreakdown: { "5": 0, "4": 0, "3": 0, "2": 0, "1": 0 }
       });
+    });
+  });
+
+  describe("GET /ratings/user/:user_id/ranked", () => {
+    let testUser;
+    let testMemes = [];
+    let token;
+    
+    // Test dates for "recently rated" ordering
+    const oldestRatingDate = new Date('2025-01-02');
+    const middleRatingDate = new Date('2025-03-23');  
+    const newestRatingDate = new Date('2025-06-24');
+
+    beforeEach(async () => {
+        // Clean up
+        await User.deleteMany({});
+        await Meme.deleteMany({});
+        await Rating.deleteMany({});
+        
+        // Create our test user (the one doing the rating)
+        testUser = new User({
+          username: 'testuser',
+          email: 'test@test.com',
+          password: '12345678'
+        });
+        await testUser.save();
+        token = createToken(testUser._id);
+        
+        // Create different meme creators
+        const creator1 = new User({username: 'creator1', email: 'creator1@test.com', password: '12345678'});
+        const creator2 = new User({username: 'creator2', email: 'creator2@test.com', password: '12345678'});
+        const creator3 = new User({username: 'creator3', email: 'creator3@test.com', password: '12345678'});
+        await creator1.save();
+        await creator2.save();
+        await creator3.save();
+        
+        // Create memes by different creators
+        const meme1 = new Meme({
+          title: "Funny Cat Meme",
+          img: "cat.jpg",
+          user: creator1._id,
+          created_at: new Date('2025-01-01'),
+          tags: ["cats", "funny"]
+        });
+        const meme2 = new Meme({
+          title: "Programming Joke",
+          img: "code.jpg", 
+          user: creator2._id,
+          created_at: new Date('2025-02-01'),
+          tags: ["programming"]
+        });
+        const meme3 = new Meme({
+          title: "Dog Video",
+          img: "dog.jpg",
+          user: creator3._id,
+          created_at: new Date('2025-03-01'),
+          tags: ["dogs"]
+        });
+        
+        await meme1.save();
+        await meme2.save();
+        await meme3.save();
+        testMemes = [meme1, meme2, meme3];
+        
+        // Create ratings by testUser at different times
+        const rating1 = new Rating({
+          meme: meme1._id,
+          user: testUser._id,
+          rating: 5,
+          createdAt: oldestRatingDate  // January - oldest
+        });
+
+        const rating2 = new Rating({
+          meme: meme2._id, 
+          user: testUser._id,
+          rating: 2,
+          createdAt: middleRatingDate  // March - middle
+        });
+
+        const rating3 = new Rating({
+          meme: meme3._id,
+          user: testUser._id, 
+          rating: 4,
+          createdAt: newestRatingDate  // June - newest  
+        });
+
+        await rating1.save();
+        await rating2.save();
+        await rating3.save();    });
+
+    it("returns memes rated by user ordered by most recently rated by default", async () => {
+      const response = await request(app)
+        .get(`/ratings/user/${testUser._id}/ranked`)
+        .set("Authorization", `Bearer ${token}`);
+        
+      expect(response.status).toEqual(200);
+      expect(response.body.memes).toHaveLength(3);
+      
+      // Should be ordered by most recently rated first
+      expect(response.body.memes[0].title).toEqual("Dog Video");        // June (newest)
+      expect(response.body.memes[1].title).toEqual("Programming Joke"); // March (middle)  
+      expect(response.body.memes[2].title).toEqual("Funny Cat Meme");   // January (oldest)
+      
+      // Should include the user's rating and when they rated it
+      expect(response.body.memes[0].userRating).toEqual(4);
+      expect(response.body.memes[1].userRating).toEqual(2);
+      expect(response.body.memes[2].userRating).toEqual(5);
+    });
+
+    it("returns memes rated by user ordered by highest user rating when order=rating", async () => {
+      const response = await request(app)
+        .get(`/ratings/user/${testUser._id}/ranked?order=rating`)
+        .set("Authorization", `Bearer ${token}`);
+        
+      expect(response.status).toEqual(200);
+      expect(response.body.memes).toHaveLength(3);
+      
+      // Should be ordered by user's rating: 5 → 4 → 2
+      expect(response.body.memes[0].title).toEqual("Funny Cat Meme");    // 5 stars
+      expect(response.body.memes[1].title).toEqual("Dog Video");         // 4 stars  
+      expect(response.body.memes[2].title).toEqual("Programming Joke");  // 2 stars
+      
+      expect(response.body.memes[0].userRating).toEqual(5);
+      expect(response.body.memes[1].userRating).toEqual(4);
+      expect(response.body.memes[2].userRating).toEqual(2);
+    });
+
+    it("returns 400 error when aggregation fails", async () => {
+      // Mock the Rating.aggregate to throw an error
+      const mockError = new Error("Database connection lost");
+      jest.spyOn(Rating, 'aggregate').mockRejectedValueOnce(mockError);
+      
+      const response = await request(app)
+        .get(`/ratings/user/${testUser._id}/ranked`)
+        .set("Authorization", `Bearer ${token}`);
+        
+      expect(response.status).toEqual(400);
+      expect(response.body.message).toEqual("Error finding user ratings");
+      expect(response.body.token).toBeDefined(); // Should still return a token
+      
+      // Restore the original function
+      Rating.aggregate.mockRestore();
     });
   });
 });

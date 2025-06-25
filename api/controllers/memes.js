@@ -1,4 +1,6 @@
 const Meme = require("../models/meme");
+const User = require("../models/user");
+const Rating = require("../models/rating");
 const { generateToken } = require("../lib/token");
 const fs = require('fs').promises;
 const mongoose = require('mongoose');
@@ -102,18 +104,17 @@ async function getNextMeme(req, res) {
     let token;
     try {
         token = generateToken(req.user_id);
+
         const tags = req.query.tags?.split(",").map(tag => tag.trim().toLowerCase());
 
         let memes;
+        console.log("---- getNextMeme ----");
         if (tags && tags.length > 0) {
-            memes = await Meme.aggregate([
-                { $match: { tags: { $all: tags } } },
-                { $sample: { size:1 } }
-            ]);
+            console.log("Getting memes with tags: " + tags);
+            memes = await getMemesWithTags(tags);
         } else {
-            memes = await Meme.aggregate([
-                { $sample: { size: 1} }
-            ])
+            console.log("Getting a random unrated meme");
+            memes = await getRandomUnratedMeme(req.user_id);
         }
 
         const meme = memes[0];
@@ -208,7 +209,221 @@ async function getAllTags(req, res) {
         console.error(err);
         res.status(500).json({ message: "Failed to fetch tags"})
     }
+}
 
+async function getMemesWithTags(tags) {
+    const memes = await Meme.aggregate([
+        { $match: { tags: { $all: tags } } },
+        { $sample: { size:1 } }
+    ]);
+    return memes;
+}
+
+async function getRandomUnratedMeme(user_id) {
+
+    const tag = await getNextRandomMemeTag(user_id);
+
+    console.log("Filtering to tag: " + tag);
+
+    // we need to construct different pipelines depending on what we're looking for
+    // we start with finding unrated ones
+    const unratedPartialPipeline = [
+        // match with the Ratings schema
+        { $lookup: {
+                from: 'ratings',
+                localField: '_id',
+                foreignField: 'meme',
+                as: 'ratings'
+            }
+        },
+        // exclude the ones this user has rated
+        { $match: {
+                'ratings.user': {
+                    $ne: new mongoose.Types.ObjectId(user_id)
+                }
+            }
+        },
+    ];
+
+    // construct the pipeline
+    // we may or may not need the tag filter,
+    // depending on what the algo suggested
+    let pipeline = [...unratedPartialPipeline]; //. this syntax is so we create a copy, not a reference
+    if (tag) {
+        pipeline.push({ $match: { tags: tag } });
+    }
+    pipeline.push({ $sample: { size: 1 } });
+
+    // run the query
+    let memes = await Meme.aggregate(pipeline);
+
+    // did we get a result?
+    if (memes.length == 0) {
+        console.log("There are no unrated memes with that tag, going for a completely random unrated meme");
+        // construct the pipeline without the tag filter
+        pipeline = [...unratedPartialPipeline];
+        pipeline.push({ $sample: { size: 1 } });
+        memes = await Meme.aggregate(pipeline);
+    }
+
+    // make sure again that we have a result
+    if (memes.length == 0) {
+        console.log("They've rated every single meme! Just pick one at random");
+        memes = await Meme.aggregate([
+            // pick one at random
+            { $sample: { size:1 } }
+        ]);
+    }
+
+    return memes;
+}
+
+async function getNextRandomMemeTag(user_id) {
+
+    // we square all the scores so higher scores are weighted far mroe than low ones
+    // then we add up all the ratings to get a total rating score
+    // then we add 10% to ensure a user doesn't always see the same memes
+    // then we pick a random number between 0 and the total score
+    // we work through the array starting at the highest rating and stop
+    // when we get to the random number
+
+    // Eg. a user has rated cats 5* and programming 1*
+    // Total number will be ( 25 + 1 ) * 1.1 = 28.6
+    // so you get something like this (not to scale!):
+    // [-------------cats---------------][p][-rand-]
+    // and we pick a point along the line
+    // 10.3 would be cats
+    // 22.9 would also be cats
+    // 25.5 would be programming
+    // 27.1 would be random
+
+    // I have no idea how well this works in practice, but it does bias
+    // results towards the memes users like
+
+    const randomUnratedTagMultiplier = 1.1;
+
+    let totalRating = 0;
+    const ratedTags = await getRatedTags(user_id);
+
+    ratedTags.forEach((tag) => totalRating += (tag.avg * tag.avg) );
+
+    tagPickNumber = Math.random() * totalRating * randomUnratedTagMultiplier;
+
+    console.log("Pick number is: " + tagPickNumber);
+    console.log("Total rating is: " + totalRating);
+
+    let nextTag = "";
+
+    // step through and set the tag if we get a match
+    for (const tag of ratedTags) {
+        tagPickNumber -= (tag.avg * tag.avg);
+        if (tagPickNumber < 0) {
+            nextTag = tag._id;
+            break;
+        }
+    }
+
+    return nextTag;
+}
+
+async function getRatedTags(user_id) {
+
+    const tags = await Rating.aggregate([
+
+        // filter to just the user's ratings
+        { $match: {"user": new mongoose.Types.ObjectId(user_id) } },
+        // match with the meme schema
+        { $lookup: {
+                from: 'memes',
+                localField: 'meme',
+                foreignField: '_id',
+                as: 'meme'
+            }
+        },
+        // unwind to expand out so we get one row per meme+tag
+        { $unwind: "$meme" },
+        { $unwind: "$meme.tags" },
+        // project so we only get the fields we want
+        { $project: {
+                tag: "$meme.tags",
+                rating: "$rating"
+            }
+        },
+        // group by tag and do the maths
+        { $group: {
+                _id: "$tag",
+                count: { $count: {} },
+                avg: { $avg: "$rating" }
+            }
+        }
+    ]);
+
+    console.log(tags);
+
+    return tags;
+}
+
+async function getUserMemesRanked(req, res) {
+    try {
+        const token = generateToken(req.user_id);
+        const order = req.query.order || 'recent';
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        
+        // Get total count first
+        const totalMemes = await Meme.countDocuments({ 
+            user: new mongoose.Types.ObjectId(req.params.user_id) 
+        });
+        
+        const pipeline = [
+            // Gets the user ID & gets all the rating stats for their memes
+            { $match: { user: new mongoose.Types.ObjectId(req.params.user_id) }},
+            { $lookup: {
+                from: 'ratings',
+                localField: '_id', 
+                foreignField: 'meme',
+                as: 'ratings'
+            }},
+            { $addFields: {
+                averageRating: { 
+                    $cond: {
+                        if: { $gt: [{ $size: "$ratings" }, 0] },
+                        then: { $round: [{ $avg: "$ratings.rating" }, 1] },
+                        else: 0
+                    }
+                },
+                totalRatings: { $size: "$ratings" }
+            }},
+            // Orders the returning data
+            { $sort: order === 'rating' 
+                ? { averageRating: -1, created_at: -1 }
+                : { created_at: -1 }
+            },
+            { $skip: skip },
+            { $limit: limit }
+        ];
+
+        const memes = await Meme.aggregate(pipeline);
+        
+        // Calculate pagination info
+        const totalPages = Math.ceil(totalMemes / limit);
+        
+        res.status(200).json({ 
+            memes: memes, 
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                totalMemes: totalMemes,
+                limit: limit
+            },
+            token: token 
+        });
+        
+    } catch (error) {
+        console.error('Error getting ranked memes:', error);
+        res.status(400).json({ message: "Error finding ranked memes", token: generateToken(req.user_id) });
+    }
 }
 
 const MemesController = {
@@ -220,7 +435,8 @@ const MemesController = {
     getMemesCreatedByUser, getMemesCreatedByUser,
     getMemesRatedByUser, getMemesRatedByUser,
     getMemesByTags, getMemesByTags,
-    getAllTags, getAllTags
+    getAllTags, getAllTags,
+    getUserMemesRanked: getUserMemesRanked
 };
 
 module.exports = MemesController;
