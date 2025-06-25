@@ -25,7 +25,7 @@ const createComment = async (req,res) => {
             meme_id, 
             user_id
         });
-        res.status(201).json({ message: "🚀 Comment added! 🚀", newComment });
+        res.status(201).json({ message: "🚀 Comment added! 🚀", comment: newComment });
     } catch (error) {
         console.error("Error adding comment:", error);
         res.status(500).json({ message: "Server error :(", error });
@@ -49,7 +49,7 @@ const getAllComments = async (req, res) => {
 const getCommentsByMeme = async (req,res) => {
     try {
         const commentMeme = await Comment.find({meme_id: req.params.meme_id})
-            .populate("user_id", "username");
+            .populate("user_id", "username")
         res.status(200).json(commentMeme);
     } catch (error) {
         console.log("Error fetching comments for this meme:", error);

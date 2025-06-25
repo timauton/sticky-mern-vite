@@ -16,3 +16,28 @@ export const getComments = async (meme_id) => {
     const data = await response.json();
     return data;
 }
+
+export const createComment = async (meme_id, comment) => {
+    const token = localStorage.getItem('token');
+
+    if (!token) { throw new Error("🔓 Please login to make a comment 🔓") } 
+
+    const requestOptions = {
+            method: 'POST',
+            headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment, meme_id })
+    }
+
+    const response = await fetch(`${BACKEND_URL}/comments`, requestOptions);
+
+    if (response.status !==201) {
+        throw new Error ('Unable to create comment');
+    }
+
+    const data = await response.json();
+    return data;
+
+}
