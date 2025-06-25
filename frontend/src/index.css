@@ -479,8 +479,8 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
 }
 
 /* meme upload body text */
-.meme-upload-form.{
-  colour: #ffffff;
+.meme-upload-form {
+  color: #ffffff;
 }
 
 .form-holder {
@@ -491,4 +491,88 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   width: 180px;
 }
 
+/* START OF MEME PAGE STYLING */
 
+/* Login prompt styled like rating bar but with reasonable default size */
+.login-prompt-bar {
+    justify-content: center;
+    text-align: center;
+    width: auto;
+    max-width: 600px; /* Smaller default max-width */
+    min-width: 300px; /* Prevent it from getting too small */
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.login-prompt-content {
+    padding: 0 2rem; /* More generous padding */
+}
+
+.login-prompt-content p {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #000000;
+    font-weight: bold;
+    white-space: nowrap; /* Prevents text wrapping initially */
+}
+
+/* Scale down appropriately on smaller screens */
+@media (max-width: 768px) {
+    .login-prompt-bar {
+        max-width: 90vw; /* Use viewport width on smaller screens */
+        margin: 0 1rem;
+    }
+    
+    .login-prompt-content p {
+        font-size: 1rem;
+        white-space: normal; /* Allow wrapping on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .login-prompt-content p {
+        font-size: 0.9rem;
+    }
+    
+    .login-prompt-content {
+        padding: 0 1rem;
+    }
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: #01b9e8;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+    font-weight: bold;
+    padding: 0;
+}
+
+.link-button:hover {
+    color: #0090b8;
+}
+
+/* MemePage specific tag styling - matches homepage dark semi-transparent style */
+.meme-page-tags {
+    background: #000000BF; /* Same semi-transparent black as homepage */
+    padding: 1rem;
+    margin: 1rem auto;
+    border-radius: 1rem;
+    max-width: 600px;
+    text-align: center;
+}
+
+.meme-page-tags-title {
+    font-size: 1.1rem;
+    color: #ffffff; /* White text on dark background */
+    margin: 0;
+}
+
+.meme-page-tag {
+    color: #ffffff; /* White text for individual tags */
+    margin: 0.2rem;
+    font-size: 0.9rem;
+    display: inline;
+}
