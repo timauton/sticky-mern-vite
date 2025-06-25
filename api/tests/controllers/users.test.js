@@ -400,6 +400,7 @@ describe("/users", () => {
       Meme.aggregate.mockRestore();
     });
   })
+
   describe("GET /users/:user_id/tag-rankings", () => {
     let testUser;
     let otherUser1;
@@ -557,4 +558,106 @@ describe("/users", () => {
       Meme.aggregate.mockRestore();
     });
   });
+
+  describe("GET /users/:user_id/tag-rankings/:tag", () => {
+    let testUser;
+    let testToken;
+
+    beforeEach(async () => {
+      // Clean up
+      await User.deleteMany({});
+      await Meme.deleteMany({});
+      await Rating.deleteMany({});
+      
+      // Create test users (reusing same setup for consistency)
+      testUser = new User({
+        username: 'testuser',
+        email: 'test@test.com',
+        password: '12345678'
+      });
+      
+      const otherUser1 = new User({
+        username: 'competitor1',
+        email: 'comp1@test.com',
+        password: '12345678'
+      });
+      
+      const otherUser2 = new User({
+        username: 'competitor2',
+        email: 'comp2@test.com',
+        password: '12345678'
+      });
+      
+      await testUser.save();
+      await otherUser1.save();
+      await otherUser2.save();
+      
+      testToken = createToken(testUser._id);
+      
+      // Create cats competition data
+      const testUserCatMeme1 = new Meme({
+        title: "Test Cat 1", img: "cat1.jpg", user: testUser._id,
+        created_at: new Date(), tags: ["cats"]
+      });
+      const testUserCatMeme2 = new Meme({
+        title: "Test Cat 2", img: "cat2.jpg", user: testUser._id,
+        created_at: new Date(), tags: ["cats"]
+      });
+      await testUserCatMeme1.save();
+      await testUserCatMeme2.save();
+      
+      const other1CatMeme = new Meme({
+        title: "Other Cat 1", img: "ocat1.jpg", user: otherUser1._id,
+        created_at: new Date(), tags: ["cats"]
+      });
+      await other1CatMeme.save();
+      
+      const other2CatMeme = new Meme({
+        title: "Other Cat 2", img: "ocat2.jpg", user: otherUser2._id,
+        created_at: new Date(), tags: ["cats"]
+      });
+      await other2CatMeme.save();
+      
+      // Create ratings for cats memes
+      await new Rating({ meme: testUserCatMeme1._id, user: otherUser1._id, rating: 4 }).save();
+      await new Rating({ meme: testUserCatMeme2._id, user: otherUser2._id, rating: 5 }).save();
+      await new Rating({ meme: other1CatMeme._id, user: testUser._id, rating: 5 }).save();
+      await new Rating({ meme: other2CatMeme._id, user: testUser._id, rating: 3 }).save();
+    });
+
+    it("returns detailed leaderboard for specific tag", async () => {
+      const response = await request(app)
+        .get(`/users/${testUser._id}/tag-rankings/cats`)
+        .set("Authorization", `Bearer ${testToken}`);
+      
+      expect(response.status).toEqual(200);
+      expect(response.body.tag).toEqual("cats");
+      expect(response.body.leaderboard).toHaveLength(3);
+      
+      // Check top user
+      expect(response.body.leaderboard[0]).toEqual({
+        rank: 1, username: "competitor1", avgRating: 5, memeCount: 1
+      });
+      
+      // Check that our test user is in the leaderboard
+      expect(response.body.leaderboard[1]).toEqual({
+        rank: 2, username: "testuser", avgRating: 4.5, memeCount: 2
+      });
+    });
+
+    it("returns 400 error when tag leaderboard aggregation fails", async () => {
+      const mockError = new Error("Database connection lost");
+      jest.spyOn(Meme, 'aggregate').mockRejectedValueOnce(mockError);
+      
+      const response = await request(app)
+        .get(`/users/${testUser._id}/tag-rankings/cats`)
+        .set("Authorization", `Bearer ${testToken}`);
+        
+      expect(response.status).toEqual(400);
+      expect(response.body.message).toEqual("Error finding tag leaderboard");
+      
+      Meme.aggregate.mockRestore();
+    });
+  }); 
 });
+

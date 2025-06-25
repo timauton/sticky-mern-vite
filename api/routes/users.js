@@ -11,7 +11,8 @@ const {
     updateUser,
     deleteUser,
     getUserActivity,
-    getUserTagRankings
+    getUserTagRankings,
+    getUserTagLeaderboard
 } = require("../controllers/users");
 
 //authorization
@@ -29,5 +30,8 @@ router.get("/:user_id/activity", tokenChecker, getUserActivity);
 
 // GETs user ranking for a tag
 router.get("/:user_id/tag-rankings", tokenChecker, getUserTagRankings);
+
+// GETs leaderboard for a tag
+router.get("/:user_id/tag-rankings/:tag", tokenChecker, getUserTagLeaderboard);
 
 module.exports = router;

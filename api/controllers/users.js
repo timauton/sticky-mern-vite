@@ -348,6 +348,119 @@ const getUserTagRankings = async (req, res) => {
     }
 }
 
+const getUserTagLeaderboard = async (req, res) => {
+    try {
+        const token = generateToken(req.user_id);
+        const userId = new mongoose.Types.ObjectId(req.params.user_id);
+        const tag = req.params.tag;
+        
+        // Get the requesting user's info so we can find them in the leaderboard later
+        const requestingUser = await User.findById(userId);
+        
+        // Create detailed leaderboard for a specific tag
+        const tagLeaderboard = await Meme.aggregate([
+            // STEP 1: Find all memes that have this specific tag
+            { $match: { tags: tag }},
+            
+            // STEP 2: Join each meme with its ratings from other users
+            { $lookup: {
+                from: 'ratings',           // Join with ratings collection
+                localField: '_id',         // Meme's _id field
+                foreignField: 'meme',      // Rating's meme field
+                as: 'ratings'              // Store joined ratings in 'ratings' array
+            }},
+            
+            // STEP 3: Calculate average rating for each individual meme
+            { $addFields: {
+                avgRating: { 
+                    $cond: {
+                        if: { $gt: [{ $size: "$ratings" }, 0] },  // If meme has ratings
+                        then: { $avg: "$ratings.rating" },        // Calculate average rating
+                        else: 0                                   // Otherwise default to 0
+                    }
+                }
+            }},
+            
+            // STEP 4: Group by user to get each user's performance in this tag
+            // This combines all of a user's memes in this tag into one record
+            { $group: {
+                _id: "$user",                           // Group by user ID
+                avgRating: { $avg: "$avgRating" },      // Average of user's meme averages for this tag
+                memeCount: { $sum: 1 }                  // Count how many memes user has in this tag
+            }},
+            
+            // STEP 5: Round the averages for cleaner display
+            { $addFields: {
+                avgRating: { $round: ["$avgRating", 1] }  // Round to 1 decimal place
+            }},
+            
+            // STEP 6: Join with users collection to get usernames
+            // This is where we get the actual display names
+            { $lookup: {
+                from: 'users',             // Join with users collection
+                localField: '_id',         // User ID from grouped memes
+                foreignField: '_id',       // User's _id field in users collection
+                as: 'userInfo'             // Store user details in 'userInfo' array
+            }},
+            
+            // STEP 7: Extract username from the joined user data
+            { $addFields: {
+                username: {
+                    $cond: {
+                        if: { $gt: [{ $size: "$userInfo" }, 0] },              // If user was found
+                        then: { $arrayElemAt: ["$userInfo.username", 0] },     // Get first (only) username
+                        else: "unknown"                                        // Fallback if user not found
+                    }
+                }
+            }},
+            
+            // STEP 8: Sort by average rating (highest first to create ranking order)
+            // This determines who's #1, #2, #3, etc.
+            { $sort: { avgRating: -1 }},
+            
+            // STEP 9: Clean up the response - only return fields we need
+            { $project: {
+                username: 1,        // Include username
+                avgRating: 1,       // Include average rating
+                memeCount: 1        // Include meme count
+            }}
+        ]);
+        
+        // STEP 10: Convert aggregation result to leaderboard format with ranks
+        // Add rank numbers (1st, 2nd, 3rd, etc.) based on sorted order
+        const leaderboard = tagLeaderboard.map((user, index) => ({
+            rank: index + 1,                // Convert array index to rank (1-based)
+            username: user.username,        // Real username from database
+            avgRating: user.avgRating,      // User's average rating for this tag
+            memeCount: user.memeCount       // User's meme count for this tag
+        }));
+        
+        // STEP 11: Find the requesting user's specific stats in the leaderboard
+        // This shows where the requesting user ranks compared to everyone else
+        const userStats = leaderboard.find(user => user.username === requestingUser?.username) || {
+            rank: 0,                                    // User not found in this tag
+            username: requestingUser?.username || 'not found',  // Show their username or error
+            avgRating: 0,                               // No average if not found
+            memeCount: 0                                // No memes in this tag
+        };
+        
+        // STEP 12: Return complete leaderboard response
+        res.status(200).json({ 
+            tag: tag,                       // Which tag this leaderboard is for
+            leaderboard: leaderboard,       // Full ranking of all users in this tag
+            userStats: userStats,           // Requesting user's specific performance and rank
+            token: token                    // New JWT token
+        });
+        
+    } catch (error) {
+        console.error('Error getting tag leaderboard:', error);
+        res.status(400).json({ 
+            message: "Error finding tag leaderboard", 
+            token: generateToken(req.user_id) 
+        });
+    }
+}
+
 module.exports = {
   registerUser,
   login,
@@ -356,5 +469,6 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserActivity,
-  getUserTagRankings
+  getUserTagRankings,
+  getUserTagLeaderboard
 }
