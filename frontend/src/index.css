@@ -491,7 +491,7 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   width: 180px;
 }
 
-/* START OF MEME PAGE STYLING */
+/* START OF PUBLIC MEME PAGE STYLING */
 
 /* Login prompt styled like rating bar but with reasonable default size */
 .login-prompt-bar {
@@ -576,3 +576,5 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
     font-size: 0.9rem;
     display: inline;
 }
+
+/* END OF PUBLIC MEME PAGE STYLING */
