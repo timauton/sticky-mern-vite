@@ -100,12 +100,13 @@ const deleteComment = async (req, res) => {
   try {
     const commentDeleted = await Comment.findByIdAndDelete(req.params.id);
 
-    if (!commentDeleted) 
-      return res.status(404).json({ message: "😭 No comment found! 😭" });
+    if (!commentDeleted)
+      return res.status(404).json({ message: "😭 No comment found." });
+
     res.status(200).json({ message: "💅 Comment deleted 💅" });
   } catch (error) {
-      console.log("Error deleting this comment:", error);
-      res.status(500).json({ message: "Server error :(", error });
+    console.log("Error deleting this comment:", error);
+    res.status(500).json({ message: "Server error :(", error });
   }
 };
 
