@@ -596,6 +596,23 @@ describe("GET /memes/user/:user_id/ranked", () => {
         // Should get the oldest meme (My Fab Meme 1)
         expect(response.body.memes[0].title).toEqual("My Fab Meme 1");
     });
+
+    it("returns 400 error when aggregation fails", async () => {
+        // Mock the Meme.aggregate to throw an error
+        const mockError = new Error("Database connection lost");
+        jest.spyOn(Meme, 'aggregate').mockRejectedValueOnce(mockError);
+        
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked`)
+            .set("Authorization", `Bearer ${token}`);
+            
+        expect(response.status).toEqual(400);
+        expect(response.body.message).toEqual("Error finding ranked memes");
+        expect(response.body.token).toBeDefined(); // Should still return a token
+        
+        // Restore the original function
+        Meme.aggregate.mockRestore();
+    });
 });
 
 const makeTestMeme = async ( suffix = "", tags = [ "tag" + suffix ], created_at = testDate, user = testUser ) => {
