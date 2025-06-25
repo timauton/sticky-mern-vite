@@ -23,7 +23,7 @@ export function TagFilter({ value, onTagChange }) {
 
     console.log(value) // check data being input
     return (
-        <div className="tagFilter">
+        <div className="tag-filter">
             <p>Add tags to filter</p>
             {/* <input
             id="tagInput"

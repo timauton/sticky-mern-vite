@@ -134,12 +134,15 @@ export function HomePage() {
           <div className="row">
             <div className="column-view-left">
               <div className="meme-tags">
-                <p className="meme-tags-title">Tagged:
+                {showTagFilter && <TagFilter value={tags} onTagChange={setTags}/>}
+                <br />
+                <br />
+                <p className="meme-tags-title">Tags for this meme:
+                <br />
                   {Array.isArray(meme.tags) && meme.tags.map( (tag, index) => {
                     return <span className="meme-tag" key={index}>{tag} </span>
                   })}
                 </p>
-                {showTagFilter && <TagFilter value={tags} onTagChange={setTags}/>}
               </div>
             </div>
             <div className="column-view-middle">
