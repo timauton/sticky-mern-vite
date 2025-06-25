@@ -12,10 +12,6 @@ const MemeSchema = new mongoose.Schema({
     tags: [{
         type: String
     }],
-// apparently not needed if using virtual field? But both are present for tags
-    // comment: {
-    //     type: String
-    // },
 });
 
 MemeSchema.virtual('rating', {

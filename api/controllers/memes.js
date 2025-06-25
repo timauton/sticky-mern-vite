@@ -2,7 +2,6 @@ const Meme = require("../models/meme");
 const { generateToken } = require("../lib/token");
 const fs = require('fs').promises;
 const mongoose = require('mongoose');
-const Comment = require("../models/comment");
 
 async function getAllMemes(req, res) {
 
@@ -26,70 +25,12 @@ async function getMemeByID(req, res) {
         // Only generate token if user is authenticated
         token = req.user_id ? generateToken(req.user_id) : null;
         
-        const meme = await Meme.findById(req.params.meme_id)
-            .populate('user');
-                //add in virtual path to find comments
-                .populate({
-                    path: 'comments',
-                    populate: {
-                        path: 'user'
-                        select: 'username'
-                    },
-                    options: {sort: {created_at: -1 } }
-            });
+        const meme = await Meme.findById(req.params.meme_id).populate('user');
         res.status(200).json({ meme: meme, token: token });
     }
     catch(err) {
         console.error(err);
         res.status(400).json({ message: "Couldn't find meme", token: token });
-    }
-}
-
-// Get comments associated with active meme ID
-async function getCommentsByMeme(req, res) {
-    let token;
-    
-    try {
-        token = req.user_id ? generateToken(req.user_id) : null;
-        
-        const comments = await Comment.find({ meme_id: req.params.meme_id })
-            .populate('user', 'username') // Assuming you want to show who commented
-            .sort({ created_at: -1 }); // Most recent first
-            
-        res.status(200).json({ comments: comments, token: token });
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ message: "Error fetching comments", token: token });
-    }
-}
-
-// create comment and attach it to active meme id
-async function createComment(req, res) {
-    let token;
-    
-    try {
-        token = generateToken(req.user_id);
-        
-        const comment = new Comment({
-            text: req.body.text,
-            user: req.user_id,
-            meme_id: req.params.meme_id,
-            created_at: Date.now()
-        });
-        
-        await comment.save();
-        
-        // Populate user info before sending back
-        await comment.populate('user', 'username');
-        
-        res.status(201).json({ 
-            message: "Comment created", 
-            comment: comment, 
-            token: token 
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ message: "Error creating comment", token: token });
     }
 }
 
@@ -279,9 +220,7 @@ const MemesController = {
     getMemesCreatedByUser, getMemesCreatedByUser,
     getMemesRatedByUser, getMemesRatedByUser,
     getMemesByTags, getMemesByTags,
-    getAllTags, getAllTags,
-    getCommentsByMeme: getCommentsByMeme,
-    createComment: createComment
+    getAllTags, getAllTags
 };
 
 module.exports = MemesController;
