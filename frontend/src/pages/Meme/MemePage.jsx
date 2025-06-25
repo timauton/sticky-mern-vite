@@ -41,7 +41,7 @@ const MemePage = () => {
         fetchMeme();
     }, [memeId]);
 
-    // Navigation handlers - simplified
+    // Navigation handlers for links in authorisation message
     const handleLoginClick = () => {
         setShowLogin((prev) => !prev);
         setShowSignup(false);
@@ -54,7 +54,6 @@ const MemePage = () => {
 
     const handleSignupSuccess = () => {
         setShowSignup(false);
-        // Removed auto-open login - let user decide
     };
 
     const handleLoginSuccess = () => {
@@ -63,8 +62,6 @@ const MemePage = () => {
         // Force re-check of localStorage
         const token = localStorage.getItem("token");
         setIsAuthenticated(!!token);
-        
-        console.log("Login success - staying on meme page!"); // Debug log
     };
 
     // Loading and error states
