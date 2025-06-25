@@ -4,6 +4,7 @@
 const seededUsers = require("./users");
 const seedMemes = require("./memes");
 const seedRatings = require("./ratings");
+const seedComments = require("./commentSeeds");
 
 const runSeeds = async () => {
     try {
@@ -12,6 +13,7 @@ const runSeeds = async () => {
         await seededUsers();
         await seedMemes();
         await seedRatings();
+        await seedComments();
 
         console.log("All seeds completed successfully!")
     } catch (error) {

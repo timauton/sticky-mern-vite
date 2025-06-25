@@ -1,6 +1,7 @@
 const Comment = require("../models/comment");
 const jwt = require("jsonwebtoken"); //creates tokens that keeps users logged in using jwts
 const { response } = require("../app");
+const mongoose = require('mongoose');
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret"; //jwtcode reads from .env file and uses supersecret as a fallback 
 
@@ -47,9 +48,8 @@ const getAllComments = async (req, res) => {
 // Get all comments for one meme:
 const getCommentsByMeme = async (req,res) => {
     try {
-        const {meme_id} = req.params;
-        const commentMeme = await Comment.find({meme_id})
-            .populate("user_id", "username")
+        const commentMeme = await Comment.find({meme_id: req.params.meme_id})
+            .populate("user_id", "username");
         res.status(200).json(commentMeme);
     } catch (error) {
         console.log("Error fetching comments for this meme:", error);
