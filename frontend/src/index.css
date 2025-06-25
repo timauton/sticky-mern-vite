@@ -13,14 +13,18 @@
 .error-display {
   background-color: #ff0000;
   border: solid #000000 4px;
-  max-width: 300px;
-  max-height: 150px;
-  text-align: center;
+  width: 300px;
+  height: 100px;
+  text-align: right;
   position:fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1;
+}
+
+.error-message {
+  text-align: center;
 }
 
 .close-error {

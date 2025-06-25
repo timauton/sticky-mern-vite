@@ -123,10 +123,12 @@ export function HomePage() {
         <div className="background-area">
           {errorMessage && (
                   <div className="error-display">
-                    {errorMessage}
-                    <span className="close-error" onClick={() => setErrorMessage("")}>
+                    <button className="close-error" onClick={() => setErrorMessage("")}>
                       &times;
-                    </span>
+                    </button>
+                    <p className="error-message">
+                    {errorMessage}
+                    </p>
                   </div>
                 )}
           <div className="top-banner">
