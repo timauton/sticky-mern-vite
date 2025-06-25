@@ -97,7 +97,6 @@ body {
   position: relative;
 }
 
-
 .meme-tags-title {
   margin: 1rem;
   font-size: 1rem;
@@ -105,11 +104,9 @@ body {
   color: #ffffff
 }
 
-
 .meme-tag {
   color: #00ff00
 }
-
 
 /* signup link text */
 .signup-button {
@@ -268,20 +265,6 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   border: 4px solid #000000;
   z-index: 1;
 }
-
-.stats-nav-button {
-  background-color: #00ff00;
-  font-size: 1.1rem;
-  white-space: pre-line;
-  position: absolute;
-  right: 150px;
-  aspect-ratio: 1/1;  
-  padding: 9px;
-  border: 4px solid #000000;
-  border-radius: 50%;
-  z-index: 1;
-}
-
 
 .logout-button {
   font-size: 2rem;
@@ -479,6 +462,20 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
 
 
 /* Meme upload button */
+
+.stats-nav-button {
+  position: static;
+  background-color: #00ff00;
+  font-size: 2rem;
+  white-space: pre-line;
+  aspect-ratio: 1/1;  
+  padding: 15px;
+  border: 4px solid #000000;
+  border-radius: 50%;
+  margin: 2rem;
+  z-index: 1;
+}
+
 .meme-upload-button {
   position: static;
   display: block;
@@ -526,6 +523,8 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
 }
 
 /* START OF PUBLIC MEME PAGE STYLING */
+
+
 
 /* Login prompt styled like rating bar but with reasonable default size */
 .login-prompt-bar {

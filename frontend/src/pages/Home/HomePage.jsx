@@ -119,11 +119,6 @@ export function HomePage() {
               onClick={handleTagFilter}
             />
             <Button
-              className="stats-nav-button"
-              buttonText={"My\nStats"} // other text is available
-              onClick={() => navigate("/stats")}
-            />
-            <Button
               className="logout-button"
               buttonText="Log Out"
               onClick={handleLogOutClick}
@@ -175,6 +170,12 @@ export function HomePage() {
               <div className="meme-upload-button-wrapper">
                 <MemeUploadButton />
               </div>
+              <br />
+              <Button
+              className="stats-nav-button"
+              buttonText={"My\nStats"} // other text is available
+              onClick={() => navigate("/stats")}
+            />
           </div>
         </div>
       </div>  
