@@ -524,11 +524,7 @@ describe("GET /memes/user/:user_id/ranked", () => {
         await rating6.save();  
     });
 
-    it("returns user's memes ordered by most recent by default", async () => {
-        console.log("Test user ID:", testUser._id);
-        console.log("Test user ID (via .id):", testUser.id);
-        console.log("First meme user field:", testMemes[0].user);
-        
+    it("returns user's memes ordered by most recent by default", async () => {        
         const response = await request(app)
             .get(`/memes/user/${testUser._id}/ranked`)
             .set("Authorization", `Bearer ${token}`);
@@ -546,13 +542,26 @@ describe("GET /memes/user/:user_id/ranked", () => {
     });
 
     it("returns user's memes ordered by highest rating when specified", async () => {
-        // Same data, different sorting
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked?order=rating`)
+            .set("Authorization", `Bearer ${token}`);
+            
+        expect(response.status).toEqual(200);
+        expect(response.body.memes).toHaveLength(3);
+        
+        // Should be ordered by rating: Meme1 (4.5) → Meme3 (3.5) → Meme2 (2.0)
+        expect(response.body.memes[0].title).toEqual("My Fab Meme 1"); // highest: 4.5
+        expect(response.body.memes[1].title).toEqual("My Fab Meme 3"); // middle: 3.5  
+        expect(response.body.memes[2].title).toEqual("My Fab Meme 2"); // lowest: 2.0
+        
+        // Also check that averageRating is included
+        expect(response.body.memes[0].averageRating).toEqual(4.5);
+        expect(response.body.memes[1].averageRating).toEqual(3.5);
+        expect(response.body.memes[2].averageRating).toEqual(2.0);
     });
 });
 
 const makeTestMeme = async ( suffix = "", tags = [ "tag" + suffix ], created_at = testDate, user = testUser ) => {
-    console.log("makeTestMeme - user parameter:", user?.id);
-    console.log("makeTestMeme - global testUser:", testUser?.id);
     const meme = new Meme({
         img: "images/my_meme" + suffix + ".jpeg",
         title: "My Fab Meme " + suffix,

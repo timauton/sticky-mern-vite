@@ -214,19 +214,42 @@ async function getAllTags(req, res) {
 async function getUserMemesRanked(req, res) {
     try {
         const token = generateToken(req.user_id);
+        const order = req.query.order || 'recent'; // Default to 'recent'
         
-        console.log("Looking for user ID:", req.params.user_id);
-        console.log("User ID type:", typeof req.params.user_id);
-        
-        const memes = await Meme.aggregate([
+        const pipeline = [
+            // Step 1: Find memes by user
             { $match: { user: new mongoose.Types.ObjectId(req.params.user_id) }},
-            { $sort: { created_at: -1 }}
-        ]);
+            
+            // Step 2: Join with ratings to all the ratings for each meme
+            { $lookup: {
+                from: 'ratings',
+                localField: '_id', 
+                foreignField: 'meme',
+                as: 'ratings'
+            }},
+            
+            // Step 3: Calculate average rating and total ratings
+            { $addFields: {
+                averageRating: { 
+                    $cond: {
+                        if: { $gt: [{ $size: "$ratings" }, 0] },
+                        then: { $round: [{ $avg: "$ratings.rating" }, 1] },
+                        else: 0
+                    }
+                },
+                totalRatings: { $size: "$ratings" }
+            }},
+            
+            // Step 4: Sort based on order parameter
+            { $sort: order === 'rating' 
+                ? { averageRating: -1, created_at: -1 }  // Highest rating first, then newest
+                : { created_at: -1 }  // Most recent first (default)
+            }
+        ];
 
-        console.log("Found memes:", memes.length);
-        console.log("First meme:", memes[0]);
-
+        const memes = await Meme.aggregate(pipeline);
         res.status(200).json({ memes: memes, token: token });
+        
     } catch (error) {
         console.error('Error getting ranked memes:', error);
         res.status(400).json({ message: "Error finding ranked memes", token: generateToken(req.user_id) });
