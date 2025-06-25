@@ -201,6 +201,153 @@ const getUserActivity = async (req, res) => {
     }
 }
 
+const getUserTagRankings = async (req, res) => {
+    try {
+        const token = generateToken(req.user_id);
+        const userId = new mongoose.Types.ObjectId(req.params.user_id);
+        
+        // STEP 1: Get user's overall stats
+        const userOverallStats = await Meme.aggregate([
+            // Start with all memes created by this specific user
+            { $match: { user: userId }},
+            
+            // Join each meme with its ratings from other users
+            { $lookup: {
+                from: 'ratings',           // Join with ratings collection
+                localField: '_id',         // Meme's _id field
+                foreignField: 'meme',      // Rating's meme field
+                as: 'ratings'              // Store joined ratings in 'ratings' array
+            }},
+            
+            // Calculate stats for each individual meme
+            { $addFields: {
+                // Calculate average rating for this meme (handle case where no ratings exist)
+                avgRating: { 
+                    $cond: {
+                        if: { $gt: [{ $size: "$ratings" }, 0] },  // If meme has ratings
+                        then: { $avg: "$ratings.rating" },        // Calculate average
+                        else: 0                                   // Otherwise default to 0
+                    }
+                },
+                // Count how many ratings this meme received
+                ratingCount: { $size: "$ratings" }
+            }},
+            
+            // Aggregate all the user's memes into overall stats
+            { $group: {
+                _id: null,                                           // Group all memes together
+                totalMemes: { $sum: 1 },                            // Count total memes
+                overallAvgRating: { $avg: "$avgRating" },           // Average of all meme averages
+                totalRatingsReceived: { $sum: "$ratingCount" }      // Sum of all ratings received
+            }},
+            
+            // Clean up the final numbers
+            { $addFields: {
+                overallAvgRating: { $round: ["$overallAvgRating", 1] }  // Round to 1 decimal place
+            }},
+            
+            // Remove the MongoDB _id field from the result
+            { $project: {
+                _id: 0,                    // Exclude _id field
+                totalMemes: 1,             // Include totalMemes
+                overallAvgRating: 1,       // Include overallAvgRating
+                totalRatingsReceived: 1    // Include totalRatingsReceived
+            }}
+        ]);
+        
+        // STEP 2: Get ALL users' average ratings per tag (eek!)
+        const allUsersTagStats = await Meme.aggregate([
+            // Unwind tags so each meme-tag combo becomes a separate document
+            // Example: A meme with ["cats", "funny"] becomes 2 documents
+            { $unwind: "$tags" },
+            
+            // Join with ratings for each meme
+            { $lookup: {
+                from: 'ratings',
+                localField: '_id',
+                foreignField: 'meme',
+                as: 'ratings'
+            }},
+            
+            // Calculate average rating per meme
+            { $addFields: {
+                avgRating: { 
+                    $cond: {
+                        if: { $gt: [{ $size: "$ratings" }, 0] },
+                        then: { $avg: "$ratings.rating" },
+                        else: 0
+                    }
+                }
+            }},
+            
+            // Group by user and tag to get user's average per tag
+            // Example: All of testUser's "cats" memes get grouped together
+            { $group: {
+                _id: { user: "$user", tag: "$tags" },           // Group by user-tag combination
+                userAvgRating: { $avg: "$avgRating" },          // Average rating for this user's tag
+                userMemeCount: { $sum: 1 }                      // Count of memes in this tag
+            }},
+            
+            // Round the averages for cleaner numbers
+            { $addFields: {
+                userAvgRating: { $round: ["$userAvgRating", 1] }
+            }},
+            
+            // Group by tag to get all users for each tag
+            // Example: All users who have created "cats" memes
+            { $group: {
+                _id: "$_id.tag",                                // Group by tag name
+                users: { $push: {                              // Create array of users for this tag
+                    user: "$_id.user",
+                    userAvgRating: "$userAvgRating",
+                    userMemeCount: "$userMemeCount"
+                }}
+            }},
+            
+            // Sort users within each tag by average rating (highest first)
+            // This creates the ranking order for each tag
+            { $addFields: {
+                users: { $sortArray: { input: "$users", sortBy: { userAvgRating: -1 }}}
+            }}
+        ]);
+        
+        // STEP 3: Calculate rankings for our specific user
+        const tagRankings = [];
+        
+        // Loop through each tag's user rankings
+        for (const tagData of allUsersTagStats) {
+            const tag = tagData._id;
+            const users = tagData.users;  // Array of users sorted by rating (best first)
+            
+            // Find our user's position in this tag's ranking
+            const userIndex = users.findIndex(u => u.user.equals(userId));
+            
+            // If our user has memes in this tag, add their ranking info
+            if (userIndex !== -1) {
+                const userStats = users[userIndex];
+                tagRankings.push({
+                    tag: tag,
+                    userRank: userIndex + 1,                    // Convert to 1-based ranking (1st, 2nd, 3rd...)
+                    totalUsers: users.length,                   // How many users compete in this tag
+                    userAvgRating: userStats.userAvgRating,     // User's average rating for this tag
+                    userMemeCount: userStats.userMemeCount      // User's meme count for this tag
+                });
+            }
+        }
+        
+        // Send the complete response
+        res.status(200).json({ 
+            userOverallStats: userOverallStats[0] || { totalMemes: 0, overallAvgRating: 0, totalRatingsReceived: 0 },
+            tagRankings: tagRankings, 
+            token: token 
+        });
+        
+    } catch (error) {
+        console.error('Error getting user tag rankings:', error);
+        res.status(400).json({ message: "Error finding user tag rankings", token: generateToken(req.user_id) });
+    }
+}
+
 module.exports = {
   registerUser,
   login,
@@ -209,4 +356,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserActivity,
+  getUserTagRankings
 }
