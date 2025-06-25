@@ -3,12 +3,11 @@ import { useState, useEffect, useRef } from "react";
 import { Login } from "../../components/Login";
 import { Signup } from "../../components/Signup";
 import MemeDisplay from "../../components/MemeDisplay";
-// import { RatingBar } from "../../components/RatingBar";
 import MemeUploadButton from "../../components/MemeUploadButtonComponent";
 import { useNavigate } from "react-router-dom";
 import getMeme from "../../services/memeSelector";
 import { TagFilter } from "../../components/TagFilter"
-import CommentBox from "../../components/CommentBox"
+import Comments from "../../components/Comments"
 import ShareButton from "../../components/ShareButtonComponent"
 import "../../index.css";
 
@@ -184,7 +183,7 @@ export function HomePage() {
                   onClick={handleNextClick}
                 />
               </div>
-                <CommentBox />
+                <Comments meme={meme} />
             </div>
             <div className="column-view-right">
               <div className="meme-upload-button-wrapper">
