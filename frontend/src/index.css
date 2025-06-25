@@ -9,6 +9,29 @@
   src: url('./assets/fonts/Candy-Season.otf') format('truetype');
 }
 
+/* Error box start */
+.error-display {
+  background-color: #ff0000;
+  border: solid #000000 4px;
+  max-width: 300px;
+  max-height: 150px;
+  text-align: center;
+  position:fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.close-error {
+  border: solid black 1px;
+  background-color: #eeeeee;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  cursor: pointer;
+}
+/* Error box end */
+
 
 /* GENERAL FORMATTING*/
 :root {
@@ -447,7 +470,7 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
 /* StatsPage columns & rows */
 .row {
   display: flex;
-   gap: 2rem;
+  gap: 2rem;
 }
 
 .column-left {
@@ -609,6 +632,16 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
     margin: 0.2rem;
     font-size: 0.9rem;
     display: inline;
+}
+
+.tag-button {
+  margin: 0.15rem;
+  cursor: pointer;
+}
+
+.clear-filter {
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
 /* END OF PUBLIC MEME PAGE STYLING */
