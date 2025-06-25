@@ -1,6 +1,5 @@
 // import getMeme from "../services/memeSelector";
 import  RatingBar  from "./RatingBar";
-import ShareButton from "./ShareButtonComponent";
 // import { useState } from "react";
 import "../index.css";
 
@@ -14,9 +13,6 @@ const MemeDisplay = (props) => {
             </div>
             <div className="rating-bar-div">
                 <RatingBar meme_id={props.meme._id} />
-            </div>
-            <div className="share-button-div">
-                <ShareButton meme={props.meme} />
             </div>
         </div>
     );
