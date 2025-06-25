@@ -19,11 +19,12 @@ async function getAllMemes(req, res) {
 }
 
 async function getMemeByID(req, res) {
-
     let token;
 
     try {
-        token = generateToken(req.user_id);
+        // Only generate token if user is authenticated
+        token = req.user_id ? generateToken(req.user_id) : null;
+        
         const meme = await Meme.findById(req.params.meme_id).populate('user');
         res.status(200).json({ meme: meme, token: token });
     }

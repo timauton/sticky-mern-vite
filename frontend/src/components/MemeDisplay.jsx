@@ -1,5 +1,5 @@
 // import getMeme from "../services/memeSelector";
-import { RatingBar } from "./RatingBar";
+import  RatingBar  from "./RatingBar";
 // import { useState } from "react";
 import "../index.css";
 

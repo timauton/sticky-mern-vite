@@ -5,6 +5,7 @@ const ratingsRouter = require("./routes/ratings")
 const usersRouter = require("./routes/users");
 const memesRouter = require("./routes/memes");
 const authenticationRouter = require("./routes/authentication");
+const commentsRouter = require("./routes/comments");
 const tokenChecker = require("./middleware/tokenChecker");
 const fs = require('fs')
 const path = require('path')
@@ -30,10 +31,12 @@ app.use("/tokens", authenticationRouter);
 const MemesController = require("./controllers/memes"); // bypasses token checker for this
 app.get("/memes/tags", MemesController.getAllTags);
 
-app.use("/memes", tokenChecker, memesRouter);
+app.use("/memes", memesRouter);
 app.use("/uploads", express.static("uploads"));
 
 app.use("/ratings", tokenChecker, ratingsRouter);
+
+app.use("/comments", tokenChecker, commentsRouter);
 
 // 404 Handler
 app.use((_req, res) => {
