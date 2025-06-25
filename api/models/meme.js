@@ -15,9 +15,10 @@ const MemeSchema = new mongoose.Schema({
 });
 
 MemeSchema.virtual('rating', {
-    ref: 'Tag',
+    ref: 'rating',
     localField: '_id',
-    foreignField: 'meme'
+    foreignField: 'meme',
+    justOne: false
 });
 
 //TODO: Uncomment the virtual fields when we implement these schemas
