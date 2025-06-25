@@ -30,7 +30,7 @@ app.use("/tokens", authenticationRouter);
 const MemesController = require("./controllers/memes"); // bypasses token checker for this
 app.get("/memes/tags", MemesController.getAllTags);
 
-app.use("/memes", tokenChecker, memesRouter);
+app.use("/memes", memesRouter);
 app.use("/uploads", express.static("uploads"));
 
 app.use("/ratings", tokenChecker, ratingsRouter);

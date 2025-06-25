@@ -6,11 +6,14 @@ const MemesController = require("../controllers/memes");
 const { uploadConfigs, handleUploadError } = require("../middleware/uploadMiddleware");
 
 // gets all memes in the database (you probably don't want this!), returns an array of memes
-router.get("/", MemesController.getAllMemes);
+router.get("/", tokenChecker, MemesController.getAllMemes);
 
 // gets the next meme that is relevant for the user, returns one meme
 // exactly whcih meme you get will be decided by The Algorithm™
 router.get("/next", tokenChecker, MemesController.getNextMeme);
+
+// public route for an individual meme so that users can share memes
+router.get("/public/:meme_id", MemesController.getMemeByID);
 
 // gets a particular meme using the _id, returns one meme
 router.get("/:meme_id", tokenChecker, MemesController.getMemeByID);
