@@ -279,28 +279,32 @@ async function getRandomUnratedMeme(user_id) {
 
 async function getNextRandomMemeTag(user_id) {
 
-    // we add up all the ratings to get a total rating score
-    // then we add 20% to ensure a user doesn't always see the same memes
+    // we square all the scores so higher scores are weighted far mroe than low ones
+    // then we add up all the ratings to get a total rating score
+    // then we add 10% to ensure a user doesn't always see the same memes
     // then we pick a random number between 0 and the total score
     // we work through the array starting at the highest rating and stop
     // when we get to the random number
 
     // Eg. a user has rated cats 5* and programming 1*
-    // Total number will be ( 5 + 1 ) * 1.2 = 7.2
-    // 3 would be cats
-    // 5.5 would be programming
-    // 6.4 would be random
+    // Total number will be ( 25 + 1 ) * 1.1 = 28.6
+    // so you get something like this (not to scale!):
+    // [-------------cats---------------][p][-rand-]
+    // and we pick a point along the line
+    // 10.3 would be cats
+    // 22.9 would also be cats
+    // 25.5 would be programming
+    // 27.1 would be random
 
     // I have no idea how well this works in practice, but it does bias
     // results towards the memes users like
 
-    // 1.25 here would give a 20% chance of totally random meme
-    const randomUnratedTagMultiplier = 1.25;
+    const randomUnratedTagMultiplier = 1.1;
 
     let totalRating = 0;
     const ratedTags = await getRatedTags(user_id);
 
-    ratedTags.forEach((tag) => totalRating += tag.avg );
+    ratedTags.forEach((tag) => totalRating += (tag.avg * tag.avg) );
 
     tagPickNumber = Math.random() * totalRating * randomUnratedTagMultiplier;
 
@@ -311,7 +315,7 @@ async function getNextRandomMemeTag(user_id) {
 
     // step through and set the tag if we get a match
     for (const tag of ratedTags) {
-        tagPickNumber -= tag.avg;
+        tagPickNumber -= (tag.avg * tag.avg);
         if (tagPickNumber < 0) {
             nextTag = tag._id;
             break;
