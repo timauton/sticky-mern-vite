@@ -6,7 +6,7 @@ import Button from "./ButtonComponent";
 
 import "../index.css";
 
-export function Signup({onSignupSuccess}) {
+export function Signup({ onSignupSuccess, setErrorMessage }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -21,8 +21,8 @@ export function Signup({onSignupSuccess}) {
         onSignupSuccess();
       }
     } catch (err) {
+      setErrorMessage("Failed to sign up, please enter all fields correctly")
       console.error(err);
-      // navigate("/signup");
     }
   }
 

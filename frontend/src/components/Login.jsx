@@ -1,6 +1,4 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-
 import { login } from "../services/authentication";
 import Button from "./ButtonComponent";
 
@@ -8,7 +6,7 @@ import "../index.css";
 
 
 
-export function Login({ onLoginSuccess }) {
+export function Login({ onLoginSuccess, setErrorMessage }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   // const navigate = useNavigate();
@@ -19,10 +17,9 @@ export function Login({ onLoginSuccess }) {
       const token = await login(username, password);
       localStorage.setItem("token", token);
       if (onLoginSuccess) onLoginSuccess();
-      // navigate("/");
     } catch (err) {
+      setErrorMessage("Incorrect username or password")
       console.error(err);
-      // navigate("/login");
     }
   }
 

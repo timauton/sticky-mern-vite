@@ -220,6 +220,20 @@ const seedMemes = async () => {
             tags: ["gaming"],
             created_at: Date("2024-12-25")
         },
+        {
+            img: "uploads/metal-cat.png",
+            title: "Metal Lyrics",
+            user: peterUser.id,
+            tags: ["cats", "heavy metal"],
+            created_at: Date("2025-04-20")
+        },
+        {
+            img: "uploads/not-the-same.png",
+            title: "Superiority",
+            user: peterUser.id,
+            tags: ["heavy metal"],
+            created_at: Date("2025-06-07")
+        }
 
     ]
 
