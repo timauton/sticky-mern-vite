@@ -8,7 +8,7 @@ import MemeUploadButton from "../../components/MemeUploadButtonComponent";
 import { useNavigate } from "react-router-dom";
 import getMeme from "../../services/memeSelector";
 import { TagFilter } from "../../components/TagFilter"
-import CommentBox from "../../components/CommentBox"
+import CreateComment from "../../components/CommentBox"
 import "../../index.css";
 
 export function HomePage() {
@@ -164,7 +164,7 @@ export function HomePage() {
                   onClick={handleNextClick}
                 />
               </div>
-                <CommentBox />
+                <CreateComment />
             </div>
             <div className="column-view-right">
               <div className="meme-upload-button-wrapper">
