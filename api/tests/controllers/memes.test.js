@@ -559,6 +559,43 @@ describe("GET /memes/user/:user_id/ranked", () => {
         expect(response.body.memes[1].averageRating).toEqual(3.5);
         expect(response.body.memes[2].averageRating).toEqual(2.0);
     });
+
+    it("returns paginated results with page and limit parameters", async () => {
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked?page=1&limit=2`)
+            .set("Authorization", `Bearer ${token}`);
+            
+        expect(response.status).toEqual(200);
+        expect(response.body.memes).toHaveLength(2); // Only 2 memes, not 3
+        expect(response.body.pagination).toEqual({
+            currentPage: 1,
+            totalPages: 2,  // 3 memes at 2 per page = 2 pages (rounded up)
+            totalMemes: 3,
+            limit: 2
+        });
+        
+        // Should get newest 2 memes first
+        expect(response.body.memes[0].title).toEqual("My Fab Meme 3");
+        expect(response.body.memes[1].title).toEqual("My Fab Meme 2");
+    });
+
+    it("returns second page of results correctly", async () => {
+        const response = await request(app)
+            .get(`/memes/user/${testUser._id}/ranked?page=2&limit=2`)
+            .set("Authorization", `Bearer ${token}`);
+            
+        expect(response.status).toEqual(200);
+        expect(response.body.memes).toHaveLength(1); // Only 1 meme on page 2
+        expect(response.body.pagination).toEqual({
+            currentPage: 2,
+            totalPages: 2,
+            totalMemes: 3,
+            limit: 2
+        });
+        
+        // Should get the oldest meme (My Fab Meme 1)
+        expect(response.body.memes[0].title).toEqual("My Fab Meme 1");
+    });
 });
 
 const makeTestMeme = async ( suffix = "", tags = [ "tag" + suffix ], created_at = testDate, user = testUser ) => {

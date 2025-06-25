@@ -214,21 +214,25 @@ async function getAllTags(req, res) {
 async function getUserMemesRanked(req, res) {
     try {
         const token = generateToken(req.user_id);
-        const order = req.query.order || 'recent'; // Default to 'recent'
+        const order = req.query.order || 'recent';
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        
+        // Get total count first
+        const totalMemes = await Meme.countDocuments({ 
+            user: new mongoose.Types.ObjectId(req.params.user_id) 
+        });
         
         const pipeline = [
-            // Step 1: Find memes by user
+            // Gets the user ID & gets all the rating stats for their memes
             { $match: { user: new mongoose.Types.ObjectId(req.params.user_id) }},
-            
-            // Step 2: Join with ratings to all the ratings for each meme
             { $lookup: {
                 from: 'ratings',
                 localField: '_id', 
                 foreignField: 'meme',
                 as: 'ratings'
             }},
-            
-            // Step 3: Calculate average rating and total ratings
             { $addFields: {
                 averageRating: { 
                     $cond: {
@@ -239,16 +243,30 @@ async function getUserMemesRanked(req, res) {
                 },
                 totalRatings: { $size: "$ratings" }
             }},
-            
-            // Step 4: Sort based on order parameter
+            // Orders the returning data
             { $sort: order === 'rating' 
-                ? { averageRating: -1, created_at: -1 }  // Highest rating first, then newest
-                : { created_at: -1 }  // Most recent first (default)
-            }
+                ? { averageRating: -1, created_at: -1 }
+                : { created_at: -1 }
+            },
+            { $skip: skip },
+            { $limit: limit }
         ];
 
         const memes = await Meme.aggregate(pipeline);
-        res.status(200).json({ memes: memes, token: token });
+        
+        // Calculate pagination info
+        const totalPages = Math.ceil(totalMemes / limit);
+        
+        res.status(200).json({ 
+            memes: memes, 
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                totalMemes: totalMemes,
+                limit: limit
+            },
+            token: token 
+        });
         
     } catch (error) {
         console.error('Error getting ranked memes:', error);
