@@ -658,6 +658,120 @@ describe("/users", () => {
       
       Meme.aggregate.mockRestore();
     });
-  }); 
+  });
+
+    describe("GET /users/:user_id/overall-leaderboard", () => {
+    let testUser;
+    let testToken;
+
+    beforeEach(async () => {
+      // Clean up
+      await User.deleteMany({});
+      await Meme.deleteMany({});
+      await Rating.deleteMany({});
+      
+      // Create test users
+      testUser = new User({
+        username: 'testuser',
+        email: 'test@test.com', 
+        password: '12345678'
+      });
+      
+      const topUser = new User({
+        username: 'topuser',
+        email: 'top@test.com',
+        password: '12345678'
+      });
+      
+      const bottomUser = new User({
+        username: 'bottomuser', 
+        email: 'bottom@test.com',
+        password: '12345678'
+      });
+      
+      await testUser.save();
+      await topUser.save();
+      await bottomUser.save();
+      
+      testToken = createToken(testUser._id);
+      
+      // === TOP USER: 1 meme with 5.0 average (rank 1) ===
+      const topUserMeme = new Meme({
+        title: "Top Meme", img: "top.jpg", user: topUser._id,
+        created_at: new Date(), tags: ["top"]
+      });
+      await topUserMeme.save();
+      
+      // Rating: [5] = 5.0 average
+      await new Rating({ meme: topUserMeme._id, user: testUser._id, rating: 5 }).save();
+      
+      // === TEST USER: 2 memes with 4.5 overall average (rank 2) ===
+      const testUserMeme1 = new Meme({
+        title: "Test Meme 1", img: "test1.jpg", user: testUser._id,
+        created_at: new Date(), tags: ["test"]
+      });
+      const testUserMeme2 = new Meme({
+        title: "Test Meme 2", img: "test2.jpg", user: testUser._id,
+        created_at: new Date(), tags: ["test"]
+      });
+      await testUserMeme1.save();
+      await testUserMeme2.save();
+      
+      // Ratings: [4] and [5] = 4.5 overall average
+      await new Rating({ meme: testUserMeme1._id, user: topUser._id, rating: 4 }).save();
+      await new Rating({ meme: testUserMeme2._id, user: bottomUser._id, rating: 5 }).save();
+      
+      // === BOTTOM USER: 1 meme with 3.0 average (rank 3) ===
+      const bottomUserMeme = new Meme({
+        title: "Bottom Meme", img: "bottom.jpg", user: bottomUser._id,
+        created_at: new Date(), tags: ["bottom"]
+      });
+      await bottomUserMeme.save();
+      
+      // Rating: [3] = 3.0 average
+      await new Rating({ meme: bottomUserMeme._id, user: testUser._id, rating: 3 }).save();
+    });
+
+    it("returns overall leaderboard across all users", async () => {
+      const response = await request(app)
+        .get(`/users/${testUser._id}/overall-leaderboard`)
+        .set("Authorization", `Bearer ${testToken}`);
+        
+      expect(response.status).toEqual(200);
+      expect(response.body.leaderboard).toHaveLength(3);
+      
+      // Check ranking order (highest overall average first)
+      expect(response.body.leaderboard[0]).toEqual({
+        rank: 1, username: "topuser", avgRating: 5.0, totalMemes: 1, totalRatings: 1
+      });
+      
+      expect(response.body.leaderboard[1]).toEqual({
+        rank: 2, username: "testuser", avgRating: 4.5, totalMemes: 2, totalRatings: 2
+      });
+      
+      expect(response.body.leaderboard[2]).toEqual({
+        rank: 3, username: "bottomuser", avgRating: 3.0, totalMemes: 1, totalRatings: 1
+      });
+      
+      // Check user stats
+      expect(response.body.userStats).toEqual({
+        rank: 2, username: "testuser", avgRating: 4.5, totalMemes: 2, totalRatings: 2
+      });
+    });
+
+    it("returns 400 error when overall leaderboard aggregation fails", async () => {
+      const mockError = new Error("Database connection lost");
+      jest.spyOn(Meme, 'aggregate').mockRejectedValueOnce(mockError);
+      
+      const response = await request(app)
+        .get(`/users/${testUser._id}/overall-leaderboard`)
+        .set("Authorization", `Bearer ${testToken}`);
+        
+      expect(response.status).toEqual(400);
+      expect(response.body.message).toEqual("Error finding overall leaderboard");
+      
+      Meme.aggregate.mockRestore();
+    });
+  });
 });
 

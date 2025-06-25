@@ -461,6 +461,114 @@ const getUserTagLeaderboard = async (req, res) => {
     }
 }
 
+const getUserOverallLeaderboard = async (req, res) => {
+    try {
+        console.log("Overall leaderboard endpoint hit!");
+        const token = generateToken(req.user_id);
+        const userId = new mongoose.Types.ObjectId(req.params.user_id);
+        
+        // Get the requesting user's info so we can find them in the leaderboard later
+        const requestingUser = await User.findById(userId);
+        
+        // Create overall leaderboard across all users
+        const overallLeaderboard = await Meme.aggregate([
+            // STEP 1: Join each meme with its ratings
+            { $lookup: {
+                from: 'ratings',
+                localField: '_id',
+                foreignField: 'meme',
+                as: 'ratings'
+            }},
+            
+            // STEP 2: Calculate average rating for each meme
+            { $addFields: {
+                avgRating: { 
+                    $cond: {
+                        if: { $gt: [{ $size: "$ratings" }, 0] },
+                        then: { $avg: "$ratings.rating" },
+                        else: 0
+                    }
+                },
+                ratingCount: { $size: "$ratings" }
+            }},
+            
+            // STEP 3: Group by user to get each user's overall performance
+            { $group: {
+                _id: "$user",
+                avgRating: { $avg: "$avgRating" },      // Average of all user's meme averages
+                totalMemes: { $sum: 1 },               // Total memes created
+                totalRatings: { $sum: "$ratingCount" }  // Total ratings received
+            }},
+            
+            // STEP 4: Round averages for cleaner display
+            { $addFields: {
+                avgRating: { $round: ["$avgRating", 1] }
+            }},
+            
+            // STEP 5: Join with users to get usernames
+            { $lookup: {
+                from: 'users',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'userInfo'
+            }},
+            
+            // STEP 6: Extract username
+            { $addFields: {
+                username: {
+                    $cond: {
+                        if: { $gt: [{ $size: "$userInfo" }, 0] },
+                        then: { $arrayElemAt: ["$userInfo.username", 0] },
+                        else: "unknown"
+                    }
+                }
+            }},
+            
+            // STEP 7: Sort by overall average rating (highest first)
+            { $sort: { avgRating: -1 }},
+            
+            // STEP 8: Clean up response
+            { $project: {
+                username: 1,
+                avgRating: 1,
+                totalMemes: 1,
+                totalRatings: 1
+            }}
+        ]);
+        
+        // Convert to leaderboard format with ranks
+        const leaderboard = overallLeaderboard.map((user, index) => ({
+            rank: index + 1,
+            username: user.username,
+            avgRating: user.avgRating,
+            totalMemes: user.totalMemes,
+            totalRatings: user.totalRatings
+        }));
+        
+        // Find requesting user's stats
+        const userStats = leaderboard.find(user => user.username === requestingUser?.username) || {
+            rank: 0,
+            username: requestingUser?.username || 'not found',
+            avgRating: 0,
+            totalMemes: 0,
+            totalRatings: 0
+        };
+        
+        res.status(200).json({ 
+            leaderboard: leaderboard,
+            userStats: userStats,
+            token: token 
+        });
+        
+    } catch (error) {
+        console.error('Error getting overall leaderboard:', error);
+        res.status(400).json({ 
+            message: "Error finding overall leaderboard", 
+            token: generateToken(req.user_id) 
+        });
+    }
+}
+
 module.exports = {
   registerUser,
   login,
@@ -470,5 +578,6 @@ module.exports = {
   deleteUser,
   getUserActivity,
   getUserTagRankings,
-  getUserTagLeaderboard
+  getUserTagLeaderboard,
+  getUserOverallLeaderboard
 }

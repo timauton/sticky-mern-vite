@@ -12,7 +12,8 @@ const {
     deleteUser,
     getUserActivity,
     getUserTagRankings,
-    getUserTagLeaderboard
+    getUserTagLeaderboard,
+    getUserOverallLeaderboard
 } = require("../controllers/users");
 
 //authorization
@@ -33,5 +34,8 @@ router.get("/:user_id/tag-rankings", tokenChecker, getUserTagRankings);
 
 // GETs leaderboard for a tag
 router.get("/:user_id/tag-rankings/:tag", tokenChecker, getUserTagLeaderboard);
+
+// GETs overall leaderboard for all memes
+router.get("/:user_id/overall-leaderboard", tokenChecker, getUserOverallLeaderboard);
 
 module.exports = router;
