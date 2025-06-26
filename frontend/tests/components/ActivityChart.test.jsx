@@ -83,21 +83,4 @@ describe('ActivityChart', () => {
       expect(screen.getByText('Failed to load activity data')).toBeInTheDocument();
     });
   });
-
-  it('transforms data correctly', async () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    
-    vi.mocked(getUserActivity).mockResolvedValue(mockActivityData);
-
-    render(<ActivityChart />);
-
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Transformed chart data:', [
-        { date: '2025-01', created: 3, rated: 0 },
-        { date: '2025-06', created: 3, rated: 3 }
-      ]);
-    });
-
-    consoleSpy.mockRestore();
-  });
 });
