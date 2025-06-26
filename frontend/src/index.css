@@ -1061,7 +1061,7 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   margin: 0;
 }
 
-/* Add a nice transition for memes appearing/disappearing */
+/* Adds a nice transition for memes appearing/disappearing */
 .my-meme {
   transition: all 0.3s ease;
   animation: fadeIn 0.3s ease-in-out;
@@ -1203,7 +1203,6 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
 }
 
 /* START OF ACTIVITY CHART STYLING */
-/* Add this to your frontend/src/index.css file */
 
 .activity-chart-card {
   background: #000000BF;
@@ -1230,5 +1229,216 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
 @media (max-width: 600px) {
   .chart-container {
     padding: 0.5rem;
+  }
+}
+
+/* LEADERBOARDS STYLING (STATS PAGE) */
+
+.leaderboards-card {
+  background: #000000BF;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.leaderboards-card h2 {
+  font-size: 2.2rem;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.leaderboard-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.leaderboard-controls button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #000;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.leaderboard-controls button:hover {
+  background-color: #f0f0f0;
+}
+
+.leaderboard-controls button.active {
+  background-color: #01b9e8;
+  color: #fff;
+  border-color: #01b9e8;
+}
+
+.tag-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.tag-input {
+  padding: 0.5rem;
+  border: 2px solid #000;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.tag-submit {
+  padding: 0.5rem 1rem !important;
+  background-color: #EA375F !important;
+  color: #fff !important;
+  border-color: #EA375F !important;
+}
+
+.tag-submit:hover {
+  background-color: #d32f56 !important;
+}
+
+.leaderboard-title h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-rank {
+  color: #01b9e8;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.leaderboard-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Ranking styles - PROPER GOLD/SILVER/BRONZE */
+.leaderboard-item.rank-first {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border-color: #FF8C00;
+}
+
+.leaderboard-item.rank-second {
+  background: linear-gradient(135deg, #C0C0C0, #E6E6FA);
+  border-color: #9370DB;
+}
+
+.leaderboard-item.rank-third {
+  background: linear-gradient(135deg, #CD7F32, #DEB887);
+  border-color: #8B4513;
+}
+
+.leaderboard-item.rank-other {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-color: #6c757d;
+}
+
+.rank-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rank-emoji {
+  font-size: 1.5rem;
+  min-width: 2rem;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #000;
+}
+
+.user-stats {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.overall-stats {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.avg-rating {
+  font-weight: bold;
+  color: #EA375F;
+}
+
+.stat {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.empty-state {
+  color: #ffffff;
+  font-style: italic;
+  margin: 2rem 0;
+}
+
+.retry-button {
+  padding: 0.5rem 1rem;
+  background-color: #01b9e8;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.retry-button:hover {
+  background-color: #0198c7;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .leaderboard-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .tag-form {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .tag-input {
+    flex: 1;
+    max-width: 200px;
+  }
+  
+  .user-stats {
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: right;
   }
 }

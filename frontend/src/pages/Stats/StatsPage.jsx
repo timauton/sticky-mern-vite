@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import MyMemesSection from "../../components/MyMemesSection";
 import TagRankingsCards from "../../components/TagRankingsCards";
 import ActivityChart from "../../components/ActivityChart";
-
+import Leaderboards from "../../components/Leaderboards";
 
 export const StatsPage = () => {
   const navigate = useNavigate();
@@ -34,10 +34,8 @@ export const StatsPage = () => {
 
           <div className="card stats-card">
             <h2>My Charts</h2>
-             <ActivityChart />
             <TagRankingsCards />
-            <img src="/temp-images/chart2.png" alt="Chart 2"/>
-            <img src="/temp-images/chart3.png" alt="Chart 3"/>
+            <Leaderboards />
           </div>
         </div>
 
@@ -45,6 +43,7 @@ export const StatsPage = () => {
           <div className="card my-memes-card">
             <div className="my-memes">
               <MyMemesSection />
+              <ActivityChart />
             </div>  
           </div>
         </div>
