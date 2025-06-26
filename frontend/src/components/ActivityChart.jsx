@@ -18,9 +18,7 @@ const ActivityChart = () => {
         const userId = getCurrentUserId();
         
         const data = await getUserActivity(userId, token);
-        
-        console.log('Activity API Response:', data);
-        
+                
         // Backend returns: { chartData: [...], token: '...' }
         // Data is combined with memesCreated and memesRated
         const chartData = data.chartData || [];
@@ -32,7 +30,6 @@ const ActivityChart = () => {
           rated: item.memesRated || 0
         }));
         
-        console.log('Transformed chart data:', transformedData);
         setActivityData(transformedData);
         
         if (data.token) {

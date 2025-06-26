@@ -24,8 +24,6 @@ const Leaderboards = () => {
       
       const data = await getOverallLeaderboard(userId, token);
       
-      console.log('Overall Leaderboard Response:', data);
-      console.log('First user data:', data.leaderboard?.[0]);
       setLeaderboardData(data.leaderboard || []);
       setUserRank(data.userStats?.rank || data.userRank);
       setViewMode('overall');
@@ -51,7 +49,6 @@ const Leaderboards = () => {
       
       const data = await getTagLeaderboard(userId, tag, token);
       
-      console.log('Tag Leaderboard Response:', data);
       setLeaderboardData(data.leaderboard || []);
       setUserRank(data.userRank);
       setViewMode('tag');

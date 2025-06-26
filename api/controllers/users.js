@@ -463,7 +463,6 @@ const getUserTagLeaderboard = async (req, res) => {
 
 const getUserOverallLeaderboard = async (req, res) => {
     try {
-        console.log("Overall leaderboard endpoint hit!");
         const token = generateToken(req.user_id);
         const userId = new mongoose.Types.ObjectId(req.params.user_id);
         
