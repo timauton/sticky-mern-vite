@@ -284,6 +284,10 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   margin-bottom: 0.5rem;
 }
 
+.success-message{
+  color: rgb(255, 0, 255);
+}
+
 /* END OF VIEW PAGE FORMATTING */
 
 /* START OF LOGGED IN SPECIFIC FORMATTING */
