@@ -43,7 +43,9 @@ describe('Leaderboards', () => {
 
     render(<Leaderboards />);
     
+    await waitFor(() => { 
     expect(screen.getByText('Leaderboards')).toBeInTheDocument();
+    })
   });
 
   it('shows loading state initially', async () => {

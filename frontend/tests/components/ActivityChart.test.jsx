@@ -37,7 +37,9 @@ describe('ActivityChart', () => {
 
     render(<ActivityChart />);
     
+    await waitFor(() => {
     expect(screen.getByText('My Activity')).toBeInTheDocument();
+    })
   });
 
   it('shows loading state initially', async () => {

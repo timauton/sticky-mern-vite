@@ -38,8 +38,8 @@ const TagRankingsCards = () => {
 
   const getRankClass = (rank) => {
     if (rank === 1) return 'rank-first';
+    if (rank <= 2) return 'rank-top-two';
     if (rank <= 3) return 'rank-top-three';
-    if (rank <= 10) return 'rank-top-ten';
     return 'rank-other';
   };
 

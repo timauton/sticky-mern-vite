@@ -54,12 +54,15 @@ describe("Comments", () => {
     });
   });
 
-  test("Allows user to type a comment", () => {
+  test("Allows user to type a comment", async () => {
     commentsService.getComments.mockResolvedValueOnce([]);
     render(<Comments meme={mockMeme} />);
-    const textarea = screen.getByPlaceholderText("Write a comment...");
-    fireEvent.change(textarea, { target: { value: "Great meme!" } });
-    expect(textarea.value).toBe("Great meme!");
+
+    await waitFor(() => {
+      const textarea = screen.getByPlaceholderText("Write a comment...");
+      fireEvent.change(textarea, { target: { value: "Great meme!" } });
+      expect(textarea.value).toBe("Great meme!");
+    })
   });
 
   test("Submits a valid comment and clears the input", async () => {
