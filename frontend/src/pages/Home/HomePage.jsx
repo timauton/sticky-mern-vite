@@ -181,11 +181,6 @@ export function HomePage() {
               <ShareButton meme={meme}/>
             </div>
             <div className="column-view-middle">
-              <div className="meme-interface">
-                <MemeDisplay
-                  meme={meme}
-                />
-              </div>
               <div className="button-box">
                 {lastMeme !== null ? (<Button
                   className="back-and-forth left"
@@ -202,6 +197,11 @@ export function HomePage() {
                   className="back-and-forth right"
                   buttonImage="./right-arrow.png"
                   onClick={handleNextClick}
+                />
+              </div>
+              <div className="meme-interface">
+                <MemeDisplay
+                  meme={meme}
                 />
               </div>
                 <Comments meme={meme} />
