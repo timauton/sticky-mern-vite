@@ -2,6 +2,7 @@ import Button from "../../components/ButtonComponent";
 import { useNavigate } from "react-router-dom";
 import MyMemesSection from "../../components/MyMemesSection";
 import TagRankingsCards from "../../components/TagRankingsCards";
+import ActivityChart from "../../components/ActivityChart";
 
 
 export const StatsPage = () => {
@@ -33,6 +34,7 @@ export const StatsPage = () => {
 
           <div className="card stats-card">
             <h2>My Charts</h2>
+             <ActivityChart />
             <TagRankingsCards />
             <img src="/temp-images/chart2.png" alt="Chart 2"/>
             <img src="/temp-images/chart3.png" alt="Chart 3"/>
