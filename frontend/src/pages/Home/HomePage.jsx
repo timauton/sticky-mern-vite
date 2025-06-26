@@ -78,9 +78,10 @@ export function HomePage() {
         setErrorMessage("No memes found with those tags")
         setTags([])
       } else {
-      if (isLoggedIn && localStorage.getItem("token")) {
-        setMeme(data.meme);
-        localStorage.setItem("token", data.token);
+        if (isLoggedIn && localStorage.getItem("token")) {
+          setMeme(data.meme);
+          localStorage.setItem("token", data.token);
+        }
       }
     }).catch((error) => {
       console.error("Error fetching meme:", error);
