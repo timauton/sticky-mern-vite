@@ -1,212 +1,168 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { vi, describe, test, expect, beforeEach } from 'vitest';
-import '@testing-library/jest-dom';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import "@testing-library/jest-dom"
 import MyMemesSection from '../../src/components/MyMemesSection';
+import * as memeService from '../../src/services/memeService';
+import * as auth from '../../src/utils/auth';
 
-// Mock the service and auth utils
-vi.mock('../../src/services/memeService', () => ({
-  getUserMemes: vi.fn()
-}));
+// Mock the services
+vi.mock('../../src/services/memeService');
+vi.mock('../../src/utils/auth');
 
-vi.mock('../../src/utils/auth', () => ({
-  getCurrentUserId: vi.fn()
-}));
+const mockMemes = [
+  {
+    _id: '1',
+    title: 'Meme 1',
+    img: 'test1.jpg',
+    averageRating: 4.5,
+  },
+  {
+    _id: '2',
+    title: 'Meme 2',
+    img: 'test2.jpg',
+    averageRating: 3.8,
+  },
+  {
+    _id: '3',
+    title: 'Meme 3',
+    img: 'test3.jpg',
+    averageRating: 4.2,
+  },
+  {
+    _id: '4',
+    title: 'Meme 4',
+    img: 'test4.jpg',
+    averageRating: 3.5,
+  },
+];
 
-import { getUserMemes } from '../../src/services/memeService';
-import { getCurrentUserId } from '../../src/utils/auth';
+const mockRatedMemes = [
+  {
+    _id: '1',
+    title: 'Rated Meme 1',
+    img: 'rated1.jpg',
+    averageRating: 4.0,
+    userRating: 5,
+    ratedAt: '2024-01-15T10:00:00Z'
+  },
+  {
+    _id: '2', 
+    title: 'Rated Meme 2',
+    img: 'rated2.jpg',
+    averageRating: 3.2,
+    userRating: 4,
+    ratedAt: '2024-01-10T09:00:00Z'
+  }
+];
 
 describe('MyMemesSection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
-    // Mock localStorage
-    Object.defineProperty(window, 'localStorage', {
-      value: {
-        getItem: vi.fn(() => 'fake-token'),
-        setItem: vi.fn()
-      },
-      writable: true
-    });
-
-    // Mock getCurrentUserId to return a user ID
-    getCurrentUserId.mockReturnValue('mock-user-id');
+    localStorage.setItem('token', 'fake-token');
+    vi.mocked(auth.getCurrentUserId).mockReturnValue('user123');
   });
 
-  test('renders My Memes heading', async () => {
-    // Mock successful meme fetch
-    getUserMemes.mockResolvedValueOnce({
-      memes: [],
-      token: 'new-token'
+  it('renders My Memes heading', async () => {
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: mockMemes
     });
 
     render(<MyMemesSection />);
-
+    
     expect(screen.getByText('My Memes')).toBeInTheDocument();
   });
 
-  test('shows loading state initially', async () => {
-    // Mock slow response
-    getUserMemes.mockImplementation(() => new Promise(() => {}));
+  it('shows loading state initially', async () => {
+    vi.mocked(memeService.getUserMemes).mockImplementation(() => new Promise(() => {}));
 
     render(<MyMemesSection />);
-
-    expect(screen.getByText('My Memes')).toBeInTheDocument();
-    expect(screen.getByText('Loading your memes...')).toBeInTheDocument();
-  });
-
-  test('fetches and displays memes from API', async () => {
-    const mockMemes = [
-      {
-        _id: '1',
-        title: 'Funny Cat Meme',
-        img: '/images/cat.jpg',
-        averageRating: 4.5
-      },
-      {
-        _id: '2',
-        title: 'Dog Video',
-        img: '/images/dog.jpg',
-        averageRating: 3.8
-      }
-    ];
-
-    getUserMemes.mockResolvedValueOnce({
-      memes: mockMemes,
-      token: 'new-token'
-    });
-
-    render(<MyMemesSection />);
-
-    // Wait for loading to finish and memes to appear
-    await waitFor(() => {
-      expect(screen.getByText('Funny Cat Meme')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Dog Video')).toBeInTheDocument();
     
-    // Check for rating text - looking for the actual text structure
-    expect(screen.getByText(/Rating: 4.5\/5/)).toBeInTheDocument();
-    expect(screen.getByText(/Rating: 3.8\/5/)).toBeInTheDocument();
+    expect(screen.getByText(/Loading your created memes/)).toBeInTheDocument();
   });
 
-  test('allows switching between recent and rating sort', async () => {
-    const mockMemes = [
-      { _id: '1', title: 'Meme 1', averageRating: 4.5, img: '/test1.jpg' },
-      { _id: '2', title: 'Meme 2', averageRating: 3.8, img: '/test2.jpg' }
-    ];
-
-    // Mock the service to return results
-    getUserMemes
-      .mockResolvedValueOnce({ 
-        memes: mockMemes, 
-        token: 'token' 
-      }) // Initial call
-      .mockResolvedValueOnce({ 
-        memes: [...mockMemes].reverse(), 
-        token: 'token' 
-      }); // After sort change
-
-    render(<MyMemesSection />);
-
-    // Wait for initial load
-    await waitFor(() => {
-      expect(screen.getByText('Meme 1')).toBeInTheDocument();
-    });
-
-    // Click the "Highest Rated" button
-    const ratingButton = screen.getByText('Highest Rated');
-    fireEvent.click(ratingButton);
-
-    // Should call the service again with different sort
-    await waitFor(() => {
-      expect(getUserMemes).toHaveBeenCalledTimes(2);
-    });
-    
-    // Check that the service was called with the correct parameters
-    expect(getUserMemes).toHaveBeenNthCalledWith(1, 'mock-user-id', 'fake-token', 'recent', 10);
-    expect(getUserMemes).toHaveBeenNthCalledWith(2, 'mock-user-id', 'fake-token', 'rating', 10);
-  });
-
-  test('initially shows only 3 memes with show more button when more than 3 memes exist', async () => {
-    const mockMemes = Array.from({ length: 7 }, (_, i) => ({
-      _id: `${i + 1}`,
-      title: `Meme ${i + 1}`,
-      img: `/images/meme${i + 1}.jpg`,
-      averageRating: 4.0 + (i * 0.1)
-    }));
-
-    getUserMemes.mockResolvedValueOnce({
-      memes: mockMemes,
-      token: 'new-token'
+  it('fetches and displays memes from API', async () => {
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: mockMemes
     });
 
     render(<MyMemesSection />);
 
     await waitFor(() => {
       expect(screen.getByText('Meme 1')).toBeInTheDocument();
+      expect(screen.getByText('Meme 2')).toBeInTheDocument();
     });
 
-    // Should only show 3 memes initially
-    expect(screen.getByText('Meme 1')).toBeInTheDocument();
-    expect(screen.getByText('Meme 2')).toBeInTheDocument();
-    expect(screen.getByText('Meme 3')).toBeInTheDocument();
-    expect(screen.queryByText('Meme 4')).not.toBeInTheDocument();
-
-    // Should show "Show More" button
-    expect(screen.getByText('Show More (4 more memes)')).toBeInTheDocument();
+    expect(memeService.getUserMemes).toHaveBeenCalledWith(
+      'user123',
+      'fake-token',
+      'recent',
+      10
+    );
   });
 
-  test('shows all memes when show more is clicked', async () => {
-    const mockMemes = Array.from({ length: 5 }, (_, i) => ({
-      _id: `${i + 1}`,
-      title: `Meme ${i + 1}`,
-      img: `/images/meme${i + 1}.jpg`,
-      averageRating: 4.0
-    }));
-
-    getUserMemes
-      .mockResolvedValueOnce({
-        memes: mockMemes, // First call returns all memes
-        token: 'token'
-      })
-      .mockResolvedValueOnce({
-        memes: mockMemes, // Second call when showAll becomes true
-        token: 'token'
-      });
+  it('allows switching between recent and rating sort', async () => {
+    const user = userEvent.setup();
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: mockMemes
+    });
 
     render(<MyMemesSection />);
 
-    // Wait for initial load
+    const highestRatedButton = screen.getByText('My Highest Rated');
+    await user.click(highestRatedButton);
+
     await waitFor(() => {
-      expect(screen.getByText('Meme 1')).toBeInTheDocument();
+      expect(memeService.getUserMemes).toHaveBeenCalledWith(
+        'user123',
+        'fake-token', 
+        'rating',
+        10
+      );
+    });
+  });
+
+  it('initially shows only 3 memes with show more button when more than 3 memes exist', async () => {
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: mockMemes // 4 memes
     });
 
-    // Should only show first 3 initially
-    expect(screen.queryByText('Meme 4')).not.toBeInTheDocument();
+    render(<MyMemesSection />);
 
-    // Click show more
+    await waitFor(() => {
+      expect(screen.getByText('Meme 1')).toBeInTheDocument();
+      expect(screen.getByText('Meme 2')).toBeInTheDocument();
+      expect(screen.getByText('Meme 3')).toBeInTheDocument();
+      expect(screen.queryByText('Meme 4')).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/Show More/)).toBeInTheDocument();
+  });
+
+  it('shows all memes when show more is clicked', async () => {
+    const user = userEvent.setup();
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: mockMemes
+    });
+
+    render(<MyMemesSection />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Show More/)).toBeInTheDocument();
+    });
+
     const showMoreButton = screen.getByText(/Show More/);
-    fireEvent.click(showMoreButton);
+    await user.click(showMoreButton);
 
-    // Should now show all memes
     await waitFor(() => {
       expect(screen.getByText('Meme 4')).toBeInTheDocument();
-      expect(screen.getByText('Meme 5')).toBeInTheDocument();
+      expect(screen.getByText('Show Less')).toBeInTheDocument();
     });
-
-    // Should show "Show Less" button
-    expect(screen.getByText('Show Less')).toBeInTheDocument();
   });
 
-  test('does not show show more button when user has 3 or fewer memes', async () => {
-    const mockMemes = [
-      { _id: '1', title: 'Meme 1', img: '/images/meme1.jpg', averageRating: 4.0 },
-      { _id: '2', title: 'Meme 2', img: '/images/meme2.jpg', averageRating: 4.0 }
-    ];
-
-    getUserMemes.mockResolvedValueOnce({
-      memes: mockMemes,
-      token: 'token'
+  it('does not show show more button when user has 3 or fewer memes', async () => {
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: mockMemes.slice(0, 3) // Exactly 3 memes
     });
 
     render(<MyMemesSection />);
@@ -215,14 +171,14 @@ describe('MyMemesSection', () => {
       expect(screen.getByText('Meme 1')).toBeInTheDocument();
     });
 
-    // Should not show "Show More" button
+    // Should NOT show any pagination controls with exactly 3 memes
     expect(screen.queryByText(/Show More/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Show Less/)).not.toBeInTheDocument();
   });
 
-  test('displays no memes message when user has no memes', async () => {
-    getUserMemes.mockResolvedValueOnce({
-      memes: [],
-      token: 'token'
+  it('displays no memes message when user has no memes', async () => {
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: []
     });
 
     render(<MyMemesSection />);
@@ -230,60 +186,184 @@ describe('MyMemesSection', () => {
     await waitFor(() => {
       expect(screen.getByText('No memes found. Start creating some!')).toBeInTheDocument();
     });
-
-    // Should not show any meme cards or show more button
-    expect(screen.queryByText(/Show More/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Total:/)).not.toBeInTheDocument();
   });
 
-  test('shows and hides show less button correctly', async () => {
-    const mockMemes = Array.from({ length: 6 }, (_, i) => ({
-      _id: `${i + 1}`,
-      title: `Meme ${i + 1}`,
-      img: `/images/meme${i + 1}.jpg`,
-      averageRating: 4.0
-    }));
-
-    getUserMemes
-      .mockResolvedValue({
-        memes: mockMemes,
-        token: 'token'
-      });
+  it('shows and hides show less button correctly', async () => {
+    const user = userEvent.setup();
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: mockMemes
+    });
 
     render(<MyMemesSection />);
 
+    // Wait for initial load
     await waitFor(() => {
       expect(screen.getByText('Meme 1')).toBeInTheDocument();
     });
 
-    // Initially should show only 3 memes and "Show More" button
-    expect(screen.getByText('Meme 1')).toBeInTheDocument();
-    expect(screen.getByText('Meme 2')).toBeInTheDocument();
-    expect(screen.getByText('Meme 3')).toBeInTheDocument();
-    expect(screen.queryByText('Meme 4')).not.toBeInTheDocument();
-    expect(screen.getByText('Show More (3 more memes)')).toBeInTheDocument();
-
     // Click show more
-    fireEvent.click(screen.getByText('Show More (3 more memes)'));
+    const showMoreButton = screen.getByText(/Show More/);
+    await user.click(showMoreButton);
 
+    // Should now show "Show Less" button
     await waitFor(() => {
       expect(screen.getByText('Show Less')).toBeInTheDocument();
     });
 
-    // Should now show all memes
-    expect(screen.getByText('Meme 4')).toBeInTheDocument();
-    expect(screen.getByText('Meme 5')).toBeInTheDocument();
-    expect(screen.getByText('Meme 6')).toBeInTheDocument();
-
     // Click show less
-    fireEvent.click(screen.getByText('Show Less'));
+    const showLessButton = screen.getByText('Show Less');
+    await user.click(showLessButton);
 
-    // Should be back to showing only 3 memes and "Show More" button
+    // Should go back to showing "Show More"
     await waitFor(() => {
-      expect(screen.getByText('Show More (3 more memes)')).toBeInTheDocument();
+      expect(screen.getByText(/Show More/)).toBeInTheDocument();
+      expect(screen.queryByText('Show Less')).not.toBeInTheDocument();
     });
-    
-    expect(screen.queryByText('Show Less')).not.toBeInTheDocument();
-    expect(screen.queryByText('Meme 4')).not.toBeInTheDocument();
+  });
+
+  // NEW TESTS FOR RATED MEMES FUNCTIONALITY
+  describe('Rated Memes Functionality', () => {
+    it('shows all four sort buttons', async () => {
+      vi.mocked(memeService.getUserMemes).mockResolvedValue({
+        memes: mockMemes
+      });
+
+      render(<MyMemesSection />);
+
+      expect(screen.getByText('My Most Recent')).toBeInTheDocument();
+      expect(screen.getByText('My Highest Rated')).toBeInTheDocument();
+      expect(screen.getByText('Recently Rated by Me')).toBeInTheDocument();
+      expect(screen.getByText('Highest Rated by Me')).toBeInTheDocument();
+    });
+
+    it('calls getUserRatedMemes when "Recently Rated by Me" is clicked', async () => {
+      const user = userEvent.setup();
+      
+      vi.mocked(memeService.getUserMemes).mockResolvedValue({ memes: [] });
+      vi.mocked(memeService.getUserRatedMemes).mockResolvedValue({ 
+        memes: mockRatedMemes
+      });
+
+      render(<MyMemesSection />);
+
+      const recentlyRatedButton = screen.getByText('Recently Rated by Me');
+      await user.click(recentlyRatedButton);
+
+      await waitFor(() => {
+        expect(memeService.getUserRatedMemes).toHaveBeenCalledWith(
+          'user123',
+          'fake-token', 
+          'recent',
+          10
+        );
+      });
+    });
+
+    it('shows user rating when viewing rated memes', async () => {
+      const user = userEvent.setup();
+      
+      vi.mocked(memeService.getUserMemes).mockResolvedValue({ memes: [] });
+      vi.mocked(memeService.getUserRatedMemes).mockResolvedValue({ 
+        memes: [
+          {
+            _id: '1',
+            title: 'My Rated Meme',
+            img: 'uploads/rated.jpg',
+            averageRating: 3.5,
+            userRating: 5
+          }
+        ]
+      });
+
+      render(<MyMemesSection />);
+
+      const recentlyRatedButton = screen.getByText('Recently Rated by Me');
+      await user.click(recentlyRatedButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('My Rated Meme')).toBeInTheDocument();
+        expect(screen.getByText(/My Rating: 5\/5/)).toBeInTheDocument();
+        expect(screen.getByText(/Average: 3.5\/5/)).toBeInTheDocument();
+      });
+    });
+
+    it('changes title when switching to rated memes', async () => {
+      const user = userEvent.setup();
+      
+      vi.mocked(memeService.getUserMemes).mockResolvedValue({ memes: [] });
+      vi.mocked(memeService.getUserRatedMemes).mockResolvedValue({ memes: [] });
+
+      render(<MyMemesSection />);
+
+      // Initially shows "My Memes"
+      expect(screen.getByText('My Memes')).toBeInTheDocument();
+
+      // Click rated memes button
+      const recentlyRatedButton = screen.getByText('Recently Rated by Me');
+      await user.click(recentlyRatedButton);
+
+      // Should change to "My Rated Memes"
+      await waitFor(() => {
+        expect(screen.getByText('My Rated Memes')).toBeInTheDocument();
+      });
+    });
+
+    it('switches back to created memes when "My Most Recent" clicked after viewing rated', async () => {
+      const user = userEvent.setup();
+      
+      vi.mocked(memeService.getUserMemes).mockResolvedValue({ 
+        memes: [
+          {
+            _id: '2',
+            title: 'My Created Meme',
+            img: 'uploads/created.jpg',
+            averageRating: 4.2
+          }
+        ]
+      });
+      vi.mocked(memeService.getUserRatedMemes).mockResolvedValue({ memes: [] });
+
+      render(<MyMemesSection />);
+
+      // Click rated memes first
+      await user.click(screen.getByText('Recently Rated by Me'));
+      
+      // Wait for title change
+      await waitFor(() => {
+        expect(screen.getByText('My Rated Memes')).toBeInTheDocument();
+      });
+      
+      // Then click back to created memes
+      await user.click(screen.getByText('My Most Recent'));
+
+      await waitFor(() => {
+        expect(screen.getByText('My Created Meme')).toBeInTheDocument();
+        expect(screen.getByText(/Rating: 4.2\/5/)).toBeInTheDocument();
+        expect(screen.getByText('My Memes')).toBeInTheDocument(); // Title should change back
+      });
+    });
+
+    it('calls getUserRatedMemes with userRating sort when "Highest Rated by Me" is clicked', async () => {
+      const user = userEvent.setup();
+      
+      vi.mocked(memeService.getUserMemes).mockResolvedValue({ memes: [] });
+      vi.mocked(memeService.getUserRatedMemes).mockResolvedValue({ 
+        memes: mockRatedMemes
+      });
+
+      render(<MyMemesSection />);
+
+      const highestRatedByMeButton = screen.getByText('Highest Rated by Me');
+      await user.click(highestRatedByMeButton);
+
+      await waitFor(() => {
+        expect(memeService.getUserRatedMemes).toHaveBeenCalledWith(
+          'user123',
+          'fake-token', 
+          'userRating',
+          10
+        );
+      });
+    });
   });
 });

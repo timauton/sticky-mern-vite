@@ -822,6 +822,7 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   cursor: pointer;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
+  font-weight: bold;
 }
 
 .sort-controls button.active,
