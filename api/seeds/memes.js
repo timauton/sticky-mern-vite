@@ -41,6 +41,7 @@ const seedMemes = async () => {
             img: "uploads/",
             title: "",
             user: User.id,
+            tags: [""],
             created_at: Date("2025-01-01")
         },
         */
@@ -163,9 +164,66 @@ const seedMemes = async () => {
             tags: ["programming"],
             created_at: new Date("2025-01-19")
         },
+        {
+            img: "uploads/roguelike_cat_toy.webp",
+            title: "Such low standards",
+            user: timUser.id,
+            tags: ["gaming", "cats"],
+            created_at: Date("2025-05-03")
+        },
+        {
+            img: "uploads/game_dev_tutorials.webp",
+            title: "You have to learn somehow...",
+            user: sarahUser.id,
+            tags: ["gaming", "programming"],
+            created_at: Date("2025-01-01")
+        },
+        {
+            img: "uploads/other_game_engines.gif",
+            title: "Something about grass rendering",
+            user: timUser.id,
+            tags: ["gaming", "programming"],
+            created_at: Date("2025-01-02")
+        },
+                {
+            img: "uploads/bloodborne_bosses.png",
+            title: "I will let you solo her",
+            user: breeUser.id,
+            tags: ["gaming"],
+            created_at: Date("2025-07-03")
+        },
+                {
+            img: "uploads/falling_out.png",
+            title: "She made me build a settlement",
+            user: peterUser.id,
+            tags: ["gaming"],
+            created_at: Date("2025-04-23")
+        },
+        {
+            img: "uploads/going_back_to_the_game.png",
+            title: "I do rememebr it was fun tho",
+            user: steveUser.id,
+            tags: ["gaming"],
+            created_at: Date("2025-06-11")
+        },
+        {
+            img: "uploads/groceries.png",
+            title: "Just popped out for some milk",
+            user: sarahUser.id,
+            tags: ["gaming"],
+            created_at: Date("2025-06-05")
+        },
+        {
+            img: "uploads/sims.png",
+            title: ":(",
+            user: timUser.id,
+            tags: ["gaming"],
+            created_at: Date("2024-12-25")
+        },
+
     ]
 
-    console.log("inserting seed memes to database");
+    console.log("inserting " + memes.length + " seed memes to database");
     await Meme.insertMany(memes);
 
     mongoose.connection.close();

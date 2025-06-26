@@ -3,15 +3,18 @@ import { useState, useEffect, useRef } from "react";
 import { Login } from "../../components/Login";
 import { Signup } from "../../components/Signup";
 import MemeDisplay from "../../components/MemeDisplay";
-// import { RatingBar } from "../../components/RatingBar";
 import MemeUploadButton from "../../components/MemeUploadButtonComponent";
 import { useNavigate } from "react-router-dom";
 import getMeme from "../../services/memeSelector";
 import { TagFilter } from "../../components/TagFilter"
-import CommentBox from "../../components/CommentBox"
+import Comments from "../../components/Comments"
+import ShareButton from "../../components/ShareButtonComponent"
 import "../../index.css";
 
 export function HomePage() {
+  // Reusable error message (?) see updateMeme for usage
+  const [errorMessage, setErrorMessage] = useState("")
+
   // Login function
   const [showLogin, setShowLogin] = useState(false);
   const handleLoginClick = () => {
@@ -78,6 +81,17 @@ export function HomePage() {
     }).catch((error) => {
       console.error("Error fetching meme:", error);
     });
+      if (!data || !data.meme) {
+        setErrorMessage("No memes found with those tags")
+        setTags([])
+      } else {
+      if (isLoggedIn && localStorage.getItem("token")) {
+        setMeme(data.meme);
+        localStorage.setItem("token", data.token);
+      }
+    }).catch((error) => {
+      console.error("Error fetching meme:", error);
+    });
   }
 
   const handleNextClick = () => {
@@ -120,6 +134,16 @@ export function HomePage() {
     <>
       <div className="background-image"></div>
         <div className="background-area">
+          {errorMessage && (
+                  <div className="error-display">
+                    <button className="close-error" onClick={() => setErrorMessage("")}>
+                      &times;
+                    </button>
+                    <p className="error-message">
+                    {errorMessage}
+                    </p>
+                  </div>
+                )}
           <div className="top-banner">
             <Button
               className="filter-by-tags-button"
@@ -142,11 +166,12 @@ export function HomePage() {
                 <br />
                 <p className="meme-tags-title">Tags for this meme:
                 <br />
-                  {Array.isArray(meme.tags) && meme.tags.map( (tag, index) => {
+                  {meme && Array.isArray(meme.tags) && meme.tags.map( (tag, index) => {
                     return <span className="meme-tag" key={index}>{tag} </span>
                   })}
                 </p>
               </div>
+              <ShareButton meme={meme}/>
             </div>
             <div className="column-view-middle">
               <div className="meme-interface">
@@ -172,7 +197,7 @@ export function HomePage() {
                   onClick={handleNextClick}
                 />
               </div>
-                <CommentBox />
+                <Comments meme={meme} />
             </div>
             <div className="column-view-right">
               <div className="meme-upload-button-wrapper">

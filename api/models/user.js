@@ -6,6 +6,13 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
 });
 
+UserSchema.virtual('ratings', {
+    ref: 'Rating',
+    localField: '_id',
+    foreignField: 'user',
+    justOne: false
+});
+
 const User = mongoose.model("User", UserSchema);
 
 module.exports = User;

@@ -25,12 +25,7 @@ export function TagFilter({ value, onTagChange }) {
     return (
         <div className="tag-filter">
             <p>Add tags to filter</p>
-            {/* <input
-            id="tagInput"
-            type="text"
-            value={value}
-            onChange={(e) => onTagChange(e.target.value)}
-            placeholder="filter memes by tags" /> */}
+
             {availableTags.map((tag) => {
                 const isSelected = value.includes(tag);
                 return (
@@ -45,6 +40,12 @@ export function TagFilter({ value, onTagChange }) {
                     />
                 )
             })}
+            <br />
+            <Button
+                className="clear-filter"
+                buttonText="Clear filter"
+                onClick={() => onTagChange([])}
+            />
         </div>
     );
 }
