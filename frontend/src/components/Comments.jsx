@@ -51,7 +51,7 @@ export const Comments = (props) => {
       <div className="comments-list">
         {comments.map((c) => (
           <div key={c.id} className="comment-item">
-            {c.comment}
+            {c.comment} #{c.user_id.username}
           </div>
         ))}
       </div>

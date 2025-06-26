@@ -26,6 +26,8 @@ export function HomePage() {
   const handleLogOutClick = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
+    setTags([]);
+    setShowTagFilter(false);
   }
 
   // Signup function
@@ -108,18 +110,28 @@ export function HomePage() {
     <>
       <div className="background-image"></div>
       <div className="background-area">
-          <div className="top-banner">
+        {errorMessage && ( 
+            <div className="error-display">
+              <button className="close-error" onClick={() => setErrorMessage("")}>
+                &times;
+              </button>
+              <p className="error-message">
+                {errorMessage}
+              </p>
+            </div>
+        )}
+        <div className="top-banner">
           <Button className="signup-button" buttonText={"Sign Up"} onClick={handleSignupClick}/>
-          {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess}/>
+          {showSignup && <div className="signup-container"><Signup onSignupSuccess={handleSignupSuccess} setErrorMessage={setErrorMessage}/>
                         </div>}
-          {showLogin && <div className="login-container"><Login onLoginSuccess={handleLoginSuccess}/>
+          {showLogin && <div className="login-container"><Login onLoginSuccess={handleLoginSuccess} setErrorMessage={setErrorMessage}/>
                         </div>}
           <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
-          </div>
-          <div className="title">Sticky Memes</div>
-          <div className="image-container">
-            <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
-          </div>
+        </div>
+        <div className="title">Sticky Memes</div>
+        <div className="meme-box">
+          <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
+        </div>
       </div>
   </>
   );
@@ -128,16 +140,16 @@ export function HomePage() {
     <>
       <div className="background-image"></div>
         <div className="background-area">
-          {errorMessage && (
-                  <div className="error-display">
-                    <button className="close-error" onClick={() => setErrorMessage("")}>
-                      &times;
-                    </button>
-                    <p className="error-message">
-                    {errorMessage}
-                    </p>
-                  </div>
-                )}
+          {errorMessage && ( 
+            <div className="error-display">
+              <button className="close-error" onClick={() => setErrorMessage("")}>
+                &times;
+              </button>
+              <p className="error-message">
+                {errorMessage}
+              </p>
+            </div>
+          )}
           <div className="top-banner">
             <Button
               className="filter-by-tags-button"
@@ -169,11 +181,6 @@ export function HomePage() {
               <ShareButton meme={meme}/>
             </div>
             <div className="column-view-middle">
-              <div className="meme-interface">
-                <MemeDisplay
-                  meme={meme}
-                />
-              </div>
               <div className="button-box">
                 {lastMeme !== null ? (<Button
                   className="back-and-forth left"
@@ -190,6 +197,11 @@ export function HomePage() {
                   className="back-and-forth right"
                   buttonImage="./right-arrow.png"
                   onClick={handleNextClick}
+                />
+              </div>
+              <div className="meme-interface">
+                <MemeDisplay
+                  meme={meme}
                 />
               </div>
                 <Comments meme={meme} />
@@ -210,6 +222,3 @@ export function HomePage() {
     </>
   );
 }
-
-
-
