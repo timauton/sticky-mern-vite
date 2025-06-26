@@ -1,4 +1,3 @@
-// tests/services/memeService.test.jsx - EXTENDED VERSION
 import { vi, describe, test, expect, beforeEach } from 'vitest';
 import { getUserMemes, getUserRatedMemes } from '../../src/services/memeService';
 
@@ -12,7 +11,7 @@ describe('memeService', () => {
     vi.clearAllMocks();
   });
 
-  // Your existing test
+
   test('getUserMemes fetches user memes from API', async () => {
     const mockResponse = {
       memes: [
@@ -40,7 +39,7 @@ describe('memeService', () => {
     expect(result).toEqual(mockResponse);
   });
 
-  // NEW TESTS FOR getUserRatedMemes
+
   describe('getUserRatedMemes', () => {
     test('fetches user rated memes with default parameters', async () => {
       const mockResponse = {
