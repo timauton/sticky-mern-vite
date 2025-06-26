@@ -39,5 +39,4 @@ export const createComment = async (meme_id, comment) => {
 
     const data = await response.json();
     return data;
-
 }

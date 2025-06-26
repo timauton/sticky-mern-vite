@@ -46,7 +46,26 @@ vi.mock("../../src/components/TagFilter", () => ({
   )
 }));
 
-vi.mock("../../src/components/CommentBox", () => ({
+vi.mock("../../src/services/commentsService", () => ({
+  getComments: vi.fn().mockResolvedValue([
+    {
+      id: 1,
+      comment: "Nice meme!",
+      user_id: {
+        username: "Alice"
+      }
+    },
+    {
+      id: 2,
+      comment: "LOL",
+      user_id: {
+        username: "Bob"
+      }
+    }
+  ])
+}));
+
+vi.mock("../../src/components/Comments", () => ({
   default: () => <div data-testid="comment-box">Comment Box</div>
 }))
 
