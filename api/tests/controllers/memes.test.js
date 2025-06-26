@@ -245,6 +245,56 @@ describe("GET, when token is present", () => {
         expect(response.status).toEqual(400);
     });
 
+    test("gets memes with a particular tag", async () => {
+
+        const meme1 = await makeTestMeme(1, ["tag1"]);
+        const meme2 = await makeTestMeme(2, ["tag1"]);
+        const meme3 = await makeTestMeme(3, ["tag2"]);
+
+        const response = await request(app)
+            .get("/memes/tagged/tag1")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.memes.length).toEqual(2);
+        expect(response.body.memes[0].tags[0]).toEqual("tag1");
+        expect(response.body.memes[1].tags[0]).toEqual("tag1");
+
+    });
+
+    test("gets a next meme with a particular tag", async () => {
+
+        const meme1 = await makeTestMeme(1, ["tag1"]);
+        const meme2 = await makeTestMeme(2, ["tag2"]);
+        const meme3 = await makeTestMeme(3, ["tag2"]);
+
+        const response = await request(app)
+            .get("/memes/next?tags=tag1")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.meme.tags).toEqual(["tag1"]);
+
+    });
+
+    test("selects memes based on tag ratings", async () => {
+
+        const meme1 = await makeTestMeme(1, "tag1");
+        const meme2 = await makeTestMeme(2, "tag2");
+
+        await Rating.deleteMany({});
+        const rating1 = new Rating({
+            meme: meme1._id,
+            user: testUser._id,
+            rating: 5
+        });
+        await rating1.save();
+
+        const response = await request(app)
+            .get("/memes/next")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.meme.tags[0]).toEqual("tag2");
+    });
+
 });
 
 describe("POST, when token is present", () => {
