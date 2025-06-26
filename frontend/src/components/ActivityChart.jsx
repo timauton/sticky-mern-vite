@@ -21,11 +21,11 @@ const ActivityChart = () => {
         
         console.log('Activity API Response:', data);
         
-        // Your backend returns: { chartData: [...], token: '...' }
-        // Data is already combined with memesCreated and memesRated
+        // Backend returns: { chartData: [...], token: '...' }
+        // Data is combined with memesCreated and memesRated
         const chartData = data.chartData || [];
         
-        // Transform the data to match our chart format
+        // Transform the data to match chart format
         const transformedData = chartData.map(item => ({
           date: item.period, // Use period as the date
           created: item.memesCreated || 0,
