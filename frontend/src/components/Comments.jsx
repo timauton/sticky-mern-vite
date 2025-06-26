@@ -12,11 +12,15 @@ export const Comments = (props) => {
   }, [props.meme]);
 
   const updateComments = async (meme_id) => {
-    //console.log("Getting comments for meme id " + meme_id);
-    const data = await getComments(meme_id);
-    //console.log("Comments for meme are: " + data);
-    setComments(data);
-  }
+    try {
+      //console.log("Getting comments for meme id " + meme_id);
+      const data = await getComments(meme_id);
+      //console.log("Comments for meme are: " + data);
+      setComments(data);
+    } catch (error) {
+      console.error("Failed to fetch comments", error)
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
