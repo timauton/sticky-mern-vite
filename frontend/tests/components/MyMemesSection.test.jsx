@@ -221,7 +221,6 @@ describe('MyMemesSection', () => {
     });
   });
 
-  // NEW TESTS FOR RATED MEMES FUNCTIONALITY
   describe('Rated Memes Functionality', () => {
     it('shows all four sort buttons', async () => {
       vi.mocked(memeService.getUserMemes).mockResolvedValue({
