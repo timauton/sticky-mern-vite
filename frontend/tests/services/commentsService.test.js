@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getComments, createComment } from '../../src/services/commentService';
+import { getComments, createComment } from "../../src/services/commentsService"
 
 describe('commentService (basic tests without mocks)', () => {
   const memeId = 'test-meme-id';
