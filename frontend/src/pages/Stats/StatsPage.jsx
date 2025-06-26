@@ -1,5 +1,9 @@
 import Button from "../../components/ButtonComponent";
 import { useNavigate } from "react-router-dom";
+import MyMemesSection from "../../components/MyMemesSection";
+import TagRankingsCards from "../../components/TagRankingsCards";
+import ActivityChart from "../../components/ActivityChart";
+import Leaderboards from "../../components/Leaderboards";
 
 export const StatsPage = () => {
   const navigate = useNavigate();
@@ -16,7 +20,7 @@ export const StatsPage = () => {
           onClick={() => navigate("/")}
         />
 
-        <div className="stats-title" data-testID="title-text">Stats page</div>
+        <div className="stats-title" data-testid="title-text">Stats page</div>
 
         <div className="row">
 
@@ -30,28 +34,16 @@ export const StatsPage = () => {
 
           <div className="card stats-card">
             <h2>My Charts</h2>
-            <img src="/temp-images/chart1.png" alt="Chart 1"/>
-            <img src="/temp-images/chart2.png" alt="Chart 2"/>
-            <img src="/temp-images/chart3.png" alt="Chart 3"/>
+            <TagRankingsCards />
+            <Leaderboards />
           </div>
         </div>
 
         <div className="column-right">
           <div className="card my-memes-card">
             <div className="my-memes">
-              <h2>My Memes</h2>
-              <div className="my-meme">
-                <img src="/temp-images/temp-meme-image.jpeg" alt="Meme 1" />
-                <h3>This is one of my memes</h3>
-              </div>
-              <div className="my-meme">
-                <img src="/temp-images/temp-meme-image.jpeg" alt="Meme 2" />
-                <h3>This is one of my memes</h3>
-              </div>
-              <div className="my-meme">
-                <img src="/temp-images/temp-meme-image.jpeg" alt="Meme 3" />
-                <h3>This is one of my memes</h3>
-              </div>
+              <MyMemesSection />
+              <ActivityChart />
             </div>  
           </div>
         </div>
