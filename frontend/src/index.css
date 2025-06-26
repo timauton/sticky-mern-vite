@@ -1090,3 +1090,114 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
     margin: 1rem 0;
   }
 }
+
+/* END OF MY MEMES SECTION (STATS PAGE) */
+
+/* START OF RANKINGS CARDS */
+
+.tag-rankings-card {
+  background: #000000BF;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.tag-rankings-card h2 {
+  font-size: 2.2rem;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.rankings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tag-ranking-card {
+  background: #ffffff;
+  border: 4px solid #000000;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  transition: transform 0.2s ease;
+}
+
+.tag-ranking-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Different styles based on ranking */
+.rank-first {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border-color: #FF8C00;
+}
+
+.rank-top-three {
+  background: linear-gradient(135deg, #C0C0C0, #E6E6FA);
+  border-color: #9370DB;
+}
+
+.rank-top-ten {
+  background: linear-gradient(135deg, #CD7F32, #DEB887);
+  border-color: #8B4513;
+}
+
+.rank-other {
+  background: linear-gradient(135deg, #f0f0f0, #ffffff);
+}
+
+.rank-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.rank-emoji {
+  font-size: 1.5rem;
+}
+
+.rank-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #000000;
+}
+
+.tag-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #000000;
+  margin: 0.5rem 0;
+  text-transform: capitalize;
+}
+
+.total-users {
+  font-size: 0.9rem;
+  color: #666666;
+  margin: 0.25rem 0;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #333333;
+}
+
+.average-rating, .total-rated {
+  font-weight: bold;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .rankings-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tag-ranking-card {
+    padding: 0.75rem;
+  }
+}
