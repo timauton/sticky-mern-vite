@@ -1,4 +1,3 @@
-// frontend/src/components/MyMemesSection.jsx - ENHANCED VERSION
 import { useState, useEffect } from 'react';
 import { getUserMemes, getUserRatedMemes } from '../services/memeService';
 import { getCurrentUserId } from '../utils/auth';
