@@ -1,7 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import "@testing-library/jest-dom"
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import "@testing-library/jest-dom"
+import { MemoryRouter } from 'react-router-dom';
 import MyMemesSection from '../../src/components/MyMemesSection';
 import * as memeService from '../../src/services/memeService';
 import * as auth from '../../src/utils/auth';
@@ -68,7 +69,11 @@ describe('MyMemesSection', () => {
       memes: mockMemes
     });
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
     
     expect(screen.getByText('My Memes')).toBeInTheDocument();
   });
@@ -76,7 +81,11 @@ describe('MyMemesSection', () => {
   it('shows loading state initially', async () => {
     vi.mocked(memeService.getUserMemes).mockImplementation(() => new Promise(() => {}));
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
     
     expect(screen.getByText(/Loading your created memes/)).toBeInTheDocument();
   });
@@ -86,7 +95,11 @@ describe('MyMemesSection', () => {
       memes: mockMemes
     });
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Meme 1')).toBeInTheDocument();
@@ -107,9 +120,13 @@ describe('MyMemesSection', () => {
       memes: mockMemes
     });
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
 
-    const highestRatedButton = screen.getByText('My Highest Rated');
+    const highestRatedButton = screen.getByText('Highest Rated');
     await user.click(highestRatedButton);
 
     await waitFor(() => {
@@ -127,7 +144,11 @@ describe('MyMemesSection', () => {
       memes: mockMemes // 4 memes
     });
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Meme 1')).toBeInTheDocument();
@@ -145,7 +166,11 @@ describe('MyMemesSection', () => {
       memes: mockMemes
     });
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText(/Show More/)).toBeInTheDocument();
@@ -165,7 +190,11 @@ describe('MyMemesSection', () => {
       memes: mockMemes.slice(0, 3) // Exactly 3 memes
     });
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Meme 1')).toBeInTheDocument();
@@ -181,7 +210,11 @@ describe('MyMemesSection', () => {
       memes: []
     });
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('No memes found. Start creating some!')).toBeInTheDocument();
@@ -194,7 +227,11 @@ describe('MyMemesSection', () => {
       memes: mockMemes
     });
 
-    render(<MyMemesSection />);
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
 
     // Wait for initial load
     await waitFor(() => {
@@ -221,21 +258,50 @@ describe('MyMemesSection', () => {
     });
   });
 
+  it('makes meme cards clickable links to individual meme pages', async () => {
+    vi.mocked(memeService.getUserMemes).mockResolvedValue({
+      memes: [
+        {
+          _id: '123abc',
+          title: 'Test Meme',
+          img: 'test.jpg',
+          averageRating: 4.5
+        }
+      ]
+    });
+
+    render(
+      <MemoryRouter>
+        <MyMemesSection />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const memeCard = screen.getByText('Test Meme').closest('.my-meme');
+      expect(memeCard.tagName).toBe('A'); // Should be a link
+      expect(memeCard).toHaveAttribute('href', '/meme/123abc');
+    });
+  });
+
   describe('Rated Memes Functionality', () => {
     it('shows all four sort buttons', async () => {
       vi.mocked(memeService.getUserMemes).mockResolvedValue({
         memes: mockMemes
       });
 
-      render(<MyMemesSection />);
+      render(
+        <MemoryRouter>
+          <MyMemesSection />
+        </MemoryRouter>
+      );
 
-      expect(screen.getByText('My Most Recent')).toBeInTheDocument();
-      expect(screen.getByText('My Highest Rated')).toBeInTheDocument();
-      expect(screen.getByText('Recently Rated by Me')).toBeInTheDocument();
+      expect(screen.getByText('Most Recent')).toBeInTheDocument();
+      expect(screen.getByText('Highest Rated')).toBeInTheDocument();
+      expect(screen.getByText('Recently Rated')).toBeInTheDocument();
       expect(screen.getByText('Highest Rated by Me')).toBeInTheDocument();
     });
 
-    it('calls getUserRatedMemes when "Recently Rated by Me" is clicked', async () => {
+    it('calls getUserRatedMemes when "Recently Rated" is clicked', async () => {
       const user = userEvent.setup();
       
       vi.mocked(memeService.getUserMemes).mockResolvedValue({ memes: [] });
@@ -243,9 +309,13 @@ describe('MyMemesSection', () => {
         memes: mockRatedMemes
       });
 
-      render(<MyMemesSection />);
+      render(
+        <MemoryRouter>
+          <MyMemesSection />
+        </MemoryRouter>
+      );
 
-      const recentlyRatedButton = screen.getByText('Recently Rated by Me');
+      const recentlyRatedButton = screen.getByText('Recently Rated');
       await user.click(recentlyRatedButton);
 
       await waitFor(() => {
@@ -274,9 +344,13 @@ describe('MyMemesSection', () => {
         ]
       });
 
-      render(<MyMemesSection />);
+      render(
+        <MemoryRouter>
+          <MyMemesSection />
+        </MemoryRouter>
+      );
 
-      const recentlyRatedButton = screen.getByText('Recently Rated by Me');
+      const recentlyRatedButton = screen.getByText('Recently Rated');
       await user.click(recentlyRatedButton);
 
       await waitFor(() => {
@@ -292,13 +366,17 @@ describe('MyMemesSection', () => {
       vi.mocked(memeService.getUserMemes).mockResolvedValue({ memes: [] });
       vi.mocked(memeService.getUserRatedMemes).mockResolvedValue({ memes: [] });
 
-      render(<MyMemesSection />);
+      render(
+        <MemoryRouter>
+          <MyMemesSection />
+        </MemoryRouter>
+      );
 
       // Initially shows "My Memes"
       expect(screen.getByText('My Memes')).toBeInTheDocument();
 
       // Click rated memes button
-      const recentlyRatedButton = screen.getByText('Recently Rated by Me');
+      const recentlyRatedButton = screen.getByText('Recently Rated');
       await user.click(recentlyRatedButton);
 
       // Should change to "My Rated Memes"
@@ -307,7 +385,7 @@ describe('MyMemesSection', () => {
       });
     });
 
-    it('switches back to created memes when "My Most Recent" clicked after viewing rated', async () => {
+    it('switches back to created memes when "Most Recent" clicked after viewing rated', async () => {
       const user = userEvent.setup();
       
       vi.mocked(memeService.getUserMemes).mockResolvedValue({ 
@@ -322,10 +400,14 @@ describe('MyMemesSection', () => {
       });
       vi.mocked(memeService.getUserRatedMemes).mockResolvedValue({ memes: [] });
 
-      render(<MyMemesSection />);
+      render(
+        <MemoryRouter>
+          <MyMemesSection />
+        </MemoryRouter>
+      );
 
       // Click rated memes first
-      await user.click(screen.getByText('Recently Rated by Me'));
+      await user.click(screen.getByText('Recently Rated'));
       
       // Wait for title change
       await waitFor(() => {
@@ -333,7 +415,7 @@ describe('MyMemesSection', () => {
       });
       
       // Then click back to created memes
-      await user.click(screen.getByText('My Most Recent'));
+      await user.click(screen.getByText('Most Recent'));
 
       await waitFor(() => {
         expect(screen.getByText('My Created Meme')).toBeInTheDocument();
@@ -350,7 +432,11 @@ describe('MyMemesSection', () => {
         memes: mockRatedMemes
       });
 
-      render(<MyMemesSection />);
+      render(
+        <MemoryRouter>
+          <MyMemesSection />
+        </MemoryRouter>
+      );
 
       const highestRatedByMeButton = screen.getByText('Highest Rated by Me');
       await user.click(highestRatedByMeButton);

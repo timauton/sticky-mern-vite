@@ -755,13 +755,17 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   display: flex;
   align-items: center;
   border-radius: 15px;
-  gap: 1rem;
-  padding: 1rem;
-  margin: 0 auto 1rem auto;
-  background-color: #000000BF; 
-  border: 2px solid #ffffff;
-  max-width: 400px;
-  width: 100%;
+  gap: 1.5rem;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+  background-color: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.my-meme:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .my-meme-content {

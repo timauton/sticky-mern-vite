@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getUserMemes, getUserRatedMemes } from '../services/memeService';
+import { Link } from 'react-router-dom';
+import { getUserMemes, getUserRatedMemes } from '../../src/services/memeService';
 import { getCurrentUserId } from '../utils/auth';
 import ShareButton from './ShareButtonComponent';
 
@@ -89,19 +90,19 @@ const MyMemesSection = () => {
             onClick={() => handleSortChange('recent', 'created')}
             className={sortBy === 'recent' && viewMode === 'created' ? 'active' : ''}
           >
-            My Most Recent
+            Most Recent
           </button>
           <button 
             onClick={() => handleSortChange('rating', 'created')}
             className={sortBy === 'rating' && viewMode === 'created' ? 'active' : ''}
           >
-            My Highest Rated
+            Highest Rated
           </button>
           <button 
             onClick={() => handleSortChange('recent', 'rated')}
             className={sortBy === 'recent' && viewMode === 'rated' ? 'active' : ''}
           >
-            Recently Rated by Me
+            Recently Rated
           </button>
           <button 
             onClick={() => handleSortChange('userRating', 'rated')}
@@ -118,7 +119,12 @@ const MyMemesSection = () => {
         )}
         
         {!loading && displayedMemes.map((meme) => (
-          <div key={meme._id} className="my-meme">
+          <Link 
+            key={meme._id} 
+            to={`/meme/${meme._id}`}
+            className="my-meme"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
             <img src={`${BACKEND_URL}/${meme.img}`} alt={meme.title} />
             <div className="my-meme-content">
               <h3>{meme.title}</h3>
@@ -131,10 +137,10 @@ const MyMemesSection = () => {
                 </>
               )}
             </div>
-            <div className="my-meme-share">
+            <div className="my-meme-share" onClick={(e) => e.preventDefault()}>
               <ShareButton meme={meme} />
             </div>
-          </div>
+          </Link>
         ))}
 
         {/* Show More/Less Controls */}
