@@ -95,7 +95,6 @@ async function deleteMeme(req, res) {
     catch (err) {
         console.error(err);
         res.status(400).json({ message: "Error deleting meme", token: token });
-        console.log("poop");
         return;
     }
 }
