@@ -211,6 +211,21 @@ body {
   margin-right: 1rem;
 }
 
+.meme-box {
+  position: relative;
+  padding-top: 3rem;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 0 auto;
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  max-height: none;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
 /* meme formatting. Height will adjust to image OG max size without exceeding a width 
 of 12 to keep the ratings bar snug to the image bottom regardless of proportions*/
 .image-container {
@@ -450,10 +465,6 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   border-radius: 50%;
   border: 8px solid #ffffff;
   object-fit: cover;
-}
-
-.stats-card {
-  margin-top: 2rem;
 }
 
 .stats-card img {

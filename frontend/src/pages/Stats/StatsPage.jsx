@@ -21,16 +21,8 @@ export const StatsPage = () => {
         />
 
         <div className="stats-title" data-testid="title-text">Stats page</div>
-
         <div className="row">
-
         <div className="column-left">
-          <div className="card my-profile-card">
-            <h2>My Profile</h2>
-            <img className="avatar" src="/temp-images/avatar.jpg" alt="User avatar" />
-            <h3>username</h3>
-            <h3>password</h3>
-          </div>
 
           <div className="card stats-card">
             <h2>My Charts</h2>
