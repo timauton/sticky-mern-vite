@@ -105,8 +105,8 @@ const MyMemesSection = () => {
             Recently Rated
           </button>
           <button 
-            onClick={() => handleSortChange('userRating', 'rated')}
-            className={sortBy === 'userRating' && viewMode === 'rated' ? 'active' : ''}
+            onClick={() => handleSortChange('highest', 'rated')}
+            className={sortBy === 'highest' && viewMode === 'rated' ? 'active' : ''}
           >
             Highest Rated by Me
           </button>
@@ -121,7 +121,7 @@ const MyMemesSection = () => {
         {!loading && displayedMemes.map((meme) => (
           <Link 
             key={meme._id} 
-            to={`/meme/${meme._id}`}
+            to={`/meme/${viewMode === 'created' ? meme._id : meme.meme}`}
             className="my-meme"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
@@ -129,15 +129,14 @@ const MyMemesSection = () => {
             <div className="my-meme-content">
               <h3>{meme.title}</h3>
               {viewMode === 'created' ? (
-                <p>Rating: {meme.averageRating}/5 ⭐</p>
+                <p>Av. Rating: {meme.averageRating}/5 ⭐</p>
               ) : (
                 <>
                   <p>My Rating: {meme.userRating}/5 ⭐</p>
-                  <p>Average: {meme.averageRating}/5 ⭐</p>
                 </>
               )}
             </div>
-            <div className="my-meme-share" onClick={(e) => e.preventDefault()}>
+            <div className="my-meme-share" onClick={(e) => { e.preventDefault()}}>
               <ShareButton meme={meme} />
             </div>
           </Link>

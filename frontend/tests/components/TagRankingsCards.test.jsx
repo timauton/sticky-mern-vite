@@ -31,7 +31,9 @@ describe('TagRankingsCards', () => {
 
     render(<TagRankingsCards />);
     
+    await waitFor(() => {
     expect(screen.getByText('Tag Rankings')).toBeInTheDocument();
+    });
   });
 
   it('shows loading state initially', async () => {
@@ -71,14 +73,14 @@ describe('TagRankingsCards', () => {
     });
   });
 
-  it('shows appropriate styling for top 3 rankings', async () => {
+  it('shows appropriate styling for top 2 rankings', async () => {
     vi.mocked(getUserTagRankings).mockResolvedValue(mockTagRankings);
 
     render(<TagRankingsCards />);
 
     await waitFor(() => {
       const catsCard = screen.getByText('cats').closest('.tag-ranking-card');
-      expect(catsCard).toHaveClass('rank-top-three');
+      expect(catsCard).toHaveClass('rank-top-two');
     });
   });
 

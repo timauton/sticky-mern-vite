@@ -1167,12 +1167,12 @@ of 12 to keep the ratings bar snug to the image bottom regardless of proportions
   border-color: #FF8C00;
 }
 
-.rank-top-three {
+.rank-top-two {
   background: linear-gradient(135deg, #C0C0C0, #E6E6FA);
   border-color: #9370DB;
 }
 
-.rank-top-ten {
+.rank-top-three {
   background: linear-gradient(135deg, #CD7F32, #DEB887);
   border-color: #8B4513;
 }

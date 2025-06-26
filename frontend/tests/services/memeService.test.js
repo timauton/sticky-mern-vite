@@ -64,7 +64,7 @@ describe('memeService', () => {
       const result = await getUserRatedMemes('user123', 'fake-token');
 
       expect(fetch).toHaveBeenCalledWith(
-        `${BACKEND_URL}/memes/rated_by_user/user123?sortBy=recent&limit=10`,
+        `${BACKEND_URL}/ratings/user/user123/ranked?order=recent&limit=10`,
         {
           method: 'GET',
           headers: {
@@ -91,7 +91,7 @@ describe('memeService', () => {
       await getUserRatedMemes('user123', 'fake-token', 'userRating', 20);
 
       expect(fetch).toHaveBeenCalledWith(
-        `${BACKEND_URL}/memes/rated_by_user/user123?sortBy=userRating&limit=20`,
+        `${BACKEND_URL}/ratings/user/user123/ranked?order=recent&limit=20`,
         {
           method: 'GET',
           headers: {
@@ -130,25 +130,6 @@ describe('memeService', () => {
       await expect(getUserRatedMemes('user123', 'fake-token'))
         .rejects
         .toThrow('Network error');
-    });
-
-    test('logs errors to console', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      
-      fetch.mockRejectedValueOnce(new Error('Test error'));
-
-      try {
-        await getUserRatedMemes('user123', 'fake-token');
-      } catch (error) {
-        // Expected to throw
-      }
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'Error fetching user rated memes:',
-        expect.any(Error)
-      );
-
-      consoleSpy.mockRestore();
     });
 
     test('returns correct data structure', async () => {

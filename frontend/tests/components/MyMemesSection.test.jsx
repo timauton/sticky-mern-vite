@@ -76,6 +76,11 @@ describe('MyMemesSection', () => {
     );
     
     expect(screen.getByText('My Memes')).toBeInTheDocument();
+    
+    // Wait for the async operation to complete
+    await waitFor(() => {
+      expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
+    });
   });
 
   it('shows loading state initially', async () => {
@@ -125,6 +130,11 @@ describe('MyMemesSection', () => {
         <MyMemesSection />
       </MemoryRouter>
     );
+
+    // Wait for initial load
+    await waitFor(() => {
+      expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
+    });
 
     const highestRatedButton = screen.getByText('Highest Rated');
     await user.click(highestRatedButton);
@@ -198,6 +208,7 @@ describe('MyMemesSection', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Meme 1')).toBeInTheDocument();
+      expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
     });
 
     // Should NOT show any pagination controls with exactly 3 memes
@@ -295,6 +306,11 @@ describe('MyMemesSection', () => {
         </MemoryRouter>
       );
 
+      // Wait for async operations to complete
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
+      });
+
       expect(screen.getByText('Most Recent')).toBeInTheDocument();
       expect(screen.getByText('Highest Rated')).toBeInTheDocument();
       expect(screen.getByText('Recently Rated')).toBeInTheDocument();
@@ -314,6 +330,11 @@ describe('MyMemesSection', () => {
           <MyMemesSection />
         </MemoryRouter>
       );
+
+      // Wait for initial load
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
+      });
 
       const recentlyRatedButton = screen.getByText('Recently Rated');
       await user.click(recentlyRatedButton);
@@ -338,7 +359,6 @@ describe('MyMemesSection', () => {
             _id: '1',
             title: 'My Rated Meme',
             img: 'uploads/rated.jpg',
-            averageRating: 3.5,
             userRating: 5
           }
         ]
@@ -350,13 +370,17 @@ describe('MyMemesSection', () => {
         </MemoryRouter>
       );
 
+      // Wait for initial load
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
+      });
+
       const recentlyRatedButton = screen.getByText('Recently Rated');
       await user.click(recentlyRatedButton);
 
       await waitFor(() => {
         expect(screen.getByText('My Rated Meme')).toBeInTheDocument();
         expect(screen.getByText(/My Rating: 5\/5/)).toBeInTheDocument();
-        expect(screen.getByText(/Average: 3.5\/5/)).toBeInTheDocument();
       });
     });
 
@@ -371,6 +395,11 @@ describe('MyMemesSection', () => {
           <MyMemesSection />
         </MemoryRouter>
       );
+
+      // Wait for initial load
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
+      });
 
       // Initially shows "My Memes"
       expect(screen.getByText('My Memes')).toBeInTheDocument();
@@ -406,6 +435,11 @@ describe('MyMemesSection', () => {
         </MemoryRouter>
       );
 
+      // Wait for initial load
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
+      });
+
       // Click rated memes first
       await user.click(screen.getByText('Recently Rated'));
       
@@ -419,12 +453,12 @@ describe('MyMemesSection', () => {
 
       await waitFor(() => {
         expect(screen.getByText('My Created Meme')).toBeInTheDocument();
-        expect(screen.getByText(/Rating: 4.2\/5/)).toBeInTheDocument();
+        expect(screen.getByText(/Av. Rating: 4.2\/5/)).toBeInTheDocument();
         expect(screen.getByText('My Memes')).toBeInTheDocument(); // Title should change back
       });
     });
 
-    it('calls getUserRatedMemes with userRating sort when "Highest Rated by Me" is clicked', async () => {
+    it('calls getUserRatedMemes with highest sort when "Highest Rated by Me" is clicked', async () => {
       const user = userEvent.setup();
       
       vi.mocked(memeService.getUserMemes).mockResolvedValue({ memes: [] });
@@ -438,6 +472,11 @@ describe('MyMemesSection', () => {
         </MemoryRouter>
       );
 
+      // Wait for initial load
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading your created memes/)).not.toBeInTheDocument();
+      });
+
       const highestRatedByMeButton = screen.getByText('Highest Rated by Me');
       await user.click(highestRatedByMeButton);
 
@@ -445,7 +484,7 @@ describe('MyMemesSection', () => {
         expect(memeService.getUserRatedMemes).toHaveBeenCalledWith(
           'user123',
           'fake-token', 
-          'userRating',
+          'highest',
           10
         );
       });
