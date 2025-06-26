@@ -129,7 +129,7 @@ export function HomePage() {
           <Button className="login-button" buttonText={"Login"} onClick={handleLoginClick}/>
         </div>
         <div className="title">Sticky Memes</div>
-        <div className="image-container">
+        <div className="meme-box">
           <img src="/The-archives.jpg" className="responsive-image" alt="the archives" />
         </div>
       </div>
