@@ -116,4 +116,20 @@ describe("/comments", () => {
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toBe("💅 Comment deleted 💅");
   });
+
+  test("GET /comments/:id returns a comment by ID", async () => {
+    const newComment = await Comment.create({
+      comment: "By ID test",
+      meme_id: memeId,
+      user_id: userId
+    });
+
+    const response = await request(app)
+      .get(`/comments/${newComment._id}`)
+      .set("Authorization", `Bearer ${authToken}`);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.comment).toBe("By ID test");
+  });   
+
 });

@@ -52,11 +52,13 @@ describe('Upload Middleware', () => {
 
         it('accepts all remaining allowed image types', () => {
             const allowedTypes = ['image/jpg', 'image/png', 'image/gif', 'image/webp']
-            const mockCallback = jest.fn();
 
             // Loop through and test all the remaining allowed file-types
             allowedTypes.forEach(type => {
-                mockCallback.mockClear();
+                const mockCallback = jest.fn();
+
+                // mockCallback.mockClear();
+
                 const mockFile = { mimetype: type, originalname: `test.${type.split('/')[1]}` };
 
                 imageFilter(null, mockFile, mockCallback)
@@ -64,6 +66,20 @@ describe('Upload Middleware', () => {
                 expect(mockCallback).toHaveBeenCalledWith(null, true)
             });
         });
+
+        it('accepts a valid image/png file to cover final branch', () => {
+            const mockFile = {
+            mimetype: 'image/png',
+            originalname: 'file.png'
+            };
+            const mockCallback = jest.fn();
+
+            imageFilter(null, mockFile, mockCallback);
+
+            expect(mockCallback).toHaveBeenCalledWith(null, true);
+        });
+
+
     });
 
     describe('handleUploadError', () => {
