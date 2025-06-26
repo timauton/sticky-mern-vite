@@ -38,6 +38,7 @@ const getAllComments = async (req, res) => {
     const commentAll = await Comment.find()
         .populate("user_id", "username")
         .populate("meme_id", "title")
+        .sort({ createdAt: -1 })
     res.status(200).json(commentAll);
   } catch (error) {
     console.log("Error fetching comments:", error);
@@ -50,6 +51,7 @@ const getCommentsByMeme = async (req,res) => {
     try {
         const commentMeme = await Comment.find({meme_id: req.params.meme_id})
             .populate("user_id", "username")
+            .sort({ createdAt: -1 })
         res.status(200).json(commentMeme);
     } catch (error) {
         console.log("Error fetching comments for this meme:", error);
@@ -62,6 +64,7 @@ const getCommentsById = async (req,res) => {
     try {
         const commentsForUsers = await Comment.findById(req.params.id)
             .populate("user_id", "username")
+            .sort({ createdAt: -1 })
         if (!commentsForUsers) return res.status(404).json({message: "😭 You've added no comments to this meme. Go and write a comment! 🥳"});
         res.status(200).json(commentsForUsers);
     } catch (error) {
