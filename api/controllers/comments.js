@@ -25,7 +25,8 @@ const createComment = async (req,res) => {
             meme_id, 
             user_id
         });
-        res.status(201).json({ message: "🚀 Comment added! 🚀", comment: newComment });
+        const newCommentWithUser = await Comment.findOne({ _id: newComment._id }).populate('user_id');
+        res.status(201).json({ message: "🚀 Comment added! 🚀", comment: newCommentWithUser });
     } catch (error) {
         console.error("Error adding comment:", error);
         res.status(500).json({ message: "Server error :(", error });
