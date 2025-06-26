@@ -3,12 +3,11 @@ import { useState, useEffect, useRef } from "react";
 import { Login } from "../../components/Login";
 import { Signup } from "../../components/Signup";
 import MemeDisplay from "../../components/MemeDisplay";
-// import { RatingBar } from "../../components/RatingBar";
 import MemeUploadButton from "../../components/MemeUploadButtonComponent";
 import { useNavigate } from "react-router-dom";
 import getMeme from "../../services/memeSelector";
 import { TagFilter } from "../../components/TagFilter"
-import CommentBox from "../../components/CommentBox"
+import Comments from "../../components/Comments"
 import ShareButton from "../../components/ShareButtonComponent"
 import "../../index.css";
 
@@ -70,15 +69,22 @@ export function HomePage() {
   // Back and forth buttons
   const updateMeme = (id) => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      return;
+    }
+
     getMeme(tags.join(","), token, id).then((data) => {
       if (!data || !data.meme) {
         setErrorMessage("No memes found with those tags")
         setTags([])
       } else {
-      setMeme(data.meme);
-      localStorage.setItem("token", data.token);
+      if (isLoggedIn && localStorage.getItem("token")) {
+        setMeme(data.meme);
+        localStorage.setItem("token", data.token);
       }
-    })
+    }).catch((error) => {
+      console.error("Error fetching meme:", error);
+    });
   }
 
   const handleNextClick = () => {
@@ -157,6 +163,7 @@ export function HomePage() {
                     return <span className="meme-tag" key={index}>{tag} </span>
                   })}
                 </p>
+                <br />
               </div>
               <ShareButton meme={meme}/>
             </div>
@@ -184,7 +191,7 @@ export function HomePage() {
                   onClick={handleNextClick}
                 />
               </div>
-                <CommentBox />
+                <Comments meme={meme} />
             </div>
             <div className="column-view-right">
               <div className="meme-upload-button-wrapper">
