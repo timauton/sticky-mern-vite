@@ -53,7 +53,7 @@ describe("/comments", () => {
       });
 
     expect(response.statusCode).toBe(201);
-    expect(response.body.newComment.comment).toBe("This is funny!");
+    expect(response.body.comment.comment).toBe("This is funny!");
   });
 
   test("GET /comments returns all comments", async () => {
