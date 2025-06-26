@@ -74,13 +74,6 @@ export function HomePage() {
     }
 
     getMeme(tags.join(","), token, id).then((data) => {
-      if (isLoggedIn && localStorage.getItem("token")) {
-        setMeme(data.meme);
-        localStorage.setItem("token", data.token);
-      }
-    }).catch((error) => {
-      console.error("Error fetching meme:", error);
-    });
       if (!data || !data.meme) {
         setErrorMessage("No memes found with those tags")
         setTags([])
