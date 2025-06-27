@@ -1,4 +1,3 @@
-// tests/services/activityService.test.jsx
 import { vi, describe, test, expect, beforeEach } from 'vitest';
 import { getUserActivity } from '../../src/services/activityService';
 

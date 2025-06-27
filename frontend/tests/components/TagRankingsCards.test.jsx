@@ -1,4 +1,3 @@
-// tests/components/TagRankingsCards.test.jsx
 import { render, screen, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import "@testing-library/jest-dom"
