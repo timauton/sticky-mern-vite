@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
 
 // Storage config: applies a unique suffix to prevent files being overwritten & depending on the path
@@ -9,8 +10,18 @@ const generateFilename = (uploadPath, originalname) => {
     return prefix + '-' + uniqueSuffix + path.extname(originalname);
 }
 
+// Makes sure there's an upload file
+const ensureUploadsDirectory = () => {
+    const uploadsPath = path.join(process.cwd(), 'uploads');
+
+    if(!fs.existsSync(uploadsPath)) {
+        fs.mkdirSync(uploadsPath, { recursive: true });
+    }
+};
 
 const createStorage = (uploadPath) => {
+    ensureUploadsDirectory();
+    
     return multer.diskStorage({
         destination: (req, file, callback) => {
             callback(null, uploadPath);
@@ -74,5 +85,7 @@ module.exports = {
     uploadConfigs,
     handleUploadError,
     imageFilter,
-    generateFilename
+    generateFilename,
+    ensureUploadsDirectory,
+    createStorage
 };

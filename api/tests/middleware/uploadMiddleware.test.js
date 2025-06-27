@@ -1,5 +1,6 @@
-// tests/middleware/uploadMiddleware.test.js
 const { imageFilter, generateFilename, handleUploadError } = require("../../middleware/uploadMiddleware")
+const fs = require('fs');
+const path = require('path');
 
 describe('Upload Middleware', () => {
     describe('imageFilter', () => {
@@ -171,6 +172,75 @@ describe('Upload Middleware', () => {
         const filename2 = generateFilename('uploads', 'test.jpg');
         
         expect(filename1).not.toBe(filename2);
+        });
     });
-  });
+    describe('uploads directory creation', () => {
+        const uploadsPath = path.join(process.cwd(), 'uploads');
+
+        beforeEach(() => {
+            if (fs.existsSync(uploadsPath)) {
+                fs.rmSync(uploadsPath, { recursive: true, force: true});
+            }
+        });
+
+        afterEach(() => {
+            if (fs.existsSync(uploadsPath)) {
+                fs.rmSync(uploadsPath, {recursive:true, force:true});
+            }
+        });
+
+        it('should create uploads directory if it does not exist', () => {
+            expect(fs.existsSync(uploadsPath)).toBe(false)
+
+            const { ensureUploadsDirectory } = require("../../middleware/uploadMiddleware");
+            ensureUploadsDirectory();
+
+            expect(fs.existsSync(uploadsPath)).toBe(true);
+        })
+
+        it('should ensure uploads directory exists when creating storage', () => {
+            const uploadsPath = path.join(process.cwd(), 'uploads');
+            if (fs.existsSync(uploadsPath)) {
+                fs.rmSync(uploadsPath, { recursive: true, force: true });
+            }
+            expect(fs.existsSync(uploadsPath)).toBe(false);
+            
+            const { createStorage } = require('../../middleware/uploadMiddleware');
+            createStorage('uploads/');
+            
+            expect(fs.existsSync(uploadsPath)).toBe(true);
+        });
+
+        it('should create directory when createStorage is called directly', () => {
+            // Arrange
+            const uploadsPath = path.join(process.cwd(), 'uploads');
+            if (fs.existsSync(uploadsPath)) {
+                fs.rmSync(uploadsPath, { recursive: true, force: true });
+            }
+            expect(fs.existsSync(uploadsPath)).toBe(false);
+            
+            // Act: Call createStorage directly
+            const { createStorage } = require('../../middleware/uploadMiddleware');
+            createStorage('uploads/');
+            
+            // Assert
+            expect(fs.existsSync(uploadsPath)).toBe(true);
+        });
+
+        it('should create directory when app initializes with middleware', () => {
+            // Arrange: Clean slate
+            const uploadsPath = path.join(process.cwd(), 'uploads');
+            if (fs.existsSync(uploadsPath)) {
+                fs.rmSync(uploadsPath, { recursive: true, force: true });
+            }
+            expect(fs.existsSync(uploadsPath)).toBe(false);
+            
+            // Act: Simulate app startup
+            const { ensureUploadsDirectory } = require('../../middleware/uploadMiddleware');
+            ensureUploadsDirectory(); // This is what we'll add to app.js
+            
+            // Assert: Directory should exist
+            expect(fs.existsSync(uploadsPath)).toBe(true);
+        });
+    })
 });
